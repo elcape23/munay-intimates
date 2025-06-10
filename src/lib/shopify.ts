@@ -3,7 +3,6 @@
 import { GraphQLClient, gql } from "graphql-request";
 
 // --- Configuración ---
-
 const storeDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const storefrontAccessToken =
   process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
@@ -25,8 +24,7 @@ const shopifyClient = new GraphQLClient(shopifyApiEndpoint, {
   },
 });
 
-// --- Definiciones de Tipos de Datos ---
-
+// --- Definiciones de Tipos de Datos (Completas) ---
 export type ShopifyImage = { url: string; altText: string | null };
 export type ShopifyPrice = { amount: string; currencyCode: string };
 export type ShopifyProductVariant = {
@@ -40,18 +38,24 @@ export type ShopifyProductOption = {
   name: string;
   values: string[];
 };
+export type ShopifyMetafield = {
+  key: string;
+  value: string;
+  reference?: {
+    fields: { key: string; value: string }[];
+  };
+};
 export type ShopifyProduct = {
   id: string;
   title: string;
   handle: string;
-  description: string;
-  descriptionHtml: string;
   tags: string[];
   priceRange: { minVariantPrice: ShopifyPrice };
   images: { edges: { node: ShopifyImage }[] };
   options: ShopifyProductOption[];
-  variants: { edges: { node: ShopifyProductVariant }[] };
-  metafields: { key: string; value: string }[] | null;
+  color?: ShopifyMetafield | null;
+  talle?: ShopifyMetafield | null;
+  estacion?: ShopifyMetafield | null;
 };
 export type ShopifyCartLine = {
   id: string;
@@ -113,16 +117,15 @@ export type ShopifyCollection = {
 // Tipos para las respuestas de la API
 type GetProductsResponse = { products: { edges: { node: ShopifyProduct }[] } };
 type GetProductByHandleResponse = { product: ShopifyProduct };
-type CreateCartResponse = { cartCreate: { cart: ShopifyCart } };
-type AddToCartResponse = { cartLinesAdd: { cart: ShopifyCart } };
-type GetCartResponse = { cart: ShopifyCart };
 type GetCollectionsResponse = {
   collections: { edges: { node: ShopifyCollection }[] };
 };
 type GetCollectionByHandleResponse = { collection: ShopifyCollection };
+type CreateCartResponse = { cartCreate: { cart: ShopifyCart } };
+type AddToCartResponse = { cartLinesAdd: { cart: ShopifyCart } };
+type GetCartResponse = { cart: ShopifyCart };
 
 // --- Función Principal de Peticiones ---
-
 export async function shopifyFetch<T>({
   query,
   variables,
@@ -143,7 +146,6 @@ export async function shopifyFetch<T>({
 }
 
 // --- Funciones de Catálogo ---
-
 export async function getProducts(
   count: number = 10
 ): Promise<ShopifyProduct[]> {
@@ -155,7 +157,6 @@ export async function getProducts(
             id
             title
             handle
-            description
             priceRange {
               minVariantPrice {
                 amount
@@ -191,8 +192,12 @@ export async function getProductByHandle(
         id
         title
         handle
-        description
         descriptionHtml
+        options {
+          id
+          name
+          values
+        }
         priceRange {
           minVariantPrice {
             amount
@@ -207,36 +212,50 @@ export async function getProductByHandle(
             }
           }
         }
-        options {
-          id
-          name
-          values
-        }
-        variants(first: 10) {
-          edges {
-            node {
-              id
-              title
-              availableForSale
-              price {
-                amount
-                currencyCode
-              }
-            }
-          }
-        }
       }
     }
   `;
-  const response = await shopifyFetch<GetProductByHandleResponse>({
+  const response = await shopifyFetch<{ product: ShopifyProduct }>({
     query,
     variables: { handle },
   });
   return response.product;
 }
 
-// --- Funciones para Colecciones ---
+export async function getProductsByHandles(
+  handles: string[]
+): Promise<ShopifyProduct[]> {
+  if (!handles || handles.length === 0) {
+    return [];
+  }
+  const queryFilter = handles
+    .map((handle) => `handle:'${handle}'`)
+    .join(" OR ");
+  const query = gql`
+        query GetProductsByHandles($query: String!) {
+            products(first: ${handles.length}, query: $query) {
+                edges {
+                    node {
+                        id, title, handle,
+                        priceRange { minVariantPrice { amount, currencyCode } },
+                        images(first: 1) { edges { node { url, altText } } }
+                    }
+                }
+            }
+        }
+    `;
+  const response = await shopifyFetch<{
+    products: { edges: { node: ShopifyProduct }[] };
+  }>({ query, variables: { query: queryFilter } });
+  return handles
+    .map((handle) => {
+      return response.products.edges.find((edge) => edge.node.handle === handle)
+        ?.node;
+    })
+    .filter(Boolean) as ShopifyProduct[];
+}
 
+// --- Funciones para Colecciones ---
 export async function getCollections(): Promise<ShopifyCollection[]> {
   const query = gql`
     query GetCollections {
@@ -285,10 +304,28 @@ export async function getCollectionByHandle(
                   }
                 }
               }
-              metafields(
-                keys: ["color", "talle", "temporada"]
-                namespace: "custom"
+              options {
+                name
+                values
+              }
+              color: metafield(
+                namespace: "shopify.metaobject_reference"
+                key: "color"
               ) {
+                reference {
+                  ... on Metaobject {
+                    fields {
+                      key
+                      value
+                    }
+                  }
+                }
+              }
+              talle: metafield(namespace: "custom", key: "talle") {
+                key
+                value
+              }
+              estacion: metafield(namespace: "custom", key: "estacion") {
                 key
                 value
               }

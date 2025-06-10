@@ -14,8 +14,12 @@ export function SideMenu() {
   // Efecto para obtener las colecciones cuando el componente se monta
   useEffect(() => {
     const fetchCollections = async () => {
-      const fetchedCollections = await getCollections();
-      setCollections(fetchedCollections);
+      try {
+        const fetchedCollections = await getCollections();
+        setCollections(fetchedCollections);
+      } catch (error) {
+        console.error("Failed to fetch collections:", error);
+      }
     };
     fetchCollections();
   }, []);
@@ -75,6 +79,14 @@ export function SideMenu() {
             </Link>
           ))}
           <hr className="my-2" />
+          {/* ¡NUEVO! Enlace a la página de favoritos */}
+          <Link
+            href="/favorites"
+            onClick={closeMenu}
+            className="p-3 rounded-md hover:bg-gray-100 text-gray-700 font-semibold"
+          >
+            Favoritos
+          </Link>
           <Link
             href="/account"
             onClick={closeMenu}

@@ -28,38 +28,42 @@ export function ProductGrid({ products }: ProductGridProps) {
     };
   }, [isFilterModalOpen]);
 
-  // Procesa tags y metafields para crear los grupos de filtros
+  // Lógica simplificada: solo procesamos tags para Subcategoría y el metafield de Color.
   const { primaryFilterGroup, modalFilterGroups } = useMemo(() => {
     const primary: Record<string, Set<string>> = {};
     const modal: Record<string, Set<string>> = {};
 
     products.forEach((product) => {
-      // Procesa las etiquetas (tags) para los filtros principales
+      // 1. Procesa las etiquetas (tags) para los filtros principales
       product.tags.forEach((tag) => {
         const parts = tag.split(":");
-        if (parts.length === 2) {
+        if (
+          parts.length === 2 &&
+          (parts[0].trim().toLowerCase() === "subcategoría" ||
+            parts[0].trim().toLowerCase() === "subcategoria")
+        ) {
           const groupName = parts[0].trim();
-          if (
-            groupName.toLowerCase() === "subcategoría" ||
-            groupName.toLowerCase() === "subcategoria"
-          ) {
-            if (!primary[groupName]) {
-              primary[groupName] = new Set();
-            }
-            primary[groupName].add(tag);
+          if (!primary[groupName]) {
+            primary[groupName] = new Set();
           }
+          primary[groupName].add(tag);
         }
       });
 
-      // Procesa los metacampos (metafields) para los filtros del modal
-      product.metafields?.forEach((metafield) => {
-        const groupName =
-          metafield.key.charAt(0).toUpperCase() + metafield.key.slice(1);
-        if (!modal[groupName]) {
-          modal[groupName] = new Set();
+      // 2. Procesa el metacampo estándar de Color
+      if (product.color?.reference?.fields) {
+        // El nombre del color en el metaobjeto estándar está en el campo 'name'.
+        const colorField = product.color.reference.fields.find(
+          (f) => f.key === "name"
+        );
+        if (colorField?.value) {
+          const groupName = "Color";
+          if (!modal[groupName]) {
+            modal[groupName] = new Set();
+          }
+          modal[groupName].add(`${groupName}:${colorField.value}`);
         }
-        modal[groupName].add(`${metafield.key}:${metafield.value}`);
-      });
+      }
     });
 
     const primaryResult: Record<string, string[]> = {};
@@ -99,13 +103,19 @@ export function ProductGrid({ products }: ProductGridProps) {
         return Object.entries(activeGroups).every(
           ([groupKey, groupFilters]) => {
             return groupFilters.some((filterValue) => {
-              if (product.tags.includes(filterValue)) {
+              const value = filterValue.split(":")[1].trim();
+              // Filtra por tag (Subcategoría)
+              if (product.tags.includes(filterValue)) return true;
+              // Filtra por metacampo de color
+              if (
+                groupKey === "Color" &&
+                product.color?.reference?.fields.some(
+                  (f) => f.key === "name" && f.value === value
+                )
+              )
                 return true;
-              }
-              const [metaKey, metaValue] = filterValue.split(":");
-              return product.metafields?.some(
-                (mf) => mf.key === metaKey && mf.value === metaValue
-              );
+
+              return false;
             });
           }
         );
@@ -127,7 +137,8 @@ export function ProductGrid({ products }: ProductGridProps) {
             parseFloat(a.priceRange.minVariantPrice.amount)
         );
         break;
-      // ... (resto del ordenamiento sin cambios)
+      default:
+        break;
     }
     return filtered;
   }, [products, activeFilters, sortMethod]);
@@ -254,7 +265,7 @@ export function ProductGrid({ products }: ProductGridProps) {
         </div>
       </div>
 
-      {/* --- Grilla de Productos (sin cambios) --- */}
+      {/* --- Grilla de Productos --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredAndSortedProducts.map((product) => (
           <Link
