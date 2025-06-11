@@ -50,9 +50,11 @@ export type ShopifyProduct = {
   title: string;
   handle: string;
   tags: string[];
+  descriptionHtml?: string;
   priceRange: { minVariantPrice: ShopifyPrice };
   images: { edges: { node: ShopifyImage }[] };
   options: ShopifyProductOption[];
+  variants?: { edges: { node: ShopifyProductVariant }[] };
   color?: ShopifyMetafield | null;
   talle?: ShopifyMetafield | null;
   estacion?: ShopifyMetafield | null;
@@ -209,6 +211,19 @@ export async function getProductByHandle(
             node {
               url
               altText
+            }
+          }
+        }
+        variants(first: 100) {
+          edges {
+            node {
+              id
+              title
+              availableForSale
+              price {
+                amount
+                currencyCode
+              }
             }
           }
         }
@@ -518,9 +533,7 @@ export async function customerCreate(
   });
   return response.customerCreate;
 }
-export async function customerAccessTokenCreate(
-  input: any
-): Promise<{
+export async function customerAccessTokenCreate(input: any): Promise<{
   customerAccessToken?: CustomerAccessToken;
   customerUserErrors: CustomerUserError[];
 }> {

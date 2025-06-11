@@ -1,6 +1,7 @@
 // src/app/products/[handle]/page.tsx
 
 import { getProductByHandle, ShopifyProduct } from "@/lib/shopify";
+import { FavoriteButton } from "@/components/common/favorite-button";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ProductForm } from "@/components/product/product-form"; // ¡NUEVO! Importamos nuestro componente interactivo.
@@ -35,6 +36,9 @@ export default async function ProductDetailPage({
               style={{ objectFit: "cover" }}
               priority
             />
+            <div className="absolute top-2 right-2 z-10">
+              <FavoriteButton productHandle={product.handle} />
+            </div>
           </div>
           {/* Miniaturas */}
           <div className="flex space-x-2 mt-4">

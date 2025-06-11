@@ -28,14 +28,14 @@ export function ProductGrid({ products }: ProductGridProps) {
     };
   }, [isFilterModalOpen]);
 
-  // Lógica simplificada: solo procesamos tags para Subcategoría y el metafield de Color.
+  // Lógica corregida para procesar tags y metacampos
   const { primaryFilterGroup, modalFilterGroups } = useMemo(() => {
     const primary: Record<string, Set<string>> = {};
     const modal: Record<string, Set<string>> = {};
 
     products.forEach((product) => {
       // 1. Procesa las etiquetas (tags) para los filtros principales
-      product.tags.forEach((tag) => {
+      product.tags?.forEach((tag) => {
         const parts = tag.split(":");
         if (
           parts.length === 2 &&
@@ -52,7 +52,6 @@ export function ProductGrid({ products }: ProductGridProps) {
 
       // 2. Procesa el metacampo estándar de Color
       if (product.color?.reference?.fields) {
-        // El nombre del color en el metaobjeto estándar está en el campo 'name'.
         const colorField = product.color.reference.fields.find(
           (f) => f.key === "name"
         );
@@ -64,6 +63,19 @@ export function ProductGrid({ products }: ProductGridProps) {
           modal[groupName].add(`${groupName}:${colorField.value}`);
         }
       }
+
+      // 3. Procesa metacampos personalizados
+      const customMetafields = [product.talle, product.estacion];
+      customMetafields.forEach((metafield) => {
+        if (metafield?.key && metafield?.value) {
+          const groupName =
+            metafield.key.charAt(0).toUpperCase() + metafield.key.slice(1);
+          if (!modal[groupName]) {
+            modal[groupName] = new Set();
+          }
+          modal[groupName].add(`${groupName}:${metafield.value}`);
+        }
+      });
     });
 
     const primaryResult: Record<string, string[]> = {};
@@ -105,15 +117,21 @@ export function ProductGrid({ products }: ProductGridProps) {
             return groupFilters.some((filterValue) => {
               const value = filterValue.split(":")[1].trim();
               // Filtra por tag (Subcategoría)
-              if (product.tags.includes(filterValue)) return true;
-              // Filtra por metacampo de color
+              if (product.tags?.includes(filterValue)) return true;
+
+              // Filtra por metacampos
+              const key = groupKey.toLowerCase();
               if (
-                groupKey === "Color" &&
+                key === "color" &&
                 product.color?.reference?.fields.some(
                   (f) => f.key === "name" && f.value === value
                 )
               )
                 return true;
+              // @ts-ignore
+              if (product[key] && product[key].value === value) {
+                return true;
+              }
 
               return false;
             });

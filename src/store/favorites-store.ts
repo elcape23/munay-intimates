@@ -4,7 +4,6 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { getProductsByHandles, ShopifyProduct } from "@/lib/shopify";
 
-// Definimos la nueva forma del estado
 interface FavoritesState {
   favoriteHandles: string[];
   favoriteProducts: ShopifyProduct[];
@@ -62,7 +61,7 @@ export const useFavoritesStore = create(
       name: "favorites-storage",
       storage: createJSONStorage(() => localStorage),
       // ¡CORRECCIÓN CLAVE! Hemos eliminado la línea 'partialize' que causaba el error de TypeScript.
-      // Ahora se guardará todo el estado, lo cual es más simple y seguro.
+      // Ahora se guardará todo el estado, lo cual es más simple y seguro para este caso.
       onRehydrateStorage: (state) => {
         state?.setHasHydrated(true);
       },

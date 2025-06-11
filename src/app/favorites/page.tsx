@@ -2,40 +2,13 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import { useFavoritesStore } from "@/store/favorites-store";
-import { getProductsByHandles, ShopifyProduct } from "@/lib/shopify";
 import Link from "next/link";
 import Image from "next/image";
 import { FavoriteButton } from "@/components/common/favorite-button";
 
 export default function FavoritesPage() {
-  // ¡MODIFICADO! Si favoriteHandles es undefined, usamos un array vacío como fallback.
-  const { favoriteHandles = [] } = useFavoritesStore();
-  const [favoriteProducts, setFavoriteProducts] = useState<ShopifyProduct[]>(
-    []
-  );
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchFavoriteProducts = async () => {
-      setIsLoading(true);
-      if (favoriteHandles.length > 0) {
-        try {
-          const products = await getProductsByHandles(favoriteHandles);
-          setFavoriteProducts(products);
-        } catch (error) {
-          console.error("Error al obtener los productos favoritos:", error);
-          setFavoriteProducts([]);
-        }
-      } else {
-        setFavoriteProducts([]);
-      }
-      setIsLoading(false);
-    };
-
-    fetchFavoriteProducts();
-  }, [favoriteHandles]);
+  const { favoriteProducts, isLoading } = useFavoritesStore();
 
   return (
     <main className="container mx-auto p-4 md:p-8">
@@ -47,7 +20,7 @@ export default function FavoritesPage() {
         <p className="text-center text-gray-500">
           Cargando tus productos favoritos...
         </p>
-      ) : favoriteProducts.length === 0 ? (
+      ) : (favoriteProducts ?? []).length === 0 ? (
         <div className="text-center text-gray-500">
           <p>Aún no has guardado ningún producto como favorito.</p>
           <Link

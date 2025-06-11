@@ -11,22 +11,27 @@ type FavoriteButtonProps = {
 };
 
 export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
-  // Obtenemos todo el estado que necesitamos, incluyendo la bandera de hidratación.
-  const { toggleFavorite, favoriteHandles, _hasHydrated } = useFavoritesStore();
+  // Obtenemos todo el estado que necesitamos, incluida la bandera de hidratación.
+  // ¡MODIFICADO! Si favoriteHandles es undefined, usamos un array vacío como fallback.
+  const {
+    toggleFavorite,
+    favoriteHandles = [],
+    _hasHydrated,
+  } = useFavoritesStore();
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // El store ya debería estar hidratado si el botón es visible,
-    // por lo que la función 'toggleFavorite' existirá.
-    toggleFavorite(productHandle);
+    // Nos aseguramos de que la función exista antes de llamarla.
+    if (toggleFavorite) {
+      toggleFavorite(productHandle);
+    }
   };
 
   // ¡CLAVE! No renderizamos el botón interactivo hasta que el store
   // nos confirme que ha cargado los datos desde la memoria del navegador.
-  // Esto evita cualquier error de "timing".
   if (!_hasHydrated) {
-    // Mostramos un placeholder para evitar saltos en la interfaz (Layout Shift)
+    // Mostramos un placeholder para evitar saltos en la interfaz.
     return <div className="h-7 w-7 rounded-full bg-gray-200 animate-pulse" />;
   }
 
