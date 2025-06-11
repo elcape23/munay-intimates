@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useAuthStore } from "@/store/auth-store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,9 +22,8 @@ export default function LoginPage() {
     }
   }, [isLoggedIn, router]);
 
-  const handleLogin = async () => {
-    // Añadimos un console.log aquí para máxima seguridad de depuración.
-    console.log("Iniciando handleLogin...");
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setError(null);
 
     try {
@@ -52,8 +51,7 @@ export default function LoginPage() {
             Iniciar Sesión
           </h1>
 
-          {/* ¡MODIFICACIÓN FINAL! Reemplazamos <form> por <div> para evitar cualquier comportamiento por defecto. */}
-          <div className="space-y-4">
+          <form className="space-y-4" onSubmit={handleLogin}>
             <div>
               <label
                 htmlFor="email"
@@ -97,15 +95,14 @@ export default function LoginPage() {
 
             <div>
               <button
-                type="button"
-                onClick={handleLogin}
+                type="submit"
                 disabled={isLoading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
               >
                 {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
               </button>
             </div>
-          </div>
+          </form>
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
               ¿Eres un cliente nuevo? Puedes crear una cuenta durante el proceso

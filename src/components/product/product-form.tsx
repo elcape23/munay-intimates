@@ -28,12 +28,13 @@ export function ProductForm({ product }: ProductFormProps) {
   const [message, setMessage] = useState(""); // Mantenemos un mensaje local para feedback inmediato
 
   const selectedVariant: ShopifyProductVariant | undefined = useMemo(() => {
+    if (!product.variants) return undefined;
     return product.variants.edges.find(({ node }) => {
       return Object.entries(selectedOptions).every(([name, value]) =>
         node.title.includes(value)
       );
     })?.node;
-  }, [selectedOptions, product.variants.edges]);
+  }, [selectedOptions, product.variants?.edges]);
 
   const handleOptionChange = (optionName: string, value: string) => {
     setSelectedOptions((prev) => ({
@@ -64,6 +65,16 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const isAddToCartDisabled =
     !selectedVariant || !selectedVariant.availableForSale || isLoading;
+
+  if (!product.variants || product.variants.edges.length === 0) {
+    return (
+      <div className="space-y-6">
+        <p className="text-center text-sm text-gray-600">
+          No hay variantes disponibles para este producto.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

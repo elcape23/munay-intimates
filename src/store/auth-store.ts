@@ -70,7 +70,13 @@ export const useAuthStore = create(
       // Acción para cerrar sesión
       logout: async () => {
         const { customerAccessToken } = get();
-        if (!customerAccessToken) return;
+        if (customerAccessToken) {
+          try {
+            await customerAccessTokenDelete(customerAccessToken.accessToken);
+          } catch (e) {
+            console.error("Error revoking token:", e);
+          }
+        }
 
         set({
           customer: null,
