@@ -1,6 +1,6 @@
-// src/app/favorites/page.tsx
-
 "use client";
+
+// src/app/favorites/page.tsx
 
 import { useFavoritesStore } from "@/store/favorites-store";
 import Link from "next/link";

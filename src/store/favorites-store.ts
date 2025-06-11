@@ -62,7 +62,7 @@ export const useFavoritesStore = create(
       storage: createJSONStorage(() => localStorage),
       // ¡CORRECCIÓN CLAVE! Hemos eliminado la línea 'partialize' que causaba el error de TypeScript.
       // Ahora se guardará todo el estado, lo cual es más simple y seguro para este caso.
-      onRehydrateStorage: (state) => {
+      onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },
     }

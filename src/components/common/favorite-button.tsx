@@ -1,6 +1,5 @@
-// src/components/common/FavoriteButton.tsx
-
 "use client";
+// src/components/common/FavoriteButton.tsx
 
 import { useFavoritesStore } from "@/store/favorites-store";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";

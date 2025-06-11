@@ -75,7 +75,9 @@ export default async function ProductDetailPage({
             <h2 className="text-lg font-semibold text-gray-700">Descripción</h2>
             <div
               className="prose prose-lg mt-2 text-gray-600"
-              dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+              dangerouslySetInnerHTML={{
+                __html: product.descriptionHtml || "",
+              }}
             />
           </div>
 
