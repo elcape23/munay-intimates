@@ -7,7 +7,7 @@ import { ShoppingBagIcon, Bars3Icon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/cart-store";
 import { useUiStore } from "@/store/ui-store";
 import { useEffect, useState } from "react";
-
+import Image from "@/assets/logo.svg";
 // El componente CartIcon no necesita cambios
 function CartIcon() {
   const { cart } = useCartStore();
@@ -51,8 +51,16 @@ export function Navbar() {
           >
             <Bars3Icon className="h-7 w-7 text-gray-600" />
           </button>
-          <Link href="/" className="text-xl font-bold text-gray-900">
-            MUNAY
+          <Link href="/" className="heading-01 text-gray-900">
+            {/* …dentro del JSX… */}
+            <Image
+              src="/logo.svg" // ruta relativa a /public
+              alt="Munay logo"
+              width={32}
+              height={32}
+              priority
+              className="h-8 w-8" // respeta el tamaño; color se define en el SVG mismo
+            />
           </Link>
         </div>
 

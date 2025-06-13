@@ -4,11 +4,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 Copy `.env.example` to `.env` and fill in the required values:
 
-```
-NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN=your-store-domain
-NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN=your-access-token
-NEXT_PUBLIC_APP_URL=https://your-app-url
-```
+NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN="munayintimates.myshopify.com"
+NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN="a36c7c3e5ad984b377929a406a4960c0"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
 ## Getting Started
 
