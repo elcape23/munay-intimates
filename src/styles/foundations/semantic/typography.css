@@ -1,184 +1,259 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* src/styles/foundations/semantic/typography.css */
 
-@layer utilities {
-  /* Heading 01 = familia + tamaño + interlínea + tracking + peso */
-  .heading-01 {
-    @apply font-brand
-           text-heading-01
-           leading-heading-01
-           tracking-heading-01;
-  }
-  .heading-01-regular {
-    @apply heading-01 font-regular;
-  }
-  .heading-01-medium {
-    @apply heading-01 font-medium;
-  }
-  .heading-01-semibold {
-    @apply heading-01 font-semibold;
-  }
-  .heading-01-bold {
-    @apply heading-01 font-bold;
-  }
-  /* Heading 02 = familia + tamaño + interlínea + tracking + peso */
-  .heading-02 {
-    @apply font-brand
-           text-heading-02
-           leading-heading-02
-           tracking-heading-02;
-  }
-  .heading-02-regular {
-    @apply heading-02 font-regular;
-  }
-  .heading-02-medium {
-    @apply heading-02 font-medium;
-  }
-  .heading-02-semibold {
-    @apply heading-02 font-semibold;
-  }
-  .heading-02-bold {
-    @apply heading-02 font-bold;
-  }
+/* ¡LA SOLUCIÓN! Usamos theme() para acceder a los valores de tu config. */
+/* Esto es más robusto que usar @apply con clases personalizadas.      */
 
-  /* Heading 03 = familia + tamaño + interlínea + tracking + peso */
-  .heading-03 {
-    @apply font-brand
-           text-heading-03
-           leading-heading-03
-           tracking-heading-03;
-  }
-  .heading-03-regular {
-    @apply heading-03 font-regular;
-  }
-  .heading-03-medium {
-    @apply heading-03 font-medium;
-  }
-  .heading-03-semibold {
-    @apply heading-03 font-semibold;
-  }
-  .heading-03-bold {
-    @apply heading-03 font-bold;
-  }
+.heading-01-bold {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-01");
+  font-weight: theme("fontWeight.bold");
+  line-height: theme("lineHeight.heading-01");
+  letter-spacing: theme("letterSpacing.heading-01");
+}
+.heading-01-semibold {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-01");
+  font-weight: theme("fontWeight.semibold");
+  line-height: theme("lineHeight.heading-01");
+  letter-spacing: theme("letterSpacing.heading-01");
+}
+.heading-01-medium {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-01");
+  font-weight: theme("fontWeight.medium");
+  line-height: theme("lineHeight.heading-01");
+  letter-spacing: theme("letterSpacing.heading-01");
+}
+.heading-01-regular {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-01");
+  font-weight: theme("fontWeight.regular");
+  line-height: theme("lineHeight.heading-01");
+  letter-spacing: theme("letterSpacing.heading-01");
+}
+.heading-02-bold {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-02");
+  font-weight: theme("fontWeight.bold");
+  line-height: theme("lineHeight.heading-02");
+  letter-spacing: theme("letterSpacing.heading-02");
+}
+.heading-02-semibold {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-02");
+  font-weight: theme("fontWeight.semibold");
+  line-height: theme("lineHeight.heading-02");
+  letter-spacing: theme("letterSpacing.heading-02");
+}
+.heading-02-medium {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-02");
+  font-weight: theme("fontWeight.medium");
+  line-height: theme("lineHeight.heading-02");
+  letter-spacing: theme("letterSpacing.heading-02");
+}
+.heading-02-regular {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-02");
+  font-weight: theme("fontWeight.regular");
+  line-height: theme("lineHeight.heading-02");
+  letter-spacing: theme("letterSpacing.heading-02");
+}
+.heading-03-bold {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-03");
+  font-weight: theme("fontWeight.bold");
+  line-height: theme("lineHeight.heading-03");
+  letter-spacing: theme("letterSpacing.heading-03");
+}
+.heading-03-semibold {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-03");
+  font-weight: theme("fontWeight.semibold");
+  line-height: theme("lineHeight.heading-03");
+  letter-spacing: theme("letterSpacing.heading-03");
+}
+.heading-03-medium {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-03");
+  font-weight: theme("fontWeight.medium");
+  line-height: theme("lineHeight.heading-03");
+  letter-spacing: theme("letterSpacing.heading-03");
+}
+.heading-03-regular {
+  font-family: theme("fontFamily.brand");
+  font-size: theme("fontSize.heading-03");
+  font-weight: theme("fontWeight.regular");
+  line-height: theme("lineHeight.heading-03");
+  letter-spacing: theme("letterSpacing.heading-03");
+}
+.heading-04-bold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-04");
+  font-weight: theme("fontWeight.bold");
+  line-height: theme("lineHeight.heading-04");
+  letter-spacing: theme("letterSpacing.heading-04");
+}
+.heading-04-semibold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-04");
+  font-weight: theme("fontWeight.semibold");
+  line-height: theme("lineHeight.heading-04");
+  letter-spacing: theme("letterSpacing.heading-04");
+}
+.heading-04-medium {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-04");
+  font-weight: theme("fontWeight.medium");
+  line-height: theme("lineHeight.heading-04");
+  letter-spacing: theme("letterSpacing.heading-04");
+}
+.heading-04-regular {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-04");
+  font-weight: theme("fontWeight.regular");
+  line-height: theme("lineHeight.heading-04");
+  letter-spacing: theme("letterSpacing.heading-04");
+}
+.heading-05-bold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-05");
+  font-weight: theme("fontWeight.bold");
+  line-height: theme("lineHeight.heading-05");
+  letter-spacing: theme("letterSpacing.heading-05");
+}
+.heading-05-semibold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-05");
+  font-weight: theme("fontWeight.semibold");
+  line-height: theme("lineHeight.heading-05");
+  letter-spacing: theme("letterSpacing.heading-05");
+}
+.heading-05-medium {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-05");
+  font-weight: theme("fontWeight.medium");
+  line-height: theme("lineHeight.heading-05");
+  letter-spacing: theme("letterSpacing.heading-05");
+}
+.heading-05-regular {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-05");
+  font-weight: theme("fontWeight.regular");
+  line-height: theme("lineHeight.heading-05");
+  letter-spacing: theme("letterSpacing.heading-05");
+}
+.heading-06-bold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-06");
+  font-weight: theme("fontWeight.bold");
+  line-height: theme("lineHeight.heading-06");
+  letter-spacing: theme("letterSpacing.heading-06");
+}
+.heading-06-semibold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-06");
+  font-weight: theme("fontWeight.semibold");
+  line-height: theme("lineHeight.heading-06");
+  letter-spacing: theme("letterSpacing.heading-06");
+}
+.heading-06-medium {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-06");
+  font-weight: theme("fontWeight.medium");
+  line-height: theme("lineHeight.heading-06");
+  letter-spacing: theme("letterSpacing.heading-06");
+}
+.heading-06-regular {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.heading-06");
+  font-weight: theme("fontWeight.regular");
+  line-height: theme("lineHeight.heading-06");
+  letter-spacing: theme("letterSpacing.heading-06");
+}
+/* ... Repite para heading-03, 04, 05, 06 ... */
 
-  /* Heading 04 = familia + tamaño + interlínea + tracking + peso */
-  .heading-04 {
-    @apply font-default
-           text-heading-04
-           leading-heading-04
-           tracking-heading-04;
-  }
-  .heading-04-regular {
-    @apply heading-04 font-regular;
-  }
-  .heading-04-medium {
-    @apply heading-04 font-medium;
-  }
-  .heading-04-semibold {
-    @apply heading-04 font-semibold;
-  }
-  .heading-04-bold {
-    @apply heading-04 font-bold;
-  }
-
-  /* Heading 05 = familia + tamaño + interlínea + tracking + peso */
-  .heading-05 {
-    @apply font-default
-           text-heading-05
-           leading-heading-05
-           tracking-heading-05;
-  }
-  .heading-05-regular {
-    @apply heading-05 font-regular;
-  }
-  .heading-05-medium {
-    @apply heading-05 font-medium;
-  }
-  .heading-05-semibold {
-    @apply heading-05 font-semibold;
-  }
-  .heading-05-bold {
-    @apply heading-05 font-bold;
-  }
-  /* Heading 06 = familia + tamaño + interlínea + tracking + peso */
-  .heading-06 {
-    @apply font-default
-           text-heading-06
-           leading-heading-06
-           tracking-heading-06;
-  }
-  .heading-06-regular {
-    @apply heading-06 font-regular;
-  }
-  .heading-06-medium {
-    @apply heading-06 font-medium;
-  }
-  .heading-06-semibold {
-    @apply heading-06 font-semibold;
-  }
-  .heading-06-bold {
-    @apply heading-06 font-bold;
-  }
-
-  /* Body 01 = familia + tamaño + interlínea + tracking + peso */
-  .body-01 {
-    @apply font-default
-           text-body-01
-           leading-body-01
-           tracking-body-01;
-  }
-
-  .body-01-regular {
-    @apply body-01 font-regular;
-  }
-  .body-01-medium {
-    @apply body-01 font-medium;
-  }
-  .body-01-semibold {
-    @apply body-01 font-semibold;
-  }
-  .body-01-bold {
-    @apply body-01 font-bold;
-  }
-
-  /* Body 02 = familia + tamaño + interlínea + tracking + peso */
-  .body-02 {
-    @apply font-default
-           text-body-02
-           leading-body-02
-           tracking-body-02;
-  }
-  .body-02-regular {
-    @apply body-02 font-regular;
-  }
-  .body-02-medium {
-    @apply body-02 font-medium;
-  }
-  .body-02-semibold {
-    @apply body-02 font-semibold;
-  }
-  .body-02-bold {
-    @apply body-02 font-bold;
-  }
-
-  /* Body 03 = familia + tamaño + interlínea + tracking + peso */
-  .body-03 {
-    @apply font-default
-           text-body-03
-           leading-body-03
-           tracking-body-03;
-  }
-  .body-03-regular {
-    @apply body-03 font-regular;
-  }
-  .body-03-medium {
-    @apply body-03 font-medium;
-  }
-  .body-03-semibold {
-    @apply body-03 font-semibold;
-  }
-  .body-03-bold {
-    @apply body-03 font-bold;
-  }
+.body-01-bold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-01");
+  font-weight: theme("fontWeight.bold");
+  line-height: theme("lineHeight.body-01");
+  letter-spacing: theme("letterSpacing.body-01");
+}
+.body-01-semibold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-01");
+  font-weight: theme("fontWeight.semibold");
+  line-height: theme("lineHeight.body-01");
+  letter-spacing: theme("letterSpacing.body-01");
+}
+.body-01-medium {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-01");
+  font-weight: theme("fontWeight.medium");
+  line-height: theme("lineHeight.body-01");
+  letter-spacing: theme("letterSpacing.body-01");
+}
+.body-01-regular {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-01");
+  font-weight: theme("fontWeight.regular");
+  line-height: theme("lineHeight.body-01");
+  letter-spacing: theme("letterSpacing.body-01");
+}
+.body-02-bold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-02");
+  font-weight: theme("fontWeight.bold");
+  line-height: theme("lineHeight.body-02");
+  letter-spacing: theme("letterSpacing.body-02");
+}
+.body-02-semibold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-02");
+  font-weight: theme("fontWeight.semibold");
+  line-height: theme("lineHeight.body-02");
+  letter-spacing: theme("letterSpacing.body-02");
+}
+.body-02-medium {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-02");
+  font-weight: theme("fontWeight.medium");
+  line-height: theme("lineHeight.body-02");
+  letter-spacing: theme("letterSpacing.body-02");
+}
+.body-02-regular {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-02");
+  font-weight: theme("fontWeight.regular");
+  line-height: theme("lineHeight.body-02");
+  letter-spacing: theme("letterSpacing.body-02");
+}
+.body-03-bold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-03");
+  font-weight: theme("fontWeight.bold");
+  line-height: theme("lineHeight.body-03");
+  letter-spacing: theme("letterSpacing.body-03");
+}
+.body-03-semibold {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-03");
+  font-weight: theme("fontWeight.semibold");
+  line-height: theme("lineHeight.body-03");
+  letter-spacing: theme("letterSpacing.body-03");
+}
+.body-03-medium {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-03");
+  font-weight: theme("fontWeight.medium");
+  line-height: theme("lineHeight.body-03");
+  letter-spacing: theme("letterSpacing.body-03");
+}
+.body-03-regular {
+  font-family: theme("fontFamily.default");
+  font-size: theme("fontSize.body-03");
+  font-weight: theme("fontWeight.regular");
+  line-height: theme("lineHeight.body-03");
+  letter-spacing: theme("letterSpacing.body-03");
 }

@@ -1,8 +1,8 @@
 // src/styles/primitives/typography.ts
 export const typography = {
   family: {
-    default: ["Manrope", "ui-sans-serif", "system-ui"],
-    brand: ["Manrope", "ui-sans-serif", "system-ui"],
+    default: ["var(--font-manrope)", "ui-sans-serif", "system-ui"],
+    brand: ["var(--font-manrope)", "ui-sans-serif", "system-ui"],
     // puedes añadir serif, mono, etc.
   },
 

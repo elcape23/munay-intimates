@@ -1,69 +1,95 @@
-// src/app/page.tsx
+// Ruta de ejemplo: src/app/page.tsx
 
-import { getProducts, ShopifyProduct } from "@/lib/shopify";
-import Image from "next/image";
-import Link from "next/link";
-// ¡NUEVO! Importamos nuestro botón de favoritos.
-import { FavoriteButton } from "@/components/common/favorite-button";
+import { Button } from "@/components/ui/button"; // Asumiendo que tu alias para componentes es @/
+import { HeartIcon } from "@heroicons/react/24/outline"; // Icono de ejemplo, puedes usar cualquier otro
 
-export default async function HomePage() {
-  const products: ShopifyProduct[] = await getProducts(10);
-
+export default function HomePage() {
   return (
-    <main className="container mx-auto p-4 md:p-8">
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
-        Nuestros Productos
-      </h1>
-
-      {!products || products.length === 0 ? (
-        <p className="text-center text-gray-500">
-          No se encontraron productos.
+    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-white">
+      <div className="space-y-8 text-center">
+        <h1 className="text-4xl font-bold text-text-primary-default">
+          Bienvenido a Munay
+        </h1>
+        <p className="text-text-secondary-default">
+          Este es un ejemplo de cómo se ven los botones de tu Design System en
+          acción.
         </p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <Link
-              href={`/products/${product.handle}`}
-              key={product.handle}
-              className="group block"
-            >
-              <div className="border rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow duration-300 bg-white h-full flex flex-col">
-                {/* Contenedor de la imagen */}
-                <div className="relative w-full h-64">
-                  <Image
-                    src={
-                      product.images.edges[0]?.node.url || "/placeholder.png"
-                    }
-                    alt={product.images.edges[0]?.node.altText || product.title}
-                    fill
-                    style={{ objectFit: "cover" }}
-                    className="transition-transform duration-300 group-hover:scale-105"
-                  />
-                  {/* ¡NUEVO! Añadimos el botón de favoritos aquí */}
-                  <div className="absolute top-2 right-2 z-10">
-                    <FavoriteButton productHandle={product.handle} />
-                  </div>
-                </div>
-                {/* Contenido de la tarjeta */}
-                <div className="p-4 flex flex-col flex-grow">
-                  <h2 className="text-lg font-semibold text-gray-900 truncate">
-                    {product.title}
-                  </h2>
-                  <div className="flex-grow"></div>
-                  <p className="text-gray-600 mt-2">
-                    {new Intl.NumberFormat("es-AR", {
-                      style: "currency",
-                      currency: product.priceRange.minVariantPrice.currencyCode,
-                    }).format(
-                      parseFloat(product.priceRange.minVariantPrice.amount)
-                    )}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
+
+        {/* --- Galería de Botones --- */}
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {/* Estos son los primary buttons.
+            Aplicarán clases como:
+          */}
+          <Button variant="primary" size="lg">
+            <HeartIcon className="w-6 h-6" />
+            button text
+            <HeartIcon className="w-6 h-6" />
+          </Button>
+          <Button variant="primary" size="md">
+            <HeartIcon className="w-5 h-5" />
+            button text
+            <HeartIcon className="w-5 h-5" />
+          </Button>
+          <Button variant="primary" size="sm">
+            <HeartIcon className="w-4 h-4" />
+            button text
+            <HeartIcon className="w-4 h-4" />
+          </Button>
+
+          {/* Estos son los secondary buttons.
+            Aplicarán clases como:
+          */}
+          <Button variant="outline" size="lg">
+            <HeartIcon className="w-6 h-6" />
+            button text
+            <HeartIcon className="w-6 h-6" />
+          </Button>
+          <Button variant="outline" size="md">
+            <HeartIcon className="w-5 h-5" />
+            button text
+            <HeartIcon className="w-5 h-5" />
+          </Button>
+          <Button variant="outline" size="sm">
+            <HeartIcon className="w-4 h-4" />
+            button text
+            <HeartIcon className="w-4 h-4" />
+          </Button>
+
+          {/* Estos son los secondary buttons.
+            Aplicarán clases como:
+          */}
+          <Button variant="link" size="lg">
+            <HeartIcon className="w-6 h-6" />
+            button text
+          </Button>
+          <Button variant="link" size="md">
+            <HeartIcon className="w-5 h-5" />
+            button text
+          </Button>
+          <Button variant="link" size="sm">
+            <HeartIcon className="w-4 h-4" />
+            button text
+          </Button>
+
+          {/* Este botón usará la variante 'destructive'.
+            Aplicará clases como:
+            - bg-background-surface-danger-default
+          */}
+          <Button variant="destructive">
+            {" "}
+            <HeartIcon className="w-6 h-6" />
+            button text
+            <HeartIcon className="w-6 h-6" />
+          </Button>
+
+          <Button variant="ghost">
+            {" "}
+            <HeartIcon className="w-6 h-6" />
+            button text
+            <HeartIcon className="w-6 h-6" />
+          </Button>
         </div>
-      )}
+      </div>
     </main>
   );
 }

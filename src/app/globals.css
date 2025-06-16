@@ -1,30 +1,37 @@
+/* globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Puedes añadir tus otros estilos globales aquí debajo si los tienes */
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Importa tus clases personalizadas DENTRO de la capa 'components' */
+@layer components {
+  @import "../styles/foundations/semantic/typography.css";
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Estas son las variables que Shadcn busca.
+       Las alimentamos con valores HSL de tus colores.
+       Esto se hace solo una vez para cumplir el "contrato". */
+    --background: 240 14% 98%; /* Valor de tu neutral-100 */
+    --foreground: 240 14% 10%; /* Valor de tu neutral-800 */
+    --card: 240 14% 98%; /* Tu neutral-100 */
+    --card-foreground: 240 14% 10%; /* Tu neutral-800 */
+    --popover: 240 14% 98%; /* Tu neutral-100 */
+    --popover-foreground: 240 14% 10%; /* Tu neutral-800 */
+    --primary: 210 100% 25%; /* Valor de tu utilities-400 */
+    --primary-foreground: 0 0% 100%; /* Blanco */
+    --secondary: 114 26% 39%; /* Valor de tu success-300 */
+    --secondary-foreground: 0 0% 100%; /* Blanco */
+    --destructive: 0 84% 45%; /* Valor de tu danger-400 */
+    --destructive-foreground: 0 0% 100%; /* Blanco */
+    --muted: 240 3% 82%; /* Tu neutral-300 */
+    --muted-foreground: 240 4% 40%; /* Tu neutral-600 */
+    --accent: 240 3% 82%; /* Tu neutral-300 */
+    --accent-foreground: 240 14% 10%; /* Tu neutral-800 */
+    --border: 240 3% 82%; /* Tu neutral-300 */
+    --input: 240 3% 82%; /* Tu neutral-300 */
+    --ring: 210 100% 25%; /* Tu utilities-400 */
+    --radius: 0.5rem; /* 8px */
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
