@@ -48,3 +48,11 @@
     display: none;
   }
 }
+
+@layer components {
+  .hero-bg {
+    background-image: url("/images/hero-1.png");
+    background-size: cover;
+    background-position: center;
+  }
+}

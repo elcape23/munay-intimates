@@ -63,7 +63,11 @@ export function SideMenu() {
 
   return (
     <Transition show={isMenuOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-40 lg:hidden" onClose={closeMenu}>
+      <Dialog
+        as="div"
+        className="relative z-[60] lg:hidden"
+        onClose={closeMenu}
+      >
         {/* --- Overlay --- */}
         <Transition.Child
           as={Fragment}
@@ -87,9 +91,9 @@ export function SideMenu() {
           leaveFrom="translate-x-0"
           leaveTo="-translate-x-full"
         >
-          <Dialog.Panel className="fixed inset-y-0 px-6 pb-[52px] left-0 w-[90%] max-w-full bg-background-primary-default flex flex-col h-full gap-10">
+          <Dialog.Panel className="fixed inset-y-0 px-6 pb-[52px] left-0 w-[90%] max-w-full bg-background-primary-default flex flex-col h-full gap-10 z-[60]">
             {/* Header */}
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between py-3">
               <Link href="/" onClick={closeMenu} aria-label="Inicio">
                 <img
                   src="/munay-wordmark.svg"
@@ -98,7 +102,7 @@ export function SideMenu() {
                 />
               </Link>
 
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
                 <button
                   aria-label="Buscar"
                   className="hover:text-brand-primary"
