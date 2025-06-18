@@ -8,6 +8,7 @@ import { SideMenu } from "@/components/common/side-menu";
 // 2. Configura la fuente con los pesos que usas
 const manrope = Manrope({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-manrope", // 3. Asigna una variable CSS
 });
@@ -23,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html>
+    <html lang="es" className={manrope.className}>
       <body>
         <Navbar />
         <SideMenu /> {/* El SideMenu se superpone y se controla solo */}

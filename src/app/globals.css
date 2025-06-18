@@ -35,3 +35,16 @@
     --radius: 0.5rem; /* 8px */
   }
 }
+
+@layer utilities {
+  .no-scrollbar {
+    /* IE y Edge */
+    -ms-overflow-style: none;
+    /* Firefox */
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    /* Chrome, Safari y Opera */
+    display: none;
+  }
+}

@@ -147,6 +147,59 @@ export async function shopifyFetch<T>({
   }
 }
 
+// --- Funciones de Navegación / Menú ---
+
+export type ShopifyMenuItem = {
+  id: string;
+  title: string;
+  url: string; // ↘️  la convertimos a path relativo
+  section: "categories" | "new" | "collections";
+  isNew: boolean;
+};
+
+/**
+ * Devuelve los ítems del menú “main-menu” definidos en tu tienda Shopify.
+ *  - Usa dos metafields opcionales:
+ *      • custom.section  → "categories" | "new" | "collections"
+ *      • custom.is_new   → "true" / "false"  (muestra badge NEW)
+ */
+export async function getMenu(
+  handle: string = "main-menu"
+): Promise<ShopifyMenuItem[]> {
+  const MENU_QUERY = gql`
+    query Menu($handle: String!) {
+      menu(handle: $handle) {
+        items {
+          id
+          title
+          url # ← ej. https://tu-tienda/...
+          metafield(namespace: "custom", key: "section") {
+            value
+          }
+          metafield(namespace: "custom", key: "is_new") {
+            value
+          }
+        }
+      }
+    }
+  `;
+
+  const data = await shopifyFetch<{
+    menu: { items: any[] } | null;
+  }>({ query: MENU_QUERY, variables: { handle } });
+
+  if (!data.menu?.items) return [];
+
+  return data.menu.items.map((item) => ({
+    id: item.id,
+    title: item.title,
+    // quitamos el dominio para obtener path relativo
+    url: item.url.replace(/^https?:\/\/[^/]+/, ""),
+    section: (item.metafield?.value as any) ?? "categories",
+    isNew: item.metafield_1?.value === "true",
+  }));
+}
+
 // --- Funciones de Catálogo ---
 export async function getProducts(
   count: number = 10
@@ -268,6 +321,89 @@ export async function getProductsByHandles(
         ?.node;
     })
     .filter(Boolean) as ShopifyProduct[];
+}
+
+// --- Funciones de Navegación desde Colecciones ---
+
+export type NavSection = "categories" | "new" | "collections";
+
+export interface NavItem {
+  id: string;
+  title: string;
+  url: string;
+  section: NavSection;
+  isNew: boolean;
+}
+
+export async function getCollectionsForMenu(): Promise<NavItem[]> {
+  const QUERY = /* GraphQL */ `
+    query AllCollections($num: Int!) {
+      collections(first: $num) {
+        edges {
+          node {
+            id
+            title
+            handle
+
+            # alias para evitar conflicto
+            isNewMetafield: metafield(namespace: "custom", key: "is_new") {
+              value
+            }
+            seasonMetafield: metafield(namespace: "custom", key: "season") {
+              value
+            }
+
+            products(first: 1, sortKey: CREATED) {
+              edges {
+                node {
+                  createdAt
+                  tags
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const data = await shopifyFetch<{
+    collections: { edges: any[] };
+  }>({ query: QUERY, variables: { num: 250 } });
+
+  console.log("🔎 collections raw →", data.collections); // 👈
+
+  const now = Date.now();
+  const THIRTY_DAYS = 1000 * 60 * 60 * 24 * 30;
+
+  return data.collections.edges.map(({ node }) => {
+    /* --- metafields leídos mediante alias --- */
+    const isNewMeta = node.isNewMetafield?.value === "true";
+    const season = node.seasonMetafield?.value?.toLowerCase(); // invierno, verano…
+
+    /* --- heurística adicional por fecha o tag --- */
+    const newestProduct = node.products.edges[0]?.node;
+    const THIRTY_DAYS = 1000 * 60 * 60 * 24 * 30;
+    const recentlyAdded =
+      newestProduct &&
+      Date.now() - Date.parse(newestProduct.createdAt) < THIRTY_DAYS;
+    const hasNewTag = newestProduct?.tags?.includes("new");
+
+    /* --- decide la sección --- */
+    const section: NavSection = season
+      ? "collections" // tiene metafield season → pestaña Colecciones
+      : isNewMeta || hasNewTag || recentlyAdded
+      ? "new" // flag metafield o heurística NEW
+      : "categories"; // caso por defecto
+
+    return {
+      id: node.id,
+      title: node.title.toUpperCase(),
+      url: `/collection/${node.handle}`,
+      section,
+      isNew: section === "new", // badge NEW solo en pestaña New
+    };
+  });
 }
 
 // --- Funciones para Colecciones ---
