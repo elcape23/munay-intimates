@@ -1,33 +1,45 @@
 // app/page.tsx
 import { HeroSection } from "@/components/home/hero-section";
-import { LoadingSkeleton } from "@/components/home/loading-skeleton";
 import { MainBanner } from "@/components/home/main-banner";
 import { ProductCarousel } from "@/components/home/product-carousel";
 import { NoClipSection } from "@/components/home/noclip-section";
+import { Navbar } from "@/components/common/nav-bar";
+import {
+  getSaleProducts,
+  getNewProducts,
+  FeaturedProduct,
+} from "@/lib/shopify";
 
-// app/page.tsx
-export default function HomePage() {
-  const isLoading = false;
+export default async function HomePage() {
+  // 1) Traemos primero los productos en oferta y los más nuevos
+  const newestRaw: FeaturedProduct[] = await getNewProducts(12);
+  const sale: FeaturedProduct[] = await getSaleProducts(12, 50);
 
-  // 👉 Aquí le dices a TS “éste es un array de any”
-  const featuredProducts: any[] = [];
+  // 2) Marcamos los nuevos con isNew
+  const newest: FeaturedProduct[] = newestRaw.map((product) => ({
+    ...product,
+    isNew: true,
+  }));
+
+  // 3) Unimos ambos arrays sin duplicar por ID
+  const saleIds = new Set(sale.map((p) => p.id));
+  const combined: FeaturedProduct[] = [
+    ...newest.filter((p) => !saleIds.has(p.id)),
+    ...sale,
+  ];
 
   return (
     <>
-      {isLoading ? (
-        <LoadingSkeleton />
-      ) : (
-        <>
-          <HeroSection />
-          <MainBanner />
+      <Navbar />
 
-          <ProductCarousel title="Destacados" data={featuredProducts} />
+      {/* Hero carousel */}
+      <HeroSection />
 
-          <NoClipSection />
+      {/* Carrusel de Ofertas + Nuevos */}
+      <ProductCarousel title="Destacados" data={combined} />
 
-          <ProductCarousel title="Lo más nuevo" data={featuredProducts} />
-        </>
-      )}
+      {/* Sección “Sin clip” */}
+      <NoClipSection />
     </>
   );
 }

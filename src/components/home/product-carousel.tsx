@@ -1,56 +1,49 @@
 // src/components/home/ProductCarousel.tsx
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import {
+  ProductCard,
+  ProductCardProps,
+} from "@/components/common/product-card";
 
 interface Props {
   title: string;
-  data: Array<{ id: string; image: string; name: string }>;
+  data: ProductCardProps[]; // reutilizamos la misma interfaz
 }
 
 export function ProductCarousel({ title, data }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const scroll = (dir: "left" | "right") => {
-    if (!containerRef.current) return;
-    const { clientWidth } = containerRef.current;
-    containerRef.current.scrollBy({
-      left: dir === "left" ? -clientWidth : clientWidth,
-      behavior: "smooth",
+  // 1️⃣ Auto‐centra al mount
+  useEffect(() => {
+    const c = containerRef.current;
+    if (!c) return;
+    // calcula el scrollLeft que deja el punto medio del contenido en el centro
+    const middle = (c.scrollWidth - c.clientWidth) / 2;
+    +c.scrollTo({
+      left: (c.scrollWidth - c.clientWidth) / 2,
+      behavior: "auto",
     });
-  };
+  }, [data]); // vuelve a centrar si cambian los datos
 
   return (
-    <section className="px-6 mt-8">
-      <h2 className="text-xl font-semibold mb-4">{title}</h2>
+    <section className="mt-6">
+      <h2 className="heading-06-medium text-left ml-6 mb-3">{title}</h2>
       <div className="relative">
-        <button
-          onClick={() => scroll("left")}
-          className="absolute left-0 top-1/2 z-10 transform -translate-y-1/2 p-2 bg-white rounded-full shadow"
-        >
-          ‹
-        </button>
         <div
           ref={containerRef}
-          className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth"
+          className="
+            flex overflow-x-auto overflow-y-hidden
+            scroll-smooth snap-x snap-mandatory no-scrollbar
+          "
         >
           {data.map((item) => (
-            <div key={item.id} className="min-w-[200px] flex-shrink-0">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-full rounded"
-              />
-              <p className="mt-2 text-center">{item.name}</p>
+            <div key={item.id} className="flex-shrink-0 w-64 snap-center px-1">
+              <ProductCard {...item} />
             </div>
           ))}
         </div>
-        <button
-          onClick={() => scroll("right")}
-          className="absolute right-0 top-1/2 z-10 transform -translate-y-1/2 p-2 bg-white rounded-full shadow"
-        >
-          ›
-        </button>
       </div>
     </section>
   );

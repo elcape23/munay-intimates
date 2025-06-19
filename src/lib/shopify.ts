@@ -136,14 +136,16 @@ export async function shopifyFetch<T>({
   variables?: Record<string, any>;
 }): Promise<T> {
   try {
-    const data = await shopifyClient.request<T>(query, variables);
-    return data;
+    return await shopifyClient.request<T>(query, variables);
   } catch (error: any) {
-    console.error(
-      "Error en la petición a Shopify API:",
-      error.response?.errors || error.message
-    );
-    throw new Error("No se pudo obtener la información de Shopify.");
+    // 1) Imprimimos a consola el error original (servidor)
+    console.error("🚨 Shopify error:", error.response?.errors || error);
+
+    // 2) Relanzamos con toda la información para verlo en el navegador
+    const message = Array.isArray(error.response?.errors)
+      ? error.response.errors.map((e: any) => e.message).join("; ")
+      : error.message;
+    throw new Error(`Shopify GraphQL failed: ${message}`);
   }
 }
 
@@ -200,6 +202,91 @@ export async function getMenu(
   }));
 }
 
+// ➊ Reusa el tipo que ya definiste
+export interface FeaturedProduct {
+  id: string;
+  title: string;
+  handle: string;
+  price: string;
+  compareAtPrice?: string;
+  imageSrc: string;
+  altText?: string;
+  colorVariants: string[];
+}
+
+// src/lib/shopify.ts
+export interface FeaturedProduct {
+  id: string;
+  title: string;
+  handle: string;
+  price: string;
+  compareAtPrice?: string;
+  imageSrc: string;
+  altText?: string;
+}
+
+export async function getNewProducts(
+  num: number = 12
+): Promise<FeaturedProduct[]> {
+  const QUERY = /* GraphQL */ `
+    query Newest($num: Int!) {
+      products(first: $num, sortKey: CREATED_AT, reverse: true) {
+        edges {
+          node {
+            id
+            title
+            handle
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  price {
+                    amount
+                  }
+                  compareAtPrice {
+                    amount
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const { products } = await shopifyFetch<{
+    products: { edges: any[] };
+  }>({
+    query: QUERY,
+    variables: { num },
+  });
+
+  return products.edges.map(({ node }) => {
+    const img = node.images.edges[0]?.node;
+    const v = node.variants.edges[0]?.node;
+    const priceNum = Number(v?.price?.amount ?? 0);
+    const cmpNum = Number(v?.compareAtPrice?.amount ?? 0);
+
+    return {
+      id: node.id,
+      title: node.title,
+      handle: node.handle,
+      imageSrc: img?.url ?? "/placeholder.png",
+      altText: img?.altText ?? node.title,
+      price: priceNum.toFixed(2),
+      compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(2) : undefined,
+    };
+  });
+}
+
 // --- Funciones de Catálogo ---
 export async function getProducts(
   count: number = 10
@@ -236,6 +323,124 @@ export async function getProducts(
     variables: { first: count },
   });
   return response.products.edges.map((edge) => edge.node);
+}
+
+// ➍ Primero defines el tipo de los productos en oferta:
+
+export interface FeaturedProduct {
+  id: string;
+  title: string;
+  handle: string;
+  price: string;
+  compareAtPrice?: string;
+  imageSrc: string;
+  altText?: string;
+  colorVariants: string[];
+}
+
+interface SaleResponse {
+  products: {
+    edges: Array<{
+      node: {
+        id: string;
+        title: string;
+        handle: string;
+        images: { edges: Array<{ node: { url: string; altText: string } }> };
+        variants: {
+          edges: Array<{
+            node: {
+              price: { amount: string };
+              compareAtPrice: { amount: string };
+            };
+          }>;
+        };
+        options: Array<{ name: string; values: string[] }>;
+      };
+    }>;
+  };
+}
+
+export async function getSaleProducts(
+  num: number = 12,
+  fetchCount: number = 50
+): Promise<FeaturedProduct[]> {
+  const QUERY = /* GraphQL */ `
+    query Sale($first: Int!) {
+      products(first: $first) {
+        edges {
+          node {
+            id
+            title
+            handle
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  price {
+                    amount
+                  }
+                  compareAtPrice {
+                    amount
+                  }
+                }
+              }
+            }
+            options(first: 10) {
+              name
+              values
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  // 1) Petición a Shopify
+  const { products } = await shopifyFetch<SaleResponse>({
+    query: QUERY,
+    variables: { first: fetchCount },
+  });
+
+  // 2) Mapea y calcula el descuento
+  const itemsWithDiscount = products.edges.map(({ node }) => {
+    const img = node.images.edges[0]?.node;
+    const variant = node.variants.edges[0]?.node;
+    const priceNum = Number(variant?.price?.amount ?? 0);
+    const cmpNum = Number(variant?.compareAtPrice?.amount ?? 0);
+    const discount = cmpNum > priceNum ? (cmpNum - priceNum) / cmpNum : 0;
+
+    // Extrae los valores de la opción “color”
+    const colorOption = node.options.find(
+      (opt) => opt.name.toLowerCase() === "color"
+    );
+    const colorVariants = Array.isArray(colorOption?.values)
+      ? colorOption.values
+      : [];
+
+    return {
+      id: node.id,
+      title: node.title,
+      handle: node.handle,
+      imageSrc: img?.url ?? "/placeholder.png",
+      altText: img?.altText ?? node.title,
+      price: priceNum.toFixed(2),
+      compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(2) : undefined,
+      colorVariants: [], // ← aquí van los colores
+      discount, // para filtrar
+    };
+  });
+
+  // 3) Filtra sólo ofertas y corta al top N
+  const onlyOnSale = itemsWithDiscount.filter((p) => p.discount > 0);
+  const topSale = onlyOnSale.slice(0, num);
+  return topSale.map(({ discount, ...rest }) => rest);
 }
 
 export async function getProductByHandle(
@@ -370,8 +575,6 @@ export async function getCollectionsForMenu(): Promise<NavItem[]> {
   const data = await shopifyFetch<{
     collections: { edges: any[] };
   }>({ query: QUERY, variables: { num: 250 } });
-
-  console.log("🔎 collections raw →", data.collections); // 👈
 
   const now = Date.now();
   const THIRTY_DAYS = 1000 * 60 * 60 * 24 * 30;
