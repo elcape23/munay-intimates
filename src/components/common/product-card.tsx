@@ -26,12 +26,14 @@ export function ProductCard({
   price,
   compareAtPrice,
   isNew = false,
-  colorVariants = [],
+  colorVariants={p.colorVariants}
 }: ProductCardProps) {
   // calcula % de descuento redondeado
   const discountPercent = compareAtPrice
     ? Math.round((1 - parseFloat(price) / parseFloat(compareAtPrice)) * 100)
     : 0;
+
+  console.log("Card colorVariants:", colorVariants);
 
   return (
     <Link

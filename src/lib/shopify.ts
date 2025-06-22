@@ -244,9 +244,13 @@ export async function getNewProducts(
                 }
               }
             }
-            variants(first: 1) {
+            variants(first: 10) {
               edges {
                 node {
+                  selectedOptions {
+                    name
+                    value
+                  }
                   price {
                     amount
                   }
@@ -255,6 +259,11 @@ export async function getNewProducts(
                   }
                 }
               }
+              options(first: 10) {
+                name
+                values
+              }
+              createdAt
             }
           }
         }
@@ -283,6 +292,7 @@ export async function getNewProducts(
       altText: img?.altText ?? node.title,
       price: priceNum.toFixed(2),
       compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(2) : undefined,
+      colorVariants: [],
     };
   });
 }
@@ -380,9 +390,13 @@ export async function getSaleProducts(
                 }
               }
             }
-            variants(first: 1) {
+            variants(first: 10) {
               edges {
                 node {
+                  selectedOptions {
+                    name
+                    value
+                  }
                   price {
                     amount
                   }
@@ -396,6 +410,7 @@ export async function getSaleProducts(
               name
               values
             }
+            createdAt
           }
         }
       }
@@ -416,13 +431,24 @@ export async function getSaleProducts(
     const cmpNum = Number(variant?.compareAtPrice?.amount ?? 0);
     const discount = cmpNum > priceNum ? (cmpNum - priceNum) / cmpNum : 0;
 
-    // Extrae los valores de la opción “color”
     const colorOption = node.options.find(
       (opt) => opt.name.toLowerCase() === "color"
     );
-    const colorVariants = Array.isArray(colorOption?.values)
-      ? colorOption.values
-      : [];
+    let colorVariants =
+      Array.isArray(colorOption?.values) && colorOption.values.length
+        ? colorOption.values
+        : [];
+
+    // Si no hay nada en options, extraer de selectedOptions
+    if (colorVariants.length === 0) {
+      colorVariants = node.variants.edges
+        .flatMap((edge) => edge.node.selectedOptions)
+        .filter((sel) => sel.name.toLowerCase() === "color")
+        .map((sel) => sel.value);
+    }
+
+    const createdAt = new Date(node.createdAt);
+    const isNew = (Date.now() - createdAt.getTime()) / (1000 * 3600 * 24) < 30;
 
     return {
       id: node.id,
@@ -432,10 +458,18 @@ export async function getSaleProducts(
       altText: img?.altText ?? node.title,
       price: priceNum.toFixed(2),
       compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(2) : undefined,
-      colorVariants: [], // ← aquí van los colores
+      colorVariants, // ← aquí van los colores
       discount, // para filtrar
+      isNew, // para destacar productos nuevos
     };
   });
+
+  console.log(
+    "itemsWithDiscount[0].colorVariants:",
+    itemsWithDiscount[0]?.colorVariants
+  );
+
+  return itemsWithDiscount;
 
   // 3) Filtra sólo ofertas y corta al top N
   const onlyOnSale = itemsWithDiscount.filter((p) => p.discount > 0);
