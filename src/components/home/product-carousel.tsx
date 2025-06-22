@@ -20,8 +20,7 @@ export function ProductCarousel({ title, data }: Props) {
     const c = containerRef.current;
     if (!c) return;
     // calcula el scrollLeft que deja el punto medio del contenido en el centro
-    const middle = (c.scrollWidth - c.clientWidth) / 2;
-    +c.scrollTo({
+    c.scrollTo({
       left: (c.scrollWidth - c.clientWidth) / 2,
       behavior: "auto",
     });

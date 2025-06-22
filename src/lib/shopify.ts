@@ -175,10 +175,10 @@ export async function getMenu(
           id
           title
           url # ← ej. https://tu-tienda/...
-          metafield(namespace: "custom", key: "section") {
+          section: metafield(namespace: "custom", key: "section") {
             value
           }
-          metafield(namespace: "custom", key: "is_new") {
+          isNew: metafield(namespace: "custom", key: "is_new") {
             value
           }
         }
@@ -197,8 +197,8 @@ export async function getMenu(
     title: item.title,
     // quitamos el dominio para obtener path relativo
     url: item.url.replace(/^https?:\/\/[^/]+/, ""),
-    section: (item.metafield?.value as any) ?? "categories",
-    isNew: item.metafield_1?.value === "true",
+    section: (item.section?.value as any) ?? "categories",
+    isNew: item.isNew?.value === "true",
   }));
 }
 
@@ -214,15 +214,28 @@ export interface FeaturedProduct {
   colorVariants: string[];
 }
 
-// src/lib/shopify.ts
-export interface FeaturedProduct {
-  id: string;
-  title: string;
-  handle: string;
-  price: string;
-  compareAtPrice?: string;
-  imageSrc: string;
-  altText?: string;
+interface NewProductsResponse {
+  products: {
+    edges: Array<{
+      node: {
+        id: string;
+        title: string;
+        handle: string;
+        images: { edges: Array<{ node: { url: string; altText: string } }> };
+        options: Array<{ name: string; values: string[] }>;
+        createdAt: string;
+        variants: {
+          edges: Array<{
+            node: {
+              selectedOptions: Array<{ name: string; value: string }>;
+              price: { amount: string };
+              compareAtPrice: { amount: string };
+            };
+          }>;
+        };
+      };
+    }>;
+  };
 }
 
 export async function getNewProducts(
@@ -271,9 +284,7 @@ export async function getNewProducts(
     }
   `;
 
-  const { products } = await shopifyFetch<{
-    products: { edges: any[] };
-  }>({
+  const { products } = await shopifyFetch<NewProductsResponse>({
     query: QUERY,
     variables: { num },
   });
@@ -282,7 +293,35 @@ export async function getNewProducts(
     const img = node.images.edges[0]?.node;
     const v = node.variants.edges[0]?.node;
     const priceNum = Number(v?.price?.amount ?? 0);
-    const cmpNum = Number(v?.compareAtPrice?.amount ?? 0);
+    const cmpNum = Number(v?.compareAtPrice?.amount ?? 0); // ----- Extraer variantes de color -----
+    const options = node.options;
+    let colorVariants: string[] = [];
+
+    const explicitColor = options.find(
+      (opt) => opt.name.toLowerCase() === "color"
+    );
+    if (explicitColor?.values?.length) {
+      colorVariants = explicitColor.values;
+    } else if (
+      options.length === 1 &&
+      options[0].values.length > 0 &&
+      options[0].values[0].toLowerCase() !== "default title"
+    ) {
+      colorVariants = options[0].values;
+    } else {
+      colorVariants = node.variants.edges
+        .flatMap((edge) => edge.node.selectedOptions)
+        .filter((sel) => sel.name.toLowerCase() !== "title")
+        .map((sel) => sel.value);
+    }
+
+    colorVariants = Array.from(
+      new Set(
+        colorVariants.filter(
+          (val) => val && val.toLowerCase() !== "default title"
+        )
+      )
+    );
 
     return {
       id: node.id,
@@ -292,7 +331,7 @@ export async function getNewProducts(
       altText: img?.altText ?? node.title,
       price: priceNum.toFixed(2),
       compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(2) : undefined,
-      colorVariants: [],
+      colorVariants,
     };
   });
 }
@@ -335,18 +374,7 @@ export async function getProducts(
   return response.products.edges.map((edge) => edge.node);
 }
 
-// ➍ Primero defines el tipo de los productos en oferta:
-
-export interface FeaturedProduct {
-  id: string;
-  title: string;
-  handle: string;
-  price: string;
-  compareAtPrice?: string;
-  imageSrc: string;
-  altText?: string;
-  colorVariants: string[];
-}
+// ➍ Tipo de respuesta para los productos en oferta
 
 interface SaleResponse {
   products: {
@@ -433,46 +461,30 @@ export async function getSaleProducts(
     const cmpNum = Number(variant?.compareAtPrice?.amount ?? 0);
     const discount = cmpNum > priceNum ? (cmpNum - priceNum) / cmpNum : 0;
 
-    // 1) Saca tus opciones
-    const options = node.options;
-
-    // 2) Prepara el array de variantes
-    let colorVariants: string[] = [];
-
-    // ① Si tienes un option llamado “Color”, úsalo
-    const explicitColor = options.find(
+    // 1) Intento por opcion “Color”
+    const colorOption = node.options.find(
       (opt) => opt.name.toLowerCase() === "color"
     );
-    if (explicitColor?.values?.length) {
-      colorVariants = explicitColor.values;
+    let colorVariants =
+      Array.isArray(colorOption?.values) && colorOption.values.length
+        ? colorOption.values
+        : [];
 
-      // ② Si sólo tienes UNA opción definida (y NO es el Default Title), úsala
-    } else if (
-      options.length === 1 &&
-      options[0].values.length > 0 &&
-      options[0].values[0].toLowerCase() !== "default title"
-    ) {
-      colorVariants = options[0].values;
-
-      // ③ Si no, recurre a selectedOptions, excluyendo “Title”
-    } else {
+    // 2) Fallback: si no hay en options, miro sólo las selectedOptions “color”
+    if (colorVariants.length === 0) {
       colorVariants = node.variants.edges
         .flatMap((edge) => edge.node.selectedOptions)
-        .filter((sel) => sel.name.toLowerCase() !== "title")
+        .filter((sel) => sel.name.toLowerCase() === "color")
         .map((sel) => sel.value);
     }
 
-    // 3) Filtra cualquier “Default Title” sobrante y quita duplicados
-    colorVariants = Array.from(
-      new Set(
-        colorVariants.filter(
-          (val) => val && val.toLowerCase() !== "default title"
-        )
-      )
-    );
+    // 3) Fallback final: si sigue vacío, tomo **todos** los selectedOptions
+    if (colorVariants.length === 0) {
+      colorVariants = node.variants.edges
+        .flatMap((edge) => edge.node.selectedOptions)
+        .map((sel) => sel.value);
+    }
 
-    // (Opcional) debug
-    console.log(node.handle, "→ colorVariants:", colorVariants);
     const createdAt = new Date(node.createdAt);
     const isNew = (Date.now() - createdAt.getTime()) / (1000 * 3600 * 24) < 30;
 
@@ -494,8 +506,6 @@ export async function getSaleProducts(
     "itemsWithDiscount[0].colorVariants:",
     itemsWithDiscount[0]?.colorVariants
   );
-
-  return itemsWithDiscount;
 
   // 3) Filtra sólo ofertas y corta al top N
   const onlyOnSale = itemsWithDiscount.filter((p) => p.discount > 0);
@@ -636,7 +646,6 @@ export async function getCollectionsForMenu(): Promise<NavItem[]> {
     collections: { edges: any[] };
   }>({ query: QUERY, variables: { num: 250 } });
 
-  const now = Date.now();
   const THIRTY_DAYS = 1000 * 60 * 60 * 24 * 30;
 
   return data.collections.edges.map(({ node }) => {
@@ -646,10 +655,10 @@ export async function getCollectionsForMenu(): Promise<NavItem[]> {
 
     /* --- heurística adicional por fecha o tag --- */
     const newestProduct = node.products.edges[0]?.node;
-    const THIRTY_DAYS = 1000 * 60 * 60 * 24 * 30;
     const recentlyAdded =
       newestProduct &&
-      Date.now() - Date.parse(newestProduct.createdAt) < THIRTY_DAYS;
+      Date.now() - Date.parse(newestProduct.createdAt) <
+        1000 * 60 * 60 * 24 * 30;
     const hasNewTag = newestProduct?.tags?.includes("new");
 
     /* --- decide la sección --- */

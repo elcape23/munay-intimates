@@ -43,8 +43,6 @@ export function ProductCard({
     ? Math.round((1 - parseFloat(price) / parseFloat(compareAtPrice)) * 100)
     : 0;
 
-  console.log("Card colorVariants:", colorVariants);
-
   return (
     <Link
       href={`/product/${handle}`}

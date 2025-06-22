@@ -11,16 +11,30 @@ type ProductFormProps = {
 };
 
 export function ProductForm({ product }: ProductFormProps) {
+  const productOptions = useMemo(() => {
+    const opts = [...product.options];
+    const hasColor = opts.some((o) => o.name.toLowerCase() === "color");
+    if (!hasColor) {
+      const colorField = product.color?.reference?.fields.find(
+        (f) => f.key === "name"
+      );
+      if (colorField?.value) {
+        opts.push({ id: "color", name: "Color", values: [colorField.value] });
+      }
+    }
+    return opts;
+  }, [product]);
+
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
   >(() => {
-    const defaultOptions: Record<string, string> = {};
-    product.options.forEach((option) => {
+    const defaults: Record<string, string> = {};
+    productOptions.forEach((option) => {
       if (option.values[0]) {
-        defaultOptions[option.name] = option.values[0];
+        defaults[option.name] = option.values[0];
       }
     });
-    return defaultOptions;
+    return defaults;
   });
 
   // Obtenemos el estado y las acciones directamente desde nuestro store de Zustand.
@@ -29,11 +43,14 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const selectedVariant: ShopifyProductVariant | undefined = useMemo(() => {
     if (!product.variants) return undefined;
-    return product.variants.edges.find(({ node }) => {
-      return Object.entries(selectedOptions).every(([name, value]) =>
+    if (product.variants.edges.length === 1) {
+      return product.variants.edges[0].node;
+    }
+    return product.variants.edges.find(({ node }) =>
+      Object.entries(selectedOptions).every(([name, value]) =>
         node.title.includes(value)
-      );
-    })?.node;
+      )
+    )?.node;
   }, [selectedOptions, product.variants?.edges]);
 
   const handleOptionChange = (optionName: string, value: string) => {
@@ -80,7 +97,7 @@ export function ProductForm({ product }: ProductFormProps) {
     <div className="space-y-6">
       {/* Selectores de variantes */}
       <div className="space-y-4">
-        {product.options.map((option) => (
+        {productOptions.map((option) => (
           <div key={option.id}>
             <label className="block text-sm font-medium text-gray-700">
               {option.name}

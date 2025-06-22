@@ -29,8 +29,6 @@ export function SideMenu() {
   const { isMenuOpen, closeMenu } = useUiStore();
   const { menuItems } = useNavigationStore();
 
-  console.log("menuItems →", menuItems);
-
   /* tabs */
   const [tab, setTab] = useState<"categories" | "new" | "collections">(
     "categories"
