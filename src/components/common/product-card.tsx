@@ -18,6 +18,16 @@ export interface ProductCardProps {
   colorVariants?: string[]; // lista de colores (hex o clases Tailwind)
 }
 
+const COLOR_MAP: Record<string, string> = {
+  Negro: "#4a4741",
+  Oliva: "#8D978E",
+  Blanco: "#ffffff",
+  Rojo: "#ff0000",
+  Azul: "#0000ff",
+  Celeste: "#aeb3b9",
+  // …añade aquí todos los nombres que uses
+};
+
 export function ProductCard({
   title,
   handle,
@@ -26,7 +36,7 @@ export function ProductCard({
   price,
   compareAtPrice,
   isNew = false,
-  colorVariants={p.colorVariants}
+  colorVariants = [],
 }: ProductCardProps) {
   // calcula % de descuento redondeado
   const discountPercent = compareAtPrice
@@ -38,7 +48,7 @@ export function ProductCard({
   return (
     <Link
       href={`/product/${handle}`}
-      className="group block relative bg-transparent h-[420px] overflow-hidden hover:transition-shadow duration-300"
+      className="flex flex-col relative bg-transparent h-[420px] overflow-hidden hover:transition-shadow duration-300"
     >
       {/* Imagen */}
       <div className="relative h-[328px] w-[100%] overflow-hidden">
@@ -46,7 +56,7 @@ export function ProductCard({
           src={imageSrc}
           alt={altText ?? title}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover w-full h-full rounded-[2px] group-hover:scale-105 transition-transform duration-300"
           priority
         />
         {/* Icono Favorito */}
@@ -70,22 +80,30 @@ export function ProductCard({
       </div>
 
       {/* Detalle */}
-      <div className="py-2 gap-1">
+      <div className="flex-1 py-2 space-y-2">
         {/* Título */}
         <h3 className="body-01-medium text-text-primary-default line-clamp-2">
           {title}
         </h3>
 
-        {/* Color Variants */}
         {colorVariants.length > 0 && (
-          <div className="flex items-center space-x-1 mt-2">
-            {colorVariants.map((color, i) => (
-              <span
-                key={i}
-                className="h-3 w-3 rounded-full border border-border-subtle"
-                style={{ backgroundColor: color }}
-              />
-            ))}
+          <div className="flex items-center">
+            {colorVariants.map((color, i) => {
+              // si ya viene en HEX (ej. "#123456") lo uso directo,
+              // si no, busco en el mapa; si tampoco existe, uso gris por defecto
+              const bgColor = color.startsWith("#")
+                ? color
+                : COLOR_MAP[color] ?? "#cccccc";
+
+              return (
+                <span
+                  key={i}
+                  className="h-4 w-4 m-[2px] rounded-full "
+                  style={{ backgroundColor: bgColor }}
+                  title={color}
+                />
+              );
+            })}
           </div>
         )}
 

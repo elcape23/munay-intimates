@@ -244,6 +244,11 @@ export async function getNewProducts(
                 }
               }
             }
+            options(first: 10) {
+              name
+              values
+            }
+            createdAt
             variants(first: 10) {
               edges {
                 node {
@@ -259,11 +264,6 @@ export async function getNewProducts(
                   }
                 }
               }
-              options(first: 10) {
-                name
-                values
-              }
-              createdAt
             }
           }
         }
@@ -359,12 +359,14 @@ interface SaleResponse {
         variants: {
           edges: Array<{
             node: {
+              selectedOptions: Array<{ name: string; value: string }>;
               price: { amount: string };
               compareAtPrice: { amount: string };
             };
           }>;
         };
         options: Array<{ name: string; values: string[] }>;
+        createdAt: string;
       };
     }>;
   };
@@ -431,22 +433,46 @@ export async function getSaleProducts(
     const cmpNum = Number(variant?.compareAtPrice?.amount ?? 0);
     const discount = cmpNum > priceNum ? (cmpNum - priceNum) / cmpNum : 0;
 
-    const colorOption = node.options.find(
+    // 1) Saca tus opciones
+    const options = node.options;
+
+    // 2) Prepara el array de variantes
+    let colorVariants: string[] = [];
+
+    // ① Si tienes un option llamado “Color”, úsalo
+    const explicitColor = options.find(
       (opt) => opt.name.toLowerCase() === "color"
     );
-    let colorVariants =
-      Array.isArray(colorOption?.values) && colorOption.values.length
-        ? colorOption.values
-        : [];
+    if (explicitColor?.values?.length) {
+      colorVariants = explicitColor.values;
 
-    // Si no hay nada en options, extraer de selectedOptions
-    if (colorVariants.length === 0) {
+      // ② Si sólo tienes UNA opción definida (y NO es el Default Title), úsala
+    } else if (
+      options.length === 1 &&
+      options[0].values.length > 0 &&
+      options[0].values[0].toLowerCase() !== "default title"
+    ) {
+      colorVariants = options[0].values;
+
+      // ③ Si no, recurre a selectedOptions, excluyendo “Title”
+    } else {
       colorVariants = node.variants.edges
         .flatMap((edge) => edge.node.selectedOptions)
-        .filter((sel) => sel.name.toLowerCase() === "color")
+        .filter((sel) => sel.name.toLowerCase() !== "title")
         .map((sel) => sel.value);
     }
 
+    // 3) Filtra cualquier “Default Title” sobrante y quita duplicados
+    colorVariants = Array.from(
+      new Set(
+        colorVariants.filter(
+          (val) => val && val.toLowerCase() !== "default title"
+        )
+      )
+    );
+
+    // (Opcional) debug
+    console.log(node.handle, "→ colorVariants:", colorVariants);
     const createdAt = new Date(node.createdAt);
     const isNew = (Date.now() - createdAt.getTime()) / (1000 * 3600 * 24) < 30;
 
