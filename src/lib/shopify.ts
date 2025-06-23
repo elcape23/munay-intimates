@@ -32,6 +32,7 @@ export type ShopifyProductVariant = {
   title: string;
   availableForSale: boolean;
   price: ShopifyPrice;
+  compareAtPrice?: ShopifyPrice;
 };
 export type ShopifyProductOption = {
   id: string;
@@ -50,6 +51,7 @@ export type ShopifyProduct = {
   title: string;
   handle: string;
   tags: string[];
+  createdAt?: string;
   descriptionHtml?: string;
   priceRange: { minVariantPrice: ShopifyPrice };
   images: { edges: { node: ShopifyImage }[] };
@@ -801,6 +803,7 @@ export async function getCollectionByHandle(
               title
               handle
               tags
+              createdAt
               priceRange {
                 minVariantPrice {
                   amount
@@ -839,6 +842,20 @@ export async function getCollectionByHandle(
               estacion: metafield(namespace: "custom", key: "estacion") {
                 key
                 value
+              }
+              variants(first: 1) {
+                edges {
+                  node {
+                    price {
+                      amount
+                      currencyCode
+                    }
+                    compareAtPrice {
+                      amount
+                      currencyCode
+                    }
+                  }
+                }
               }
             }
           }

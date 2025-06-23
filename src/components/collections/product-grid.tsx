@@ -5,7 +5,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { ShopifyProduct } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Button } from "../ui/button";
 import { ProductCard } from "@/components/common/product-card";
 
 type ProductGridProps = {
@@ -279,21 +278,44 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       </div>
 
       {/* --- Grilla de Productos --- */}
-      <div className="-mx-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5">
+      <div className="-mx-6 h-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5 [&>a>div]:px-4">
         {filteredAndSortedProducts.map((product) => (
-          <ProductCard
-            key={product.handle}
-            id={product.id}
-            title={product.title}
-            handle={product.handle}
-            imageSrc={product.images.edges[0]?.node.url || "/placeholder.png"}
-            altText={product.images.edges[0]?.node.altText || product.title}
-            price={parseFloat(
-              product.priceRange.minVariantPrice.amount
-            ).toLocaleString("es-AR", {
-              useGrouping: true,
-            })}
-          />
+          <div key={product.handle} className="h-full">
+            <ProductCard
+              key={product.handle}
+              id={product.id}
+              title={product.title}
+              handle={product.handle}
+              imageSrc={product.images.edges[0]?.node.url || "/placeholder.png"}
+              altText={product.images.edges[0]?.node.altText || product.title}
+              price={parseFloat(
+                product.priceRange.minVariantPrice.amount
+              ).toLocaleString("es-AR", {
+                useGrouping: true,
+              })}
+              compareAtPrice={(() => {
+                const cmp =
+                  product.variants?.edges[0]?.node.compareAtPrice?.amount ??
+                  null;
+                if (!cmp) return undefined;
+                return parseFloat(cmp).toLocaleString("es-AR", {
+                  useGrouping: true,
+                });
+              })()}
+              colorVariants={
+                product.options.find((o) => o.name.toLowerCase() === "color")
+                  ?.values || []
+              }
+              isNew={(() => {
+                const thirtyDays = 1000 * 60 * 60 * 24 * 30;
+                const byDate = product.createdAt
+                  ? Date.now() - Date.parse(product.createdAt) < thirtyDays
+                  : false;
+                const byTag = product.tags?.includes("new");
+                return Boolean(byDate || byTag);
+              })()}
+            />
+          </div>
         ))}
       </div>
     </div>
