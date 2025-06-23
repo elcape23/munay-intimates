@@ -337,12 +337,22 @@ export async function getNewProducts(
       )
     );
 
-    if (colorVariants.length === 0) {
-      const colorField = node.color?.reference?.fields.find(
-        (f) => f.key === "name"
+    const colorFields = node.color?.reference?.fields;
+    if (colorFields) {
+      const hexField = colorFields.find(
+        (f) =>
+          f.key === "hex" || (f.key === "value" && f.value?.startsWith("#"))
       );
-      if (colorField?.value) {
-        colorVariants = [colorField.value];
+      const nameField = colorFields.find((f) => f.key === "name");
+
+      if (colorVariants.length === 0) {
+        if (hexField?.value) {
+          colorVariants = [hexField.value];
+        } else if (nameField?.value) {
+          colorVariants = [nameField.value];
+        }
+      } else if (colorVariants.length === 1 && hexField?.value) {
+        colorVariants = [hexField.value];
       }
     }
 
@@ -524,12 +534,22 @@ export async function getSaleProducts(
         .map((sel) => sel.value);
     }
 
-    if (colorVariants.length === 0) {
-      const colorField = node.color?.reference?.fields.find(
-        (f) => f.key === "name"
+    const colorFields = node.color?.reference?.fields;
+    if (colorFields) {
+      const hexField = colorFields.find(
+        (f) =>
+          f.key === "hex" || (f.key === "value" && f.value?.startsWith("#"))
       );
-      if (colorField?.value) {
-        colorVariants = [colorField.value];
+      const nameField = colorFields.find((f) => f.key === "name");
+
+      if (colorVariants.length === 0) {
+        if (hexField?.value) {
+          colorVariants = [hexField.value];
+        } else if (nameField?.value) {
+          colorVariants = [nameField.value];
+        }
+      } else if (colorVariants.length === 1 && hexField?.value) {
+        colorVariants = [hexField.value];
       }
     }
 
@@ -739,7 +759,7 @@ export async function getCollectionsForMenu(): Promise<NavItem[]> {
     return {
       id: node.id,
       title: node.title.toUpperCase(),
-      url: `/collection/${node.handle}`,
+      url: `/collections/${node.handle}`,
       section,
       isNew: section === "new", // badge NEW solo en pestaña New
     };

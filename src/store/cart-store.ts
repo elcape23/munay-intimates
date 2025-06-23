@@ -23,6 +23,8 @@ export const useCartStore = create<CartState>((set, get) => ({
    * o crea uno nuevo si no existe.
    */
   fetchCart: async () => {
+    // ➡️ Si estamos en SSR, salimos para no usar localStorage
+    if (typeof window === "undefined") return;
     set({ isLoading: true, error: null });
     try {
       let cart: ShopifyCart | null = null;
@@ -86,6 +88,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   },
 }));
 
-// Inicializamos el store al cargar la app para que el carrito esté disponible desde el inicio.
-// Esto es opcional pero recomendado para evitar un render inicial sin datos del carrito.
-useCartStore.getState().fetchCart();
+// Solo en el browser:
+if (typeof window !== "undefined") {
+  useCartStore.getState().fetchCart();
+}
