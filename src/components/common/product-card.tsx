@@ -46,7 +46,7 @@ export function ProductCard({
 
   return (
     <Link
-      href={`/product/${handle}`}
+      href={`/products/${handle}`}
       className="flex flex-col relative bg-transparent h-[420px] overflow-hidden hover:transition-shadow duration-300"
     >
       {/* Imagen */}

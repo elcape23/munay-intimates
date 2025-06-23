@@ -4,14 +4,9 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { ShopifyProduct } from "@/lib/shopify";
-import Link from "next/link";
-import Image from "next/image";
-import {
-  ChevronLeftIcon,
-  XMarkIcon,
-  HeartIcon as HeartOutline,
-} from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "../ui/button";
+import { ProductCard } from "@/components/common/product-card";
 
 type ProductGridProps = {
   title: string;
@@ -286,44 +281,19 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       {/* --- Grilla de Productos --- */}
       <div className="-mx-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5">
         {filteredAndSortedProducts.map((product) => (
-          <Link
-            href={`/products/${product.handle}`}
+          <ProductCard
             key={product.handle}
-            className="group block"
-          >
-            <div className="overflow-hidden group-hover: transition duration-300 h-full flex flex-col">
-              <div className="relative w-full h-64">
-                <Image
-                  src={product.images.edges[0]?.node.url || "/placeholder.png"}
-                  alt={product.images.edges[0]?.node.altText || product.title}
-                  fill
-                  style={{ objectFit: "cover" }}
-                  className="rounded-[2px] transition-transform duration-300 group-hover:scale-105"
-                />
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-2 right-2 z-10"
-                >
-                  <HeartOutline />
-                </Button>
-              </div>
-              <div className="px-3 py-2 flex flex-col flex-grow">
-                <h2 className="body-01-medium text-text-primary-default truncate">
-                  {product.title}
-                </h2>
-                <div className="flex-grow"></div>
-                <p className="body-01-semibold text-text-primary-default mt-2">
-                  {new Intl.NumberFormat("es-AR", {
-                    style: "currency",
-                    currency: product.priceRange.minVariantPrice.currencyCode,
-                  }).format(
-                    parseFloat(product.priceRange.minVariantPrice.amount)
-                  )}
-                </p>
-              </div>
-            </div>
-          </Link>
+            id={product.id}
+            title={product.title}
+            handle={product.handle}
+            imageSrc={product.images.edges[0]?.node.url || "/placeholder.png"}
+            altText={product.images.edges[0]?.node.altText || product.title}
+            price={parseFloat(
+              product.priceRange.minVariantPrice.amount
+            ).toLocaleString("es-AR", {
+              useGrouping: true,
+            })}
+          />
         ))}
       </div>
     </div>
