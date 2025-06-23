@@ -33,6 +33,7 @@ export type ShopifyProductVariant = {
   availableForSale: boolean;
   price: ShopifyPrice;
   compareAtPrice?: ShopifyPrice;
+  selectedOptions?: { name: string; value: string }[];
 };
 export type ShopifyProductOption = {
   id: string;
@@ -326,7 +327,8 @@ export async function getNewProducts(
       colorVariants = options[0].values;
     } else {
       colorVariants = node.variants.edges
-        .flatMap((edge) => edge.node.selectedOptions)
+        .flatMap((edge) => edge.node.selectedOptions ?? [])
+        .filter((sel): sel is { name: string; value: string } => !!sel)
         .filter((sel) => sel.name.toLowerCase() !== "title")
         .map((sel) => sel.value);
     }
@@ -524,7 +526,8 @@ export async function getSaleProducts(
     // 2) Fallback: si no hay en options, miro sólo las selectedOptions “color”
     if (colorVariants.length === 0) {
       colorVariants = node.variants.edges
-        .flatMap((edge) => edge.node.selectedOptions)
+        .flatMap((edge) => edge.node.selectedOptions ?? [])
+        .filter((sel): sel is { name: string; value: string } => !!sel)
         .filter((sel) => sel.name.toLowerCase() === "color")
         .map((sel) => sel.value);
     }
@@ -532,7 +535,8 @@ export async function getSaleProducts(
     // 3) Fallback final: si sigue vacío, tomo **todos** los selectedOptions
     if (colorVariants.length === 0) {
       colorVariants = node.variants.edges
-        .flatMap((edge) => edge.node.selectedOptions)
+        .flatMap((edge) => edge.node.selectedOptions ?? [])
+        .filter((sel): sel is { name: string; value: string } => !!sel)
         .map((sel) => sel.value);
     }
 

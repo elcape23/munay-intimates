@@ -6,6 +6,7 @@ import { useState, useMemo, useEffect } from "react";
 import { ShopifyProduct } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ProductCard } from "@/components/common/product-card";
+import { extractColorVariants } from "@/lib/product-helpers";
 
 type ProductGridProps = {
   title: string;
@@ -302,10 +303,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                   useGrouping: true,
                 });
               })()}
-              colorVariants={
-                product.options.find((o) => o.name.toLowerCase() === "color")
-                  ?.values || []
-              }
+              colorVariants={extractColorVariants(product)}
               isNew={(() => {
                 const thirtyDays = 1000 * 60 * 60 * 24 * 30;
                 const byDate = product.createdAt
