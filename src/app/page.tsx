@@ -1,9 +1,10 @@
 // app/page.tsx
 import { HeroSection } from "@/components/home/hero-section";
-import { MainBanner } from "@/components/home/main-banner";
+import { ExploreSection } from "@/components/home/explore-section";
 import { ProductCarousel } from "@/components/home/product-carousel";
 import { NoClipSection } from "@/components/home/noclip-section";
 import { Navbar } from "@/components/common/nav-bar";
+import { Footer } from "@/components/common/footer";
 import {
   getSaleProducts,
   getNewProducts,
@@ -39,7 +40,26 @@ export default async function HomePage() {
       <ProductCarousel title="Destacados" data={combined} />
 
       {/* Sección “Sin clip” */}
-      <NoClipSection />
+      <NoClipSection
+        images={[
+          "/images/noclip/home-no-clip.png",
+          "/images/noclip/home-no-clip-2.png",
+          "/images/noclip/home-no-clip-3.png",
+        ]}
+      />
+
+      <ExploreSection
+        title="Animate a explorar lo desconocido"
+        product={{
+          id: "1",
+          title: "Producto Destacado",
+          handle: "producto-destacado",
+          imageSrc: "/images/products/product-1.png",
+          altText: "Producto Destacado",
+          price: "49.99",
+        }}
+      />
+      <Footer />
     </>
   );
 }

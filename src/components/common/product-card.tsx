@@ -25,6 +25,7 @@ const COLOR_MAP: Record<string, string> = {
   Rojo: "#ff0000",
   Azul: "#0000ff",
   Celeste: "#aeb3b9",
+  Beige: "#e0d5ca",
   // …añade aquí todos los nombres que uses
 };
 
@@ -108,7 +109,7 @@ export function ProductCard({
         {/* Precios */}
         <div className="flex items-baseline space-x-2">
           {compareAtPrice && (
-            <span className="body-01-regular line-through text-decoration-color-red text-text-secondary-default">
+            <span className="body-01-regular line-through decoration-border-danger-hover decoration-[2px] text-text-secondary-default">
               ${compareAtPrice}
             </span>
           )}

@@ -27,7 +27,7 @@ export function ProductCarousel({ title, data }: Props) {
   }, [data]); // vuelve a centrar si cambian los datos
 
   return (
-    <section className="mt-6">
+    <section className="mt-6 bg-background-primary-default">
       <h2 className="heading-06-medium text-left ml-6 mb-3">{title}</h2>
       <div className="relative">
         <div

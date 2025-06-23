@@ -223,6 +223,7 @@ interface NewProductsResponse {
         handle: string;
         images: { edges: Array<{ node: { url: string; altText: string } }> };
         options: Array<{ name: string; values: string[] }>;
+        color: ShopifyMetafield | null;
         createdAt: string;
         variants: {
           edges: Array<{
@@ -260,6 +261,19 @@ export async function getNewProducts(
             options(first: 10) {
               name
               values
+            }
+            color: metafield(
+              namespace: "shopify.metaobject_reference"
+              key: "color"
+            ) {
+              reference {
+                ... on Metaobject {
+                  fields {
+                    key
+                    value
+                  }
+                }
+              }
             }
             createdAt
             variants(first: 10) {
@@ -323,14 +337,25 @@ export async function getNewProducts(
       )
     );
 
+    if (colorVariants.length === 0) {
+      const colorField = node.color?.reference?.fields.find(
+        (f) => f.key === "name"
+      );
+      if (colorField?.value) {
+        colorVariants = [colorField.value];
+      }
+    }
+
     return {
       id: node.id,
       title: node.title,
       handle: node.handle,
       imageSrc: img?.url ?? "/placeholder.png",
       altText: img?.altText ?? node.title,
-      price: priceNum.toFixed(2),
-      compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(2) : undefined,
+      price: Math.round(priceNum).toLocaleString("es-AR", {
+        useGrouping: true,
+      }),
+      compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(0) : undefined,
       colorVariants,
     };
   });
@@ -394,6 +419,7 @@ interface SaleResponse {
           }>;
         };
         options: Array<{ name: string; values: string[] }>;
+        color: ShopifyMetafield | null;
         createdAt: string;
       };
     }>;
@@ -440,6 +466,19 @@ export async function getSaleProducts(
               name
               values
             }
+            color: metafield(
+              namespace: "shopify.metaobject_reference"
+              key: "color"
+            ) {
+              reference {
+                ... on Metaobject {
+                  fields {
+                    key
+                    value
+                  }
+                }
+              }
+            }
             createdAt
           }
         }
@@ -485,6 +524,15 @@ export async function getSaleProducts(
         .map((sel) => sel.value);
     }
 
+    if (colorVariants.length === 0) {
+      const colorField = node.color?.reference?.fields.find(
+        (f) => f.key === "name"
+      );
+      if (colorField?.value) {
+        colorVariants = [colorField.value];
+      }
+    }
+
     const createdAt = new Date(node.createdAt);
     const isNew = (Date.now() - createdAt.getTime()) / (1000 * 3600 * 24) < 30;
 
@@ -494,8 +542,15 @@ export async function getSaleProducts(
       handle: node.handle,
       imageSrc: img?.url ?? "/placeholder.png",
       altText: img?.altText ?? node.title,
-      price: priceNum.toFixed(2),
-      compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(2) : undefined,
+      price: Math.round(priceNum).toLocaleString("es-AR", {
+        useGrouping: true,
+      }),
+      compareAtPrice:
+        cmpNum > priceNum
+          ? Math.round(cmpNum).toLocaleString("es-AR", {
+              useGrouping: true,
+            })
+          : undefined,
       colorVariants, // ← aquí van los colores
       discount, // para filtrar
       isNew, // para destacar productos nuevos
@@ -527,6 +582,19 @@ export async function getProductByHandle(
           id
           name
           values
+        }
+        color: metafield(
+          namespace: "shopify.metaobject_reference"
+          key: "color"
+        ) {
+          reference {
+            ... on Metaobject {
+              fields {
+                key
+                value
+              }
+            }
+          }
         }
         priceRange {
           minVariantPrice {
