@@ -2,6 +2,7 @@
 
 import { getProductByHandle, ShopifyProduct } from "@/lib/shopify";
 import { FavoriteButton } from "@/components/common/favorite-button";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ProductForm } from "@/components/product/product-form"; // ¡NUEVO! Importamos nuestro componente interactivo.
@@ -36,8 +37,11 @@ export default async function ProductDetailPage({
               style={{ objectFit: "cover" }}
               priority
             />
-            <div className="absolute top-2 right-2 z-10">
+            <div className="absolute top-14 right-6 z-10">
               <FavoriteButton productHandle={product.handle} />
+            </div>
+            <div className="absolute top-14 right-6 z-10">
+              <ArrowUpTrayIcon className="h-6 w-6 text-icon-primary-default mt-11" />
             </div>
           </div>
           {/* Miniaturas */}

@@ -329,10 +329,80 @@ export function ProductGrid({
             </div>
             {Object.keys(modalFilterGroups).length > 0 ? (
               Object.entries(modalFilterGroups).map(([groupName, values]) => (
-                <div key={groupName}>
+                <div key={groupName} className="space-y-2">
                   <h3 className="body-02-medium text-text-seconday-default mb-3">
                     {groupName}
                   </h3>
+                  {groupName === "Color" ? (
+                    <div className="flex flex-wrap gap-2">
+                      {values.map((filterString) => {
+                        const value = filterString.split(":")[1].trim();
+                        const active = activeFilters.includes(filterString);
+                        return (
+                          <button
+                            key={filterString}
+                            onClick={() => handleFilterToggle(filterString)}
+                            className={`h-8 w-8 rounded-full border ${
+                              active ? "ring-2 ring-gray-900" : ""
+                            }`}
+                            style={{ backgroundColor: value }}
+                          />
+                        );
+                      })}
+                    </div>
+                  ) : groupName === "Talle" ? (
+                    <div className="flex flex-wrap gap-2">
+                      {values.map((filterString) => {
+                        const value = filterString.split(":")[1].trim();
+                        const active = activeFilters.includes(filterString);
+                        return (
+                          <button
+                            key={filterString}
+                            onClick={() => handleFilterToggle(filterString)}
+                            className={`h-8 w-8 flex items-center justify-center rounded-full border text-xs ${
+                              active
+                                ? "bg-gray-900 text-white border-gray-900"
+                                : "bg-white text-gray-700 border-gray-300"
+                            }`}
+                          >
+                            {value}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : groupName === "Colección" ? (
+                    <select
+                      className="w-full border rounded p-2"
+                      value={activeCollection}
+                      onChange={(e) => handleCollectionChange(e.target.value)}
+                    >
+                      <option value="">Todas</option>
+                      {values.map((filterString) => {
+                        const value = filterString.split(":")[1].trim();
+                        return (
+                          <option key={filterString} value={value}>
+                            {value}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {values.map((filterString) => (
+                        <button
+                          key={filterString}
+                          onClick={() => handleFilterToggle(filterString)}
+                          className={`px-3 py-1.5 border rounded-full body-02-medium transition-colors ${
+                            activeFilters.includes(filterString)
+                              ? "text-text-primary-default border-gray-900"
+                              : "text-text-secondary-default border-gray-300 hover:bg-gray-100"
+                          }`}
+                        >
+                          {filterString.split(":")[1].trim()}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))
             ) : (

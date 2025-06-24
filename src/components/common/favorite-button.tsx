@@ -31,7 +31,7 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
   // nos confirme que ha cargado los datos desde la memoria del navegador.
   if (!_hasHydrated) {
     // Mostramos un placeholder para evitar saltos en la interfaz.
-    return <div className="h-7 w-7 rounded-full bg-gray-200 animate-pulse" />;
+    return <div className="h-6 w-6 rounded-full bg-gray-200 animate-pulse" />;
   }
 
   // Una vez que el store está cargado, podemos comprobar de forma segura si el producto es favorito.
@@ -43,12 +43,12 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
       aria-label={
         isProductFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
       }
-      className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+      className="rounded-full hover:bg-gray-200 transition-colors"
     >
       {isProductFavorite ? (
-        <HeartIconSolid className="h-6 w-6 text-red-500" />
+        <HeartIconSolid className="h-6 w-6 text-icon-primary-default" />
       ) : (
-        <HeartIconOutline className="h-6 w-6 text-gray-500" />
+        <HeartIconOutline className="h-6 w-6 text-icon-primary-default" />
       )}
     </button>
   );
