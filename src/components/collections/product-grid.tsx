@@ -61,18 +61,25 @@ export function ProductGrid({
           }
         });
 
-        // 2. Procesa el metacampo estándar de Color
+        // 2. Procesa el metacampo o la opción de producto para Color
+        const groupNameColor = "Color";
+        if (!modal[groupNameColor]) modal[groupNameColor] = new Set();
         if (product.color?.reference?.fields) {
           const colorField = product.color.reference.fields.find(
-            (f) => f.key === "name"
+            (f) => f.key === "name" || f.key === "value"
           );
           if (colorField?.value) {
-            const groupName = "Color";
-            if (!modal[groupName]) {
-              modal[groupName] = new Set();
-            }
-            modal[groupName].add(`${groupName}:${colorField.value}`);
+            modal[groupNameColor].add(`${groupNameColor}:${colorField.value}`);
           }
+        }
+
+        const colorOption = product.options?.find(
+          (opt) => opt.name.toLowerCase() === "color"
+        );
+        if (colorOption) {
+          colorOption.values.forEach((val) =>
+            modal[groupNameColor].add(`${groupNameColor}:${val}`)
+          );
         }
 
         prices.push(parseFloat(product.priceRange.minVariantPrice.amount));
@@ -89,6 +96,15 @@ export function ProductGrid({
             modal[groupName].add(`${groupName}:${metafield.value}`);
           }
         });
+        const sizeOption = product.options?.find((opt) =>
+          ["talle", "size"].includes(opt.name.toLowerCase())
+        );
+        if (sizeOption) {
+          if (!modal["Talle"]) modal["Talle"] = new Set();
+          sizeOption.values.forEach((val) =>
+            modal["Talle"].add(`Talle:${val}`)
+          );
+        }
       });
 
       const collectionGroup = "Colección";
@@ -317,76 +333,6 @@ export function ProductGrid({
                   <h3 className="body-02-medium text-text-seconday-default mb-3">
                     {groupName}
                   </h3>
-                  {groupName === "Color" ? (
-                    <div className="flex flex-wrap gap-2">
-                      {values.map((filterString) => {
-                        const value = filterString.split(":")[1].trim();
-                        const active = activeFilters.includes(filterString);
-                        return (
-                          <button
-                            key={filterString}
-                            onClick={() => handleFilterToggle(filterString)}
-                            className={`h-8 w-8 rounded-full border ${
-                              active ? "ring-2 ring-gray-900" : ""
-                            }`}
-                            style={{ backgroundColor: value }}
-                          />
-                        );
-                      })}
-                    </div>
-                  ) : groupName === "Talle" ? (
-                    <div className="flex flex-wrap gap-2">
-                      {values.map((filterString) => {
-                        const value = filterString.split(":")[1].trim();
-                        const active = activeFilters.includes(filterString);
-                        return (
-                          <button
-                            key={filterString}
-                            onClick={() => handleFilterToggle(filterString)}
-                            className={`h-8 w-8 flex items-center justify-center rounded-full border text-xs ${
-                              active
-                                ? "bg-gray-900 text-white border-gray-900"
-                                : "bg-white text-gray-700 border-gray-300"
-                            }`}
-                          >
-                            {value}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : groupName === "Colección" ? (
-                    <select
-                      className="w-full border rounded p-2"
-                      value={activeCollection}
-                      onChange={(e) => handleCollectionChange(e.target.value)}
-                    >
-                      <option value="">Todas</option>
-                      {values.map((filterString) => {
-                        const value = filterString.split(":")[1].trim();
-                        return (
-                          <option key={filterString} value={value}>
-                            {value}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  ) : (
-                    <div className="flex flex-wrap gap-2">
-                      {values.map((filterString) => (
-                        <button
-                          key={filterString}
-                          onClick={() => handleFilterToggle(filterString)}
-                          className={`px-3 py-1.5 border rounded-full body-02-medium transition-colors ${
-                            activeFilters.includes(filterString)
-                              ? "text-text-primary-default border-gray-900"
-                              : "text-text-secondary-default border-gray-300 hover:bg-gray-100"
-                          }`}
-                        >
-                          {filterString.split(":")[1].trim()}
-                        </button>
-                      ))}
-                    </div>
-                  )}
                 </div>
               ))
             ) : (

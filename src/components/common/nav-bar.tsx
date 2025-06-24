@@ -4,7 +4,11 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Bars3Icon, ShoppingBagIcon } from "@heroicons/react/24/outline";
+import {
+  XMarkIcon,
+  Bars3Icon,
+  ShoppingBagIcon,
+} from "@heroicons/react/24/outline";
 import { useUiStore } from "@/store/ui-store";
 import { useCartStore } from "@/store/cart-store";
 import { cn } from "@/lib/utils"; // tu helper de clases condicionales
@@ -12,6 +16,7 @@ import { cn } from "@/lib/utils"; // tu helper de clases condicionales
 export function Navbar() {
   const path = usePathname();
   const isHome = path === "/";
+  const isProduct = path.startsWith("/products/");
   const { toggleMenu } = useUiStore();
   const [scrolled, setScrolled] = useState(false);
   const { cart } = useCartStore();
@@ -31,8 +36,8 @@ export function Navbar() {
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-700 ease-in-out",
         {
-          "bg-transparent": isHome && !scrolled,
-          "bg-background-primary-default": !isHome || scrolled,
+          "bg-transparent": (isHome && !scrolled) || isProduct,
+          "bg-background-primary-default": (!isHome || scrolled) && !isProduct,
         }
       )}
     >
@@ -44,28 +49,35 @@ export function Navbar() {
           onClick={toggleMenu}
           className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring-primary"
         >
-          <Bars3Icon
-            className={cn("h-6 w-6", {
-              "text-icon-primary-invert": isHome && !scrolled,
-              "text-icon-primary-default": !isHome || scrolled,
-            })}
-          />
+          {" "}
+          {isProduct ? (
+            <XMarkIcon className="w-6 h-6" />
+          ) : (
+            <Bars3Icon
+              className={cn("h-6 w-6", {
+                "text-icon-primary-invert": isHome && !scrolled,
+                "text-icon-primary-default": !isHome || scrolled,
+              })}
+            />
+          )}
         </button>
 
         {/* Logo brand */}
-        <Link href="/" aria-label="Ir al home" className="flex items-center">
-          {/* El SVG está en /public/munay-wordmark.svg */}
-          <img
-            src={
-              isHome && !scrolled
-                ? "/munay-wordmark-white.svg"
-                : "/munay-wordmark.svg"
-            }
-            alt="Logo Munay"
-            className="h-auto w-[106px]"
-            loading="eager"
-          />
-        </Link>
+        {!isProduct && (
+          <Link href="/" aria-label="Ir al home" className="flex items-center">
+            {/* El SVG está en /public/munay-wordmark.svg */}
+            <img
+              src={
+                isHome && !scrolled
+                  ? "/munay-wordmark-white.svg"
+                  : "/munay-wordmark.svg"
+              }
+              alt="Logo Munay"
+              className="h-auto w-[106px]"
+              loading="eager"
+            />
+          </Link>
+        )}
 
         {/* Icono carrito */}
         <Link

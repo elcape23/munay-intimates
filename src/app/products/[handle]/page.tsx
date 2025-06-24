@@ -23,12 +23,12 @@ export default async function ProductDetailPage({
   }
 
   return (
-    <main className="container mx-auto p-4 md:p-8">
+    <main className="container mx-auto ">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         {/* Columna de la Galería de Imágenes */}
         <div className="flex flex-col items-center">
           {/* Imagen Principal */}
-          <div className="relative w-full aspect-square rounded-lg overflow-hidden border">
+          <div className="relative w-full aspect-[10/14] overflow-hidden border">
             <Image
               src={product.images.edges[0]?.node.url || "/placeholder.png"}
               alt={product.images.edges[0]?.node.altText || product.title}
