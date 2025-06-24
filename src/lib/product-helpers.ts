@@ -9,17 +9,11 @@ export function extractColorVariants(product: ShopifyProduct): string[] {
   );
   if (explicitColor?.values?.length) {
     colorVariants = explicitColor.values;
-  } else if (
-    options.length === 1 &&
-    options[0].values.length > 0 &&
-    options[0].values[0].toLowerCase() !== "default title"
-  ) {
-    colorVariants = options[0].values;
   } else if (product.variants) {
     colorVariants = product.variants.edges
       .flatMap((edge) => edge.node.selectedOptions ?? [])
       .filter((sel): sel is { name: string; value: string } => !!sel)
-      .filter((sel) => sel.name.toLowerCase() !== "title")
+      .filter((sel) => sel.name.toLowerCase() === "color")
       .map((sel) => sel.value);
   }
 

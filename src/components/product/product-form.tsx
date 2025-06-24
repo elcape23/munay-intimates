@@ -22,6 +22,13 @@ export function ProductForm({ product }: ProductFormProps) {
         opts.push({ id: "color", name: "Color", values: [colorField.value] });
       }
     }
+    const hasTalle = opts.some((o) =>
+      ["talle", "size"].includes(o.name.toLowerCase())
+    );
+    if (!hasTalle && product.talle?.value) {
+      const values = product.talle.value.split(",").map((v) => v.trim());
+      opts.push({ id: "talle", name: "Talle", values });
+    }
     return opts;
   }, [product]);
 

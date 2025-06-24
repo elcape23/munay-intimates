@@ -794,6 +794,31 @@ export async function getCollections(): Promise<ShopifyCollection[]> {
   return response.collections.edges.map((edge) => edge.node);
 }
 
+export async function getCollectionsBySeason(
+  season: string
+): Promise<ShopifyCollection[]> {
+  const query = gql`
+    query GetCollectionsBySeason($query: String!) {
+      collections(first: 100, query: $query) {
+        edges {
+          node {
+            id
+            title
+            handle
+          }
+        }
+      }
+    }
+  `;
+
+  const seasonQuery = `metafield:custom.season:${season}`;
+  const response = await shopifyFetch<GetCollectionsResponse>({
+    query,
+    variables: { query: seasonQuery },
+  });
+  return response.collections.edges.map((edge) => edge.node);
+}
+
 export async function getCollectionByHandle(
   handle: string
 ): Promise<ShopifyCollection | null> {
