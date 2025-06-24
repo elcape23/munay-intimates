@@ -61,6 +61,9 @@ export type ShopifyProduct = {
   color?: ShopifyMetafield | null;
   talle?: ShopifyMetafield | null;
   estacion?: ShopifyMetafield | null;
+  collections?: {
+    edges: { node: { id: string; title: string; handle: string } }[];
+  };
 };
 export type ShopifyCartLine = {
   id: string;
@@ -858,6 +861,15 @@ export async function getCollectionByHandle(
                       amount
                       currencyCode
                     }
+                  }
+                }
+              }
+              collections(first: 10) {
+                edges {
+                  node {
+                    id
+                    title
+                    handle
                   }
                 }
               }

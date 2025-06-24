@@ -1,8 +1,13 @@
 // src/app/(pages)/collections/[handle]/page.tsx
 
-import { getCollectionByHandle, ShopifyCollection } from "@/lib/shopify";
+import {
+  getCollectionByHandle,
+  getCollections,
+  ShopifyCollection,
+} from "@/lib/shopify";
 import { notFound } from "next/navigation";
 import { ProductGrid } from "@/components/collections/product-grid";
+import { Footer } from "@/components/common/footer";
 
 export default async function CollectionPage({
   params,
@@ -20,12 +25,18 @@ export default async function CollectionPage({
   }
 
   const products = collection.products.edges.map((edge) => edge.node);
+  const collections = await getCollections();
 
   return (
     <main className="pt-[67px] bg-gray-50 min-h-screen">
       <section className="container bg-background-primary-default mx-auto px-6 pb-16">
-        <ProductGrid title={collection.title} products={products} />
+        <ProductGrid
+          title={collection.title}
+          products={products}
+          collections={collections}
+        />
       </section>
+      <Footer />
     </main>
   );
 }

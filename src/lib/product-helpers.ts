@@ -17,7 +17,8 @@ export function extractColorVariants(product: ShopifyProduct): string[] {
     colorVariants = options[0].values;
   } else if (product.variants) {
     colorVariants = product.variants.edges
-      .flatMap((edge) => edge.node.selectedOptions)
+      .flatMap((edge) => edge.node.selectedOptions ?? [])
+      .filter((sel): sel is { name: string; value: string } => !!sel)
       .filter((sel) => sel.name.toLowerCase() !== "title")
       .map((sel) => sel.value);
   }

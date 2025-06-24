@@ -3,20 +3,28 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { ShopifyProduct } from "@/lib/shopify";
+import { ShopifyProduct, ShopifyCollection } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ProductCard } from "@/components/common/product-card";
 import { extractColorVariants } from "@/lib/product-helpers";
+import { Footer } from "../common/footer";
 
 type ProductGridProps = {
   title: string;
   products: ShopifyProduct[];
+  collections: ShopifyCollection[];
 };
 
-export function ProductGrid({ title, products }: ProductGridProps) {
+export function ProductGrid({
+  title,
+  products,
+  collections,
+}: ProductGridProps) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [sortMethod, setSortMethod] = useState("default");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [minPriceFilter, setMinPriceFilter] = useState(0);
+  const [maxPriceFilter, setMaxPriceFilter] = useState(0);
 
   useEffect(() => {
     if (isFilterModalOpen) {
@@ -30,69 +38,89 @@ export function ProductGrid({ title, products }: ProductGridProps) {
   }, [isFilterModalOpen]);
 
   // Lógica corregida para procesar tags y metacampos
-  const { primaryFilterGroup, modalFilterGroups } = useMemo(() => {
-    const primary: Record<string, Set<string>> = {};
-    const modal: Record<string, Set<string>> = {};
+  const { primaryFilterGroup, modalFilterGroups, minPrice, maxPrice } =
+    useMemo(() => {
+      const primary: Record<string, Set<string>> = {};
+      const modal: Record<string, Set<string>> = {};
+      const prices: number[] = [];
 
-    products.forEach((product) => {
-      // 1. Procesa las etiquetas (tags) para los filtros principales
-      product.tags?.forEach((tag) => {
-        const parts = tag.split(":");
-        if (
-          parts.length === 2 &&
-          (parts[0].trim().toLowerCase() === "subcategoría" ||
-            parts[0].trim().toLowerCase() === "subcategoria")
-        ) {
-          const groupName = parts[0].trim();
-          if (!primary[groupName]) {
-            primary[groupName] = new Set();
+      products.forEach((product) => {
+        // 1. Procesa las etiquetas (tags) para los filtros principales
+        product.tags?.forEach((tag) => {
+          const parts = tag.split(":");
+          if (
+            parts.length === 2 &&
+            (parts[0].trim().toLowerCase() === "subcategoría" ||
+              parts[0].trim().toLowerCase() === "subcategoria")
+          ) {
+            const groupName = parts[0].trim();
+            if (!primary[groupName]) {
+              primary[groupName] = new Set();
+            }
+            primary[groupName].add(tag);
           }
-          primary[groupName].add(tag);
+        });
+
+        // 2. Procesa el metacampo estándar de Color
+        if (product.color?.reference?.fields) {
+          const colorField = product.color.reference.fields.find(
+            (f) => f.key === "name"
+          );
+          if (colorField?.value) {
+            const groupName = "Color";
+            if (!modal[groupName]) {
+              modal[groupName] = new Set();
+            }
+            modal[groupName].add(`${groupName}:${colorField.value}`);
+          }
         }
+
+        prices.push(parseFloat(product.priceRange.minVariantPrice.amount));
+
+        // 3. Procesa metacampos personalizados
+        const customMetafields = [product.talle, product.estacion];
+        customMetafields.forEach((metafield) => {
+          if (metafield?.key && metafield?.value) {
+            const groupName =
+              metafield.key.charAt(0).toUpperCase() + metafield.key.slice(1);
+            if (!modal[groupName]) {
+              modal[groupName] = new Set();
+            }
+            modal[groupName].add(`${groupName}:${metafield.value}`);
+          }
+        });
       });
 
-      // 2. Procesa el metacampo estándar de Color
-      if (product.color?.reference?.fields) {
-        const colorField = product.color.reference.fields.find(
-          (f) => f.key === "name"
-        );
-        if (colorField?.value) {
-          const groupName = "Color";
-          if (!modal[groupName]) {
-            modal[groupName] = new Set();
-          }
-          modal[groupName].add(`${groupName}:${colorField.value}`);
-        }
+      const collectionGroup = "Colección";
+      collections.forEach((c) => {
+        if (!modal[collectionGroup]) modal[collectionGroup] = new Set();
+        modal[collectionGroup].add(`${collectionGroup}:${c.handle}`);
+      });
+
+      const primaryResult: Record<string, string[]> = {};
+      for (const groupName in primary) {
+        primaryResult[groupName] = Array.from(primary[groupName]).sort();
+      }
+      const modalResult: Record<string, string[]> = {};
+      for (const groupName in modal) {
+        modalResult[groupName] = Array.from(modal[groupName]).sort();
       }
 
-      // 3. Procesa metacampos personalizados
-      const customMetafields = [product.talle, product.estacion];
-      customMetafields.forEach((metafield) => {
-        if (metafield?.key && metafield?.value) {
-          const groupName =
-            metafield.key.charAt(0).toUpperCase() + metafield.key.slice(1);
-          if (!modal[groupName]) {
-            modal[groupName] = new Set();
-          }
-          modal[groupName].add(`${groupName}:${metafield.value}`);
-        }
-      });
-    });
+      const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+      const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
 
-    const primaryResult: Record<string, string[]> = {};
-    for (const groupName in primary) {
-      primaryResult[groupName] = Array.from(primary[groupName]).sort();
-    }
-    const modalResult: Record<string, string[]> = {};
-    for (const groupName in modal) {
-      modalResult[groupName] = Array.from(modal[groupName]).sort();
-    }
+      return {
+        primaryFilterGroup: primaryResult,
+        modalFilterGroups: modalResult,
+        minPrice,
+        maxPrice,
+      };
+    }, [products, collections]);
 
-    return {
-      primaryFilterGroup: primaryResult,
-      modalFilterGroups: modalResult,
-    };
-  }, [products]);
+  useEffect(() => {
+    setMinPriceFilter(minPrice);
+    setMaxPriceFilter(maxPrice);
+  }, [minPrice, maxPrice]);
 
   const handleFilterToggle = (tag: string) => {
     setActiveFilters((prev) =>
@@ -100,9 +128,26 @@ export function ProductGrid({ title, products }: ProductGridProps) {
     );
   };
 
+  const activeCollection = useMemo(() => {
+    const col = activeFilters.find((f) => f.startsWith("Colección:"));
+    return col ? col.split(":")[1].trim() : "";
+  }, [activeFilters]);
+
+  const handleCollectionChange = (value: string) => {
+    const prefix = "Colección:";
+    setActiveFilters((prev) => {
+      const other = prev.filter((f) => !f.startsWith(prefix));
+      return value ? [...other, `${prefix}${value}`] : other;
+    });
+  };
+
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = [...products];
-    if (activeFilters.length > 0) {
+    if (
+      activeFilters.length > 0 ||
+      minPriceFilter !== minPrice ||
+      maxPriceFilter !== maxPrice
+    ) {
       const activeGroups: Record<string, string[]> = {};
       activeFilters.forEach((filter) => {
         const key = filter.split(":")[0].trim();
@@ -113,6 +158,15 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       });
 
       filtered = filtered.filter((product) => {
+        const price = parseFloat(product.priceRange.minVariantPrice.amount);
+        if (price < minPriceFilter || price > maxPriceFilter) return false;
+
+        if (activeCollection) {
+          const handles =
+            product.collections?.edges.map((e) => e.node.handle) || [];
+          if (!handles.includes(activeCollection)) return false;
+        }
+
         return Object.entries(activeGroups).every(
           ([groupKey, groupFilters]) => {
             return groupFilters.some((filterValue) => {
@@ -160,7 +214,16 @@ export function ProductGrid({ title, products }: ProductGridProps) {
         break;
     }
     return filtered;
-  }, [products, activeFilters, sortMethod]);
+  }, [
+    products,
+    activeFilters,
+    sortMethod,
+    minPriceFilter,
+    maxPriceFilter,
+    activeCollection,
+    minPrice,
+    maxPrice,
+  ]);
 
   const activeFilterCount = activeFilters.length;
 
@@ -211,27 +274,119 @@ export function ProductGrid({ title, products }: ProductGridProps) {
             </button>
           </div>
           <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
+            <div>
+              <h3 className="body-02-medium text-text-seconday-default mb-3">
+                Precio
+              </h3>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="range"
+                    min={minPrice}
+                    max={maxPrice}
+                    value={minPriceFilter}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setMinPriceFilter(val);
+                      if (val > maxPriceFilter) setMaxPriceFilter(val);
+                    }}
+                    className="w-full"
+                  />
+                  <input
+                    type="range"
+                    min={minPrice}
+                    max={maxPrice}
+                    value={maxPriceFilter}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      setMaxPriceFilter(val);
+                      if (val < minPriceFilter) setMinPriceFilter(val);
+                    }}
+                    className="w-full"
+                  />
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span>{minPriceFilter}</span>
+                  <span>{maxPriceFilter}</span>
+                </div>
+              </div>
+            </div>
             {Object.keys(modalFilterGroups).length > 0 ? (
               Object.entries(modalFilterGroups).map(([groupName, values]) => (
                 <div key={groupName}>
                   <h3 className="body-02-medium text-text-seconday-default mb-3">
                     {groupName}
                   </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {values.map((filterString) => (
-                      <button
-                        key={filterString}
-                        onClick={() => handleFilterToggle(filterString)}
-                        className={`px-3 py-1.5 border rounded-full body-02-medium transition-colors ${
-                          activeFilters.includes(filterString)
-                            ? "text-text-primary-default border-gray-900"
-                            : "text-text-secondary-default border-gray-300 hover:bg-gray-100"
-                        }`}
-                      >
-                        {filterString.split(":")[1].trim()}
-                      </button>
-                    ))}
-                  </div>
+                  {groupName === "Color" ? (
+                    <div className="flex flex-wrap gap-2">
+                      {values.map((filterString) => {
+                        const value = filterString.split(":")[1].trim();
+                        const active = activeFilters.includes(filterString);
+                        return (
+                          <button
+                            key={filterString}
+                            onClick={() => handleFilterToggle(filterString)}
+                            className={`h-8 w-8 rounded-full border ${
+                              active ? "ring-2 ring-gray-900" : ""
+                            }`}
+                            style={{ backgroundColor: value }}
+                          />
+                        );
+                      })}
+                    </div>
+                  ) : groupName === "Talle" ? (
+                    <div className="flex flex-wrap gap-2">
+                      {values.map((filterString) => {
+                        const value = filterString.split(":")[1].trim();
+                        const active = activeFilters.includes(filterString);
+                        return (
+                          <button
+                            key={filterString}
+                            onClick={() => handleFilterToggle(filterString)}
+                            className={`h-8 w-8 flex items-center justify-center rounded-full border text-xs ${
+                              active
+                                ? "bg-gray-900 text-white border-gray-900"
+                                : "bg-white text-gray-700 border-gray-300"
+                            }`}
+                          >
+                            {value}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : groupName === "Colección" ? (
+                    <select
+                      className="w-full border rounded p-2"
+                      value={activeCollection}
+                      onChange={(e) => handleCollectionChange(e.target.value)}
+                    >
+                      <option value="">Todas</option>
+                      {values.map((filterString) => {
+                        const value = filterString.split(":")[1].trim();
+                        return (
+                          <option key={filterString} value={value}>
+                            {value}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {values.map((filterString) => (
+                        <button
+                          key={filterString}
+                          onClick={() => handleFilterToggle(filterString)}
+                          className={`px-3 py-1.5 border rounded-full body-02-medium transition-colors ${
+                            activeFilters.includes(filterString)
+                              ? "text-text-primary-default border-gray-900"
+                              : "text-text-secondary-default border-gray-300 hover:bg-gray-100"
+                          }`}
+                        >
+                          {filterString.split(":")[1].trim()}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))
             ) : (
@@ -279,9 +434,12 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       </div>
 
       {/* --- Grilla de Productos --- */}
-      <div className="-mx-6 h-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5 [&>a>div]:px-4">
+      <div className="-mx-6 h-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5 ">
         {filteredAndSortedProducts.map((product) => (
-          <div key={product.handle} className="h-full">
+          <div
+            key={product.handle}
+            className="h-full [&>a>div]:px-4 [&>a>div>h3]:mb-4"
+          >
             <ProductCard
               key={product.handle}
               id={product.id}

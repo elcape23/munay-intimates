@@ -56,12 +56,13 @@ export function Navbar() {
         <Link href="/" aria-label="Ir al home" className="flex items-center">
           {/* El SVG está en /public/munay-wordmark.svg */}
           <img
-            src={cn({
-              "/munay-wordmark-white.svg": isHome && scrolled,
-              "/munay-wordmark.svg": !isHome || scrolled,
-            })}
+            src={
+              isHome && !scrolled
+                ? "/munay-wordmark-white.svg"
+                : "/munay-wordmark.svg"
+            }
             alt="Logo Munay"
-            className="h-auto w-[106px] "
+            className="h-auto w-[106px]"
             loading="eager"
           />
         </Link>
