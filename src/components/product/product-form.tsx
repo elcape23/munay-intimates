@@ -105,49 +105,131 @@ export function ProductForm({ product }: ProductFormProps) {
     <div className="space-y-6">
       {/* Selectores de variantes */}
       <div className="space-y-4">
-        {productOptions.map((option) => (
-          <div
-            key={option.id}
-            className="flex flex-row gap-10 justify-between items-center"
-          >
-            <label className="block body-01-medium text-gray-700">
-              {option.name}
-            </label>
-            <div className="flex flex-row gap-2 items-center">
-              {option.values.map((value) => {
-                const isActive = selectedOptions[option.name] === value;
-                return (
-                  <button
-                    key={value}
-                    onClick={() => handleOptionChange(option.name, value)}
-                    className={`body-01-regular transition-colors 
-                                        ${
-                                          isActive
-                                            ? "text-text-primary-default border-b-[2px] border-border-primary-default"
-                                            : "text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
-                                        }`}
-                  >
-                    {option.name.toLowerCase() === "color" && (
-                      <span
-                        className="inline-block w-4 h-4 rounded-full mr-1 border"
-                        style={{ backgroundColor: COLOR_MAP[value] ?? value }}
-                      />
-                    )}
-                    {value}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
+        {productOptions
+          .filter((option) => option.name.toLowerCase() !== "tejido")
+          .map((option) => {
+            const selectedValue = selectedOptions[option.name];
 
+            // ── PERSONALIZADO para “Color”
+            if (option.name.toLowerCase() === "color") {
+              return (
+                <div
+                  key={option.id}
+                  className="flex flex-row justify-between items-center"
+                >
+                  <div className="flex items-center gap-2">
+                    <label className="body-01-medium text-text-primary-default">
+                      {option.name}
+                    </label>
+                    <span className="body-01-regular text-text-secondary-default">
+                      {selectedValue}
+                    </span>
+                  </div>
+                  <div className="flex gap-3 mt-2">
+                    {option.values.map((value) => {
+                      const hex = COLOR_MAP[value] ?? value;
+                      const isActive = selectedValue === value;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          aria-label={value}
+                          onClick={() => handleOptionChange(option.name, value)}
+                          className={`w-5 h-5 rounded-full border-[1px] ${
+                            isActive
+                              ? "border-border-primary-default"
+                              : "border-transparent"
+                          }`}
+                          style={{ backgroundColor: hex }}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            }
+
+            // Caso “Talle”: mostrar el valor activo junto al label
+            if (option.name.toLowerCase() === "talle") {
+              return (
+                <div key={option.id} className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <label className="body-01-semibold text-text-primary-default">
+                      {option.name}
+                    </label>
+                    <span className="body-01-regular text-text-secondary-default">
+                      {selectedValue}
+                    </span>
+                  </div>
+                  <div className="flex flex-row gap-2 items-center">
+                    {option.values.map((value) => {
+                      const isActive = selectedValue === value;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => handleOptionChange(option.name, value)}
+                          className={`body-01-regular text-text-primary-default transition-colors ${
+                            isActive
+                              ? "body-03-regular text-text-primary-default border-b-[2px] border-border-primary-default"
+                              : "text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
+                          }`}
+                        >
+                          {value}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            }
+
+            // Resto de opciones (incluyendo “Color”)
+            return (
+              <div
+                key={option.id}
+                className="flex flex-row gap-10 justify-between items-center"
+              >
+                <label className="block body-01-medium text-text-primary-default">
+                  {option.name}
+                </label>
+                <div className="flex flex-row gap-2 items-center">
+                  {option.values.map((value) => {
+                    const isActive = selectedOptions[option.name] === value;
+                    return (
+                      <button
+                        key={value}
+                        onClick={() => handleOptionChange(option.name, value)}
+                        className={`body-01-semibold transition-colors 
+                        ${
+                          isActive
+                            ? "text-text-primary-default border-b-[2px] border-border-primary-default"
+                            : "body-01-medium text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
+                        }`}
+                      >
+                        {option.name.toLowerCase() === "color" && (
+                          <span
+                            className="inline-block w-4 h-4 rounded-full mr-1 border"
+                            style={{
+                              backgroundColor: COLOR_MAP[value] ?? value,
+                            }}
+                          />
+                        )}
+                        {value}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+      </div>
       {/* Botón de Añadir al Carrito */}
       <div className="flex flex-row gap-4">
         <button
           onClick={handleAddToCart}
           disabled={isAddToCartDisabled}
-          className={`w-full body-01-semibold py-3 px-6 transition-colors
+          className={`w-full body-01-semibold text-text-primary-default py-3 px-6 transition-colors
               ${
                 isAddToCartDisabled
                   ? "bg-background-fill-neutral-hover text-text-primary-invert cursor-not-allowed"
