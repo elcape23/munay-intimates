@@ -13,16 +13,10 @@ import {
 
 export default async function HomePage() {
   // 1) Traemos primero los productos en oferta y los más nuevos
-  const newestRaw: FeaturedProduct[] = await getNewProducts(12);
+  const newest: FeaturedProduct[] = await getNewProducts(12);
   const sale: FeaturedProduct[] = await getSaleProducts(12, 50);
 
-  // 2) Marcamos los nuevos con isNew
-  const newest: FeaturedProduct[] = newestRaw.map((product) => ({
-    ...product,
-    isNew: true,
-  }));
-
-  // 3) Unimos ambos arrays sin duplicar por ID
+  // 2) Combinamos los productos en oferta con los más nuevos, evitando duplicados
   const saleIds = new Set(sale.map((p) => p.id));
   const combined: FeaturedProduct[] = [
     ...newest.filter((p) => !saleIds.has(p.id)),

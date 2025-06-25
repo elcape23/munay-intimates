@@ -223,6 +223,7 @@ export interface FeaturedProduct {
   imageSrc: string;
   altText?: string;
   colorVariants: string[];
+  isNew?: boolean;
 }
 
 interface NewProductsResponse {
@@ -368,6 +369,10 @@ export async function getNewProducts(
       }
     }
 
+    const createdMs = new Date(node.createdAt).getTime();
+    const TWO_WEEKS_MS = 1000 * 60 * 60 * 24 * 14;
+    const isNew = Date.now() - createdMs < TWO_WEEKS_MS;
+
     return {
       id: node.id,
       title: node.title,
@@ -379,6 +384,7 @@ export async function getNewProducts(
       }),
       compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(0) : undefined,
       colorVariants,
+      isNew,
     };
   });
 }
