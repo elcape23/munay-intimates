@@ -26,7 +26,7 @@ export default function ProductGallery({ images }: Props) {
 
   /* ───────── Render ───────── */
   return (
-    <div className="-mx-6 relative">
+    <div className="-mx-6 relative overflow-hidden">
       {/* Carrusel */}
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex">

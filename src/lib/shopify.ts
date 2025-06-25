@@ -59,6 +59,7 @@ export type ShopifyProduct = {
     minVariantPrice: ShopifyPrice;
     maxVariantPrice: ShopifyPrice;
   };
+  isNew: boolean;
   images: { edges: { node: ShopifyImage }[] };
   options: ShopifyProductOption[];
   variants?: { edges: { node: ShopifyProductVariant }[] };
@@ -609,6 +610,7 @@ export async function getProductByHandle(
       product(handle: $handle) {
         id
         title
+        tags
         productType
         handle
         descriptionHtml

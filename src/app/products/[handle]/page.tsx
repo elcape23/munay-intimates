@@ -15,6 +15,7 @@ import {
 import RelatedProductsCarousel from "@/components/product/related-products-carousel";
 import { getCollectionByHandle } from "@/lib/shopify";
 import ProductGallery from "@/components/product/product-gallery";
+import { COLOR_MAP } from "@/lib/color-map";
 
 // Esta es una página dinámica. Next.js le pasará los 'params' desde la URL.
 export default async function ProductDetailPage({
@@ -24,6 +25,7 @@ export default async function ProductDetailPage({
 }) {
   // 1️⃣ Trae el producto principal
   const product = await getProductByHandle(params.handle);
+  console.log("TAGS:", product?.tags);
   if (!product) notFound();
 
   // 2️⃣ Averigua el handle de su primera colección (o la que prefieras)
@@ -41,10 +43,44 @@ export default async function ProductDetailPage({
       {/* Columna de Información y Acciones */}
       <div>
         <div className="flex flex-col space-y-1">
+          <div className="flex items-center justify-between">
+            <h1 className="heading-06-medium text-text-primary-default">
+              {product.title}
+            </h1>
+            {/* Badge “NEW” si el producto tiene el tag “New” */}
+            {product.isNew && (
+              <span className="body-03-regular ml-[2px] text-text-secondary-default">
+                NEW
+              </span>
+            )}
+
+            {/* Dot del primer color + “+N” de colores restantes */}
+            {(() => {
+              const colorOption = product.options.find(
+                (opt) => opt.name === "Color"
+              );
+              const colorValues = colorOption?.values ?? [];
+              if (colorValues.length === 0) return null;
+              const firstColor = colorValues[0];
+              const othersCount = colorValues.length - 1;
+              return (
+                <div className="ml-4 flex items-center gap-1">
+                  <span
+                    className="w-5 h-5 rounded-full border"
+                    style={{
+                      backgroundColor: COLOR_MAP[firstColor] ?? firstColor,
+                    }}
+                  />
+                  {othersCount > 0 && (
+                    <span className="body-01-regular text-text-primary-default">
+                      +{othersCount}
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
           {/* ► Título grande */}
-          <h1 className="heading-06-medium text-text-primary-default">
-            {product.title}
-          </h1>
           {/* ► Botón de Favoritos */}
           {product.productType && (
             <span className="body-02-medium text-text-secondary-default">
