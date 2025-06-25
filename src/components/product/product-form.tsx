@@ -24,7 +24,7 @@ export function ProductForm({ product }: ProductFormProps) {
       }
     }
     const hasTalle = opts.some((o) =>
-      ["talle", "size"].includes(o.name.toLowerCase())
+      ["talle", "talla", "size"].includes(o.name.toLowerCase())
     );
     if (!hasTalle && product.talle?.value) {
       const values = product.talle.value.split(",").map((v) => v.trim());
@@ -150,11 +150,16 @@ export function ProductForm({ product }: ProductFormProps) {
             }
 
             // Caso “Talle”: mostrar el valor activo junto al label
-            if (option.name.toLowerCase() === "talle") {
+            if (
+              ["talle", "talla", "size"].includes(option.name.toLowerCase())
+            ) {
               return (
-                <div key={option.id} className="flex flex-col gap-2">
+                <div
+                  key={option.id}
+                  className="flex flex-row justify-between items-center"
+                >
                   <div className="flex items-center gap-2">
-                    <label className="body-01-semibold text-text-primary-default">
+                    <label className="body-01-medium text-text-primary-default">
                       {option.name}
                     </label>
                     <span className="body-01-regular text-text-secondary-default">
@@ -169,9 +174,9 @@ export function ProductForm({ product }: ProductFormProps) {
                           key={value}
                           type="button"
                           onClick={() => handleOptionChange(option.name, value)}
-                          className={`body-01-regular text-text-primary-default transition-colors ${
+                          className={`transition-colors ${
                             isActive
-                              ? "body-03-regular text-text-primary-default border-b-[2px] border-border-primary-default"
+                              ? "body-01-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
                               : "text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
                           }`}
                         >
@@ -193,14 +198,14 @@ export function ProductForm({ product }: ProductFormProps) {
                 <label className="block body-01-medium text-text-primary-default">
                   {option.name}
                 </label>
-                <div className="flex flex-row gap-2 items-center">
+                <div className="flex flex-row items-center">
                   {option.values.map((value) => {
                     const isActive = selectedOptions[option.name] === value;
                     return (
                       <button
                         key={value}
                         onClick={() => handleOptionChange(option.name, value)}
-                        className={`body-01-semibold transition-colors 
+                        className={`m-2 body-01-semibold transition-colors 
                         ${
                           isActive
                             ? "text-text-primary-default border-b-[2px] border-border-primary-default"

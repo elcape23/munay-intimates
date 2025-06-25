@@ -14,9 +14,11 @@ export default function RelatedProductsCarousel({
   products,
 }: RelatedProductsCarouselProps) {
   return (
-    <section className="py-8">
-      <h2 className="text-xl font-semibold mb-4">Te puede interesar</h2>
-      <div className="flex space-x-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4">
+    <section className="">
+      <h2 className="heading-06-medium text-text-primary-default">
+        Te puede interesar
+      </h2>
+      <div className="flex space-x-4 overflow-x-auto snap-x snap-mandatory no-scrollbar">
         {products.map((product) => {
           // Mapea ShopifyProduct a las props de ProductCard
           const isNew = product.createdAt

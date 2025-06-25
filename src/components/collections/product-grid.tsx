@@ -93,7 +93,7 @@ export function ProductGrid({
         customMetafields.forEach((metafield) => {
           if (metafield?.key && metafield?.value) {
             const key = metafield.key.toLowerCase();
-            if (key === "talle") {
+            if (key === "talle" || key === "talla") {
               if (!modal["Talle"]) modal["Talle"] = new Set();
               metafield.value.split(",").forEach((val) => {
                 const trimmed = val.trim();
@@ -107,7 +107,10 @@ export function ProductGrid({
               if (!modal[groupName]) {
                 modal[groupName] = new Set();
               }
-              if (metafield.key.toLowerCase() === "talle") {
+              if (
+                "talle" === metafield.key.toLowerCase() ||
+                "talla" === metafield.key.toLowerCase()
+              ) {
                 metafield.value
                   .split(",")
                   .map((v) => v.trim())
@@ -122,7 +125,7 @@ export function ProductGrid({
           }
         });
         const sizeOption = product.options?.find((opt) =>
-          ["talle", "size"].includes(opt.name.toLowerCase())
+          ["talle", "talla", "size"].includes(opt.name.toLowerCase())
         );
         if (sizeOption) {
           if (!modal["Talle"]) modal["Talle"] = new Set();

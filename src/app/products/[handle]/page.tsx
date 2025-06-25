@@ -41,70 +41,71 @@ export default async function ProductDetailPage({
       {/* ▶ Carrusel principal */}
       <ProductGallery images={product.images.edges} />
       {/* Columna de Información y Acciones */}
-      <div>
-        <div className="flex flex-col space-y-1">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-row">
-              <h1 className="heading-06-medium text-text-primary-default">
-                {product.title}
-              </h1>
-              {/* Badge “NEW” si el producto tiene el tag “New” */}
-              {product.isNew && (
-                <span className="body-02-regular ml-[2px] uppercase text-text-primary-default">
-                  NEW
-                </span>
-              )}
-            </div>
-
-            {/* Dot del primer color + “+N” de colores restantes */}
-            {(() => {
-              const colorOption = product.options.find(
-                (opt) => opt.name === "Color"
-              );
-              const colorValues = colorOption?.values ?? [];
-              if (colorValues.length === 0) return null;
-              const firstColor = colorValues[0];
-              const othersCount = colorValues.length - 1;
-              return (
-                <div className="ml-4 flex items-center gap-1">
-                  <span
-                    className="w-5 h-5 rounded-full border"
-                    style={{
-                      backgroundColor: COLOR_MAP[firstColor] ?? firstColor,
-                    }}
-                  />
-                  {othersCount > 0 && (
-                    <span className="body-01-regular text-text-primary-default">
-                      +{othersCount}
-                    </span>
-                  )}
-                </div>
-              );
-            })()}
+      <div className="flex flex-col space-y-1">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-row">
+            <h1 className="heading-06-medium text-text-primary-default">
+              {product.title}
+            </h1>
+            {/* Badge “NEW” si el producto tiene el tag “New” */}
+            {product.isNew && (
+              <span className="body-02-regular ml-[2px] uppercase text-text-primary-default">
+                NEW
+              </span>
+            )}
           </div>
-          {/* ► Título grande */}
-          {/* ► Botón de Favoritos */}
-          {product.productType && (
-            <span className="body-02-medium text-text-secondary-default">
-              {product.productType}
-            </span>
-          )}
-          {/* ► Descripción corta (opcional) */}
-          <div className="body-02-regular text-text-secondary-default">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: product.descriptionHtml || "",
-              }}
-            />
-          </div>
-        </div>
 
-        {/* ► Formulario de selección (color, talle, añadir/comprar) */}
-        <div className="mt-8 bg-background-primary-default">
-          <ProductForm product={product} />
+          {/* Dot del primer color + “+N” de colores restantes */}
+          {(() => {
+            const colorOption = product.options.find(
+              (opt) => opt.name === "Color"
+            );
+            const colorValues = colorOption?.values ?? [];
+            if (colorValues.length === 0) return null;
+            const firstColor = colorValues[0];
+            const othersCount = colorValues.length - 1;
+            return (
+              <div className="ml-4 flex items-center gap-1">
+                <span
+                  className="w-5 h-5 rounded-full border"
+                  style={{
+                    backgroundColor: COLOR_MAP[firstColor] ?? firstColor,
+                  }}
+                />
+                {othersCount > 0 && (
+                  <span className="body-01-regular text-text-primary-default">
+                    +{othersCount}
+                  </span>
+                )}
+              </div>
+            );
+          })()}
         </div>
-        {/* ► Secciones desplegables */}
-        <div className="mt-12 space-y-4">
+        {/* ► Título grande */}
+        {/* ► Botón de Favoritos */}
+        {product.productType && (
+          <span className="body-02-medium text-text-secondary-default">
+            {product.productType}
+          </span>
+        )}
+        {/* ► Descripción corta (opcional) */}
+        <div className="body-02-regular text-text-secondary-default">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: product.descriptionHtml || "",
+            }}
+          />
+        </div>
+      </div>
+
+      {/* ► Formulario de selección (color, talle, añadir/comprar) */}
+      <div className="bg-background-primary-default">
+        <ProductForm product={product} />
+      </div>
+      {/* ► Secciones desplegables */}
+      <div className="flex flex-col gap-4">
+        {/* Acorddion #1 */}
+        <div className="justify-between">
           <Accordion type="single" collapsible>
             <AccordionItem value="item-1">
               <AccordionTrigger>Medidas del producto</AccordionTrigger>
@@ -113,18 +114,50 @@ export default async function ProductDetailPage({
             {/* …más items… */}
           </Accordion>
         </div>
-        {/* ► Productos relacionados */}
-        <div className="mt-12">
-          <RelatedProductsCarousel products={relatedProducts} />
+        {/* Acorddion #2 */}
+        <div className="justify-between">
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Composición, cuidado & origen</AccordionTrigger>
+              <AccordionContent>…contenido…</AccordionContent>
+            </AccordionItem>
+            {/* …más items… */}
+          </Accordion>
         </div>
-        {/* ► Precio destacado */}
-        <p className="body-02-regular text-text-secondary-default">
-          {new Intl.NumberFormat("es-AR", {
-            style: "currency",
-            currency: product.priceRange.minVariantPrice.currencyCode,
-          }).format(parseFloat(product.priceRange.minVariantPrice.amount))}
-        </p>
+        {/* Acorddion #3 */}
+        <div className="justify-between">
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>
+                Envíos, cambios & devoluciones
+              </AccordionTrigger>
+              <AccordionContent>…contenido…</AccordionContent>
+            </AccordionItem>
+            {/* …más items… */}
+          </Accordion>
+        </div>
+        {/* Acorddion #4 */}
+        <div className="justify-between">
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-4">
+              <AccordionTrigger>Disponibilidad en tienda</AccordionTrigger>
+              <AccordionContent>…contenido…</AccordionContent>
+            </AccordionItem>
+            {/* …más items… */}
+          </Accordion>
+        </div>
       </div>
+      {/* ► Productos relacionados */}
+      <div className="">
+        <RelatedProductsCarousel products={relatedProducts} />
+      </div>
+      {/* ► Precio destacado */}
+      <p className="body-02-regular text-text-secondary-default">
+        {new Intl.NumberFormat("es-AR", {
+          style: "currency",
+          currency: product.priceRange.minVariantPrice.currencyCode,
+        }).format(parseFloat(product.priceRange.minVariantPrice.amount))}
+      </p>
     </section>
   );
 }
