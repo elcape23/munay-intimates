@@ -5,7 +5,16 @@ import { FavoriteButton } from "@/components/common/favorite-button";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ProductForm } from "@/components/product/product-form"; // ¡NUEVO! Importamos nuestro componente interactivo.
+import { ProductForm } from "@/components/product/product-form";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+import RelatedProductsCarousel from "@/components/product/related-products-carousel";
+import { getCollectionByHandle } from "@/lib/shopify";
+import ProductGallery from "@/components/product/product-gallery";
 
 // Esta es una página dinámica. Next.js le pasará los 'params' desde la URL.
 export default async function ProductDetailPage({
@@ -13,86 +22,71 @@ export default async function ProductDetailPage({
 }: {
   params: { handle: string };
 }) {
-  const { handle } = params;
+  // 1️⃣ Trae el producto principal
+  const product = await getProductByHandle(params.handle);
+  if (!product) notFound();
 
-  // Obtenemos los datos del producto usando la función que creamos.
-  const product: ShopifyProduct | null = await getProductByHandle(handle);
+  // 2️⃣ Averigua el handle de su primera colección (o la que prefieras)
+  const firstCollectionHandle = product.collections?.edges?.[0]?.node.handle;
 
-  // Si el producto no se encuentra, mostramos la página 404.
-  if (!product) {
-    notFound();
-  }
+  const relatedProducts: ShopifyProduct[] = await getCollectionByHandle(
+    product.collections?.edges[0]?.node.handle ?? ""
+  ).then((c) => c?.products.edges.map((e) => e.node) ?? []);
 
   return (
-    <main className="container mx-auto ">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-        {/* Columna de la Galería de Imágenes */}
-        <div className="flex flex-col items-center">
-          {/* Imagen Principal */}
-          <div className="relative w-full aspect-[10/14] overflow-hidden border">
-            <Image
-              src={product.images.edges[0]?.node.url || "/placeholder.png"}
-              alt={product.images.edges[0]?.node.altText || product.title}
-              fill
-              style={{ objectFit: "cover" }}
-              priority
-            />
-            <div className="absolute top-14 right-6 z-10">
-              <FavoriteButton productHandle={product.handle} />
-            </div>
-            <div className="absolute top-14 right-6 z-10">
-              <ArrowUpTrayIcon className="h-6 w-6 text-icon-primary-default mt-11" />
-            </div>
-          </div>
-          {/* Miniaturas */}
-          <div className="flex space-x-2 mt-4">
-            {product.images.edges.slice(0, 4).map((edge, index) => (
-              <div
-                key={edge.node.url}
-                className="relative w-20 h-20 rounded border overflow-hidden cursor-pointer"
-              >
-                <Image
-                  src={edge.node.url}
-                  alt={`${product.title} - imagen ${index + 1}`}
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Columna de Información y Acciones */}
-        <div className="flex flex-col py-4">
-          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
+    <section className="grid grid-cols-1 gap-y-6 gap-x-6">
+      {/* Columna de la Galería de Imágenes */}
+      {/* ▶ Carrusel principal */}
+      <ProductGallery images={product.images.edges} />
+      {/* Columna de Información y Acciones */}
+      <div>
+        <div className="flex flex-col space-y-1">
+          {/* ► Título grande */}
+          <h1 className="heading-06-medium text-text-primary-default">
             {product.title}
           </h1>
 
-          <p className="text-2xl mt-4 text-gray-800">
-            {new Intl.NumberFormat("es-AR", {
-              style: "currency",
-              currency: product.priceRange.minVariantPrice.currencyCode,
-            }).format(parseFloat(product.priceRange.minVariantPrice.amount))}
-          </p>
-
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold text-gray-700">Descripción</h2>
+          {product.productType && (
+            <span className="body-02-medium text-text-secondary-default">
+              {product.productType}
+            </span>
+          )}
+          {/* ► Descripción corta (opcional) */}
+          <div className="body-02-regular text-text-secondary-default">
             <div
-              className="prose prose-lg mt-2 text-gray-600"
               dangerouslySetInnerHTML={{
                 __html: product.descriptionHtml || "",
               }}
             />
           </div>
-
-          {/* ¡MODIFICADO! Reemplazamos toda la sección de opciones y el botón
-              con nuestro nuevo componente de cliente ProductForm.
-              Le pasamos los datos del producto como prop. */}
-          <div className="mt-8">
-            <ProductForm product={product} />
-          </div>
         </div>
+
+        {/* ► Formulario de selección (color, talle, añadir/comprar) */}
+        <div className="mt-8 bg-background-primary-default">
+          <ProductForm product={product} />
+        </div>
+        {/* ► Secciones desplegables */}
+        <div className="mt-12 space-y-4">
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-1">
+              <AccordionTrigger>Medidas del producto</AccordionTrigger>
+              <AccordionContent>…contenido…</AccordionContent>
+            </AccordionItem>
+            {/* …más items… */}
+          </Accordion>
+        </div>
+        {/* ► Productos relacionados */}
+        <div className="mt-12">
+          <RelatedProductsCarousel products={relatedProducts} />
+        </div>
+        {/* ► Precio destacado */}
+        <p className="body-02-regular text-text-secondary-default">
+          {new Intl.NumberFormat("es-AR", {
+            style: "currency",
+            currency: product.priceRange.minVariantPrice.currencyCode,
+          }).format(parseFloat(product.priceRange.minVariantPrice.amount))}
+        </p>
       </div>
-    </main>
+    </section>
   );
 }

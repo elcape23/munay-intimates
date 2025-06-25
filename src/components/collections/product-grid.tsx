@@ -7,7 +7,7 @@ import { ShopifyProduct, ShopifyCollection } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ProductCard } from "@/components/common/product-card";
 import { extractColorVariants } from "@/lib/product-helpers";
-import { Footer } from "../common/footer";
+import { COLOR_MAP } from "@/lib/color-map";
 
 type ProductGridProps = {
   title: string;
@@ -65,11 +65,15 @@ export function ProductGrid({
         const groupNameColor = "Color";
         if (!modal[groupNameColor]) modal[groupNameColor] = new Set();
         if (product.color?.reference?.fields) {
-          const colorField = product.color.reference.fields.find(
+          const hexField = product.color.reference.fields.find(
+            (f) => f.key === "hex"
+          );
+          const nameField = product.color.reference.fields.find(
             (f) => f.key === "name" || f.key === "value"
           );
-          if (colorField?.value) {
-            modal[groupNameColor].add(`${groupNameColor}:${colorField.value}`);
+          const colorValue = hexField?.value || nameField?.value;
+          if (colorValue) {
+            modal[groupNameColor].add(`${groupNameColor}:${colorValue}`);
           }
         }
 
@@ -88,12 +92,33 @@ export function ProductGrid({
         const customMetafields = [product.talle, product.estacion];
         customMetafields.forEach((metafield) => {
           if (metafield?.key && metafield?.value) {
-            const groupName =
-              metafield.key.charAt(0).toUpperCase() + metafield.key.slice(1);
-            if (!modal[groupName]) {
-              modal[groupName] = new Set();
+            const key = metafield.key.toLowerCase();
+            if (key === "talle") {
+              if (!modal["Talle"]) modal["Talle"] = new Set();
+              metafield.value.split(",").forEach((val) => {
+                const trimmed = val.trim();
+                if (trimmed) {
+                  modal["Talle"].add(`Talle:${trimmed}`);
+                }
+              });
+            } else {
+              const groupName =
+                metafield.key.charAt(0).toUpperCase() + metafield.key.slice(1);
+              if (!modal[groupName]) {
+                modal[groupName] = new Set();
+              }
+              if (metafield.key.toLowerCase() === "talle") {
+                metafield.value
+                  .split(",")
+                  .map((v) => v.trim())
+                  .filter(Boolean)
+                  .forEach((val) => {
+                    modal[groupName].add(`${groupName}:${val}`);
+                  });
+              } else {
+                modal[groupName].add(`${groupName}:${metafield.value}`);
+              }
             }
-            modal[groupName].add(`${groupName}:${metafield.value}`);
           }
         });
         const sizeOption = product.options?.find((opt) =>
@@ -195,7 +220,10 @@ export function ProductGrid({
               if (
                 key === "color" &&
                 product.color?.reference?.fields.some(
-                  (f) => f.key === "name" && f.value === value
+                  (f) =>
+                    (f.key === "hex" && f.value === value) ||
+                    (f.key === "name" && f.value === value) ||
+                    (f.key === "value" && f.value === value)
                 )
               )
                 return true;
@@ -338,14 +366,18 @@ export function ProductGrid({
                       {values.map((filterString) => {
                         const value = filterString.split(":")[1].trim();
                         const active = activeFilters.includes(filterString);
+                        const bgColor = value.startsWith("#")
+                          ? value
+                          : COLOR_MAP[value] ?? "#cccccc";
                         return (
                           <button
                             key={filterString}
                             onClick={() => handleFilterToggle(filterString)}
+                            aria-label={value}
                             className={`h-8 w-8 rounded-full border ${
                               active ? "ring-2 ring-gray-900" : ""
                             }`}
-                            style={{ backgroundColor: value }}
+                            style={{ backgroundColor: bgColor }}
                           />
                         );
                       })}
@@ -359,6 +391,7 @@ export function ProductGrid({
                           <button
                             key={filterString}
                             onClick={() => handleFilterToggle(filterString)}
+                            aria-label={value}
                             className={`h-8 w-8 flex items-center justify-center rounded-full border text-xs ${
                               active
                                 ? "bg-gray-900 text-white border-gray-900"

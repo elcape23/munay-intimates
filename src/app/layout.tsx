@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={manrope.className}>
-      <body>
+      <body className="overflow-x-hidden no-scrollbar">
         <Navbar />
         <SideMenu /> {/* El SideMenu se superpone y se controla solo */}
         <main>{children}</main>

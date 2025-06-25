@@ -43,7 +43,7 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
       aria-label={
         isProductFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
       }
-      className="rounded-full hover:bg-gray-200 transition-colors"
+      className="text-icon-primary-default hover:bg-gray-200 transition-colors"
     >
       {isProductFavorite ? (
         <HeartIconSolid className="h-6 w-6 text-icon-primary-default" />

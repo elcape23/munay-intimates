@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   XMarkIcon,
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"; // tu helper de clases condicionales
 
 export function Navbar() {
   const path = usePathname();
+  const router = useRouter();
   const isHome = path === "/";
   const isProduct = path.startsWith("/products/");
   const { toggleMenu } = useUiStore();
@@ -31,22 +32,32 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Handler: abre menú o vuelve atrás
+  const handleMenuOrBack = () => {
+    if (isProduct) {
+      router.back();
+    } else {
+      toggleMenu();
+    }
+  };
+
   return (
     <nav
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-700 ease-in-out",
         {
           "bg-transparent": (isHome && !scrolled) || isProduct,
-          "bg-background-primary-default": (!isHome || scrolled) && !isProduct,
+          "bg-background-primary-default":
+            (!isHome || scrolled) && (!isProduct || scrolled),
         }
       )}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
+      <div className="max-w-7xl h-[55px] mx-auto flex items-center justify-between px-6 py-3">
         {/* Menú hamburguesa */}
         <button
           type="button"
-          aria-label="Abrir menú"
-          onClick={toggleMenu}
+          aria-label={isProduct ? "Volver atrás" : "Abrir menú"}
+          onClick={handleMenuOrBack}
           className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring-primary"
         >
           {" "}
@@ -63,21 +74,26 @@ export function Navbar() {
         </button>
 
         {/* Logo brand */}
-        {!isProduct && (
-          <Link href="/" aria-label="Ir al home" className="flex items-center">
-            {/* El SVG está en /public/munay-wordmark.svg */}
-            <img
-              src={
-                isHome && !scrolled
-                  ? "/munay-wordmark-white.svg"
-                  : "/munay-wordmark.svg"
-              }
-              alt="Logo Munay"
-              className="h-auto w-[106px]"
-              loading="eager"
-            />
-          </Link>
-        )}
+        {!isProduct ||
+          (scrolled && (
+            <Link
+              href="/"
+              aria-label="Ir al home"
+              className="flex items-center"
+            >
+              {/* El SVG está en /public/munay-wordmark.svg */}
+              <img
+                src={
+                  isHome && !scrolled
+                    ? "/munay-wordmark-white.svg"
+                    : "/munay-wordmark.svg"
+                }
+                alt="Logo Munay"
+                className="h-auto w-[106px]"
+                loading="eager"
+              />
+            </Link>
+          ))}
 
         {/* Icono carrito */}
         <Link

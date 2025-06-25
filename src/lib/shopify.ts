@@ -50,11 +50,15 @@ export type ShopifyMetafield = {
 export type ShopifyProduct = {
   id: string;
   title: string;
+  productType?: string | null;
   handle: string;
   tags: string[];
   createdAt?: string;
   descriptionHtml?: string;
-  priceRange: { minVariantPrice: ShopifyPrice };
+  priceRange: {
+    minVariantPrice: ShopifyPrice;
+    maxVariantPrice: ShopifyPrice;
+  };
   images: { edges: { node: ShopifyImage }[] };
   options: ShopifyProductOption[];
   variants?: { edges: { node: ShopifyProductVariant }[] };
@@ -605,6 +609,7 @@ export async function getProductByHandle(
       product(handle: $handle) {
         id
         title
+        productType
         handle
         descriptionHtml
         options {
@@ -624,6 +629,14 @@ export async function getProductByHandle(
               }
             }
           }
+        }
+        talle: metafield(namespace: "custom", key: "talle") {
+          key
+          value
+        }
+        estacion: metafield(namespace: "custom", key: "estacion") {
+          key
+          value
         }
         priceRange {
           minVariantPrice {

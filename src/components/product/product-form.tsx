@@ -4,7 +4,8 @@
 
 import { useState, useMemo } from "react";
 import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
-import { useCartStore } from "@/store/cart-store"; // ¡NUEVO! Importamos nuestro store.
+import { useCartStore } from "@/store/cart-store";
+import { COLOR_MAP } from "@/lib/color-map";
 
 type ProductFormProps = {
   product: ShopifyProduct;
@@ -105,24 +106,33 @@ export function ProductForm({ product }: ProductFormProps) {
       {/* Selectores de variantes */}
       <div className="space-y-4">
         {productOptions.map((option) => (
-          <div key={option.id}>
-            <label className="block text-sm font-medium text-gray-700">
+          <div
+            key={option.id}
+            className="flex flex-row gap-10 justify-between items-center"
+          >
+            <label className="block body-01-medium text-gray-700">
               {option.name}
             </label>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="flex flex-row gap-2 items-center">
               {option.values.map((value) => {
                 const isActive = selectedOptions[option.name] === value;
                 return (
                   <button
                     key={value}
                     onClick={() => handleOptionChange(option.name, value)}
-                    className={`px-4 py-2 border rounded-full text-sm font-medium transition-colors
+                    className={`body-01-regular transition-colors 
                                         ${
                                           isActive
-                                            ? "bg-gray-900 text-white border-gray-900"
-                                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                                            ? "text-text-primary-default"
+                                            : "text-text-secondary-default hover:bg-gray-100"
                                         }`}
                   >
+                    {option.name.toLowerCase() === "color" && (
+                      <span
+                        className="inline-block w-4 h-4 rounded-full mr-1 border"
+                        style={{ backgroundColor: COLOR_MAP[value] ?? value }}
+                      />
+                    )}
                     {value}
                   </button>
                 );
@@ -133,23 +143,40 @@ export function ProductForm({ product }: ProductFormProps) {
       </div>
 
       {/* Botón de Añadir al Carrito */}
-      <button
-        onClick={handleAddToCart}
-        disabled={isAddToCartDisabled}
-        className={`w-full font-bold py-3 px-6 rounded-lg transition-colors
+      <div className="flex flex-row gap-4">
+        <button
+          onClick={handleAddToCart}
+          disabled={isAddToCartDisabled}
+          className={`w-full body-01-semibold py-3 px-6 transition-colors
               ${
                 isAddToCartDisabled
-                  ? "bg-gray-400 text-white cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
+                  ? "bg-background-fill-neutral-hover text-text-primary-invert cursor-not-allowed"
+                  : "bg-background-fill-neutral-default text-text-primary-invert hover:bg-blue-700"
               }`}
-      >
-        {isLoading
-          ? "Añadiendo..."
-          : selectedVariant?.availableForSale
-          ? "Añadir al Carrito"
-          : "No Disponible"}
-      </button>
-
+        >
+          {isLoading
+            ? "Añadiendo..."
+            : selectedVariant?.availableForSale
+            ? "Añadir"
+            : "No Disponible"}
+        </button>
+        <button
+          onClick={handleAddToCart}
+          disabled={isAddToCartDisabled}
+          className={`w-full body-01-semibold py-3 px-6 transition-colors
+              ${
+                isAddToCartDisabled
+                  ? "bg-transparent text-text-primary-default border cursor-not-allowed"
+                  : "bg-transparent text-text-primary-default border border-border-primary-default hover:bg-blue-700"
+              }`}
+        >
+          {isLoading
+            ? "Añadiendo..."
+            : selectedVariant?.availableForSale
+            ? "Comprar"
+            : "No Disponible"}
+        </button>
+      </div>
       {/* Mensajes para el usuario */}
       {message && (
         <p className="text-center text-sm text-gray-600 mt-4">{message}</p>
