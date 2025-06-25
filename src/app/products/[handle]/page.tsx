@@ -44,15 +44,17 @@ export default async function ProductDetailPage({
       <div>
         <div className="flex flex-col space-y-1">
           <div className="flex items-center justify-between">
-            <h1 className="heading-06-medium text-text-primary-default">
-              {product.title}
-            </h1>
-            {/* Badge “NEW” si el producto tiene el tag “New” */}
-            {product.isNew && (
-              <span className="body-03-regular ml-[2px] text-text-secondary-default">
-                NEW
-              </span>
-            )}
+            <div className="flex flex-row">
+              <h1 className="heading-06-medium text-text-primary-default">
+                {product.title}
+              </h1>
+              {/* Badge “NEW” si el producto tiene el tag “New” */}
+              {product.isNew && (
+                <span className="body-02-regular ml-[2px] uppercase text-text-primary-default">
+                  NEW
+                </span>
+              )}
+            </div>
 
             {/* Dot del primer color + “+N” de colores restantes */}
             {(() => {

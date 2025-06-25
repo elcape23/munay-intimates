@@ -567,8 +567,9 @@ export async function getSaleProducts(
       }
     }
 
-    const createdAt = new Date(node.createdAt);
-    const isNew = (Date.now() - createdAt.getTime()) / (1000 * 3600 * 24) < 30;
+    const createdMs = new Date(node.createdAt).getTime();
+    const TWO_WEEKS_MS = 1000 * 60 * 60 * 24 * 14; // milisegundos en dos semanas
+    const isNew = Date.now() - createdMs < TWO_WEEKS_MS;
 
     return {
       id: node.id,
@@ -614,6 +615,7 @@ export async function getProductByHandle(
         productType
         handle
         descriptionHtml
+        createdAt
         options {
           id
           name
@@ -674,7 +676,18 @@ export async function getProductByHandle(
     query,
     variables: { handle },
   });
-  return response.product;
+  const product = response.product;
+  if (!response.product) return null;
+  const p = response.product;
+  // fecha en ms, o 0 si no existe
+  const createdMs = p.createdAt ? Date.parse(p.createdAt) : 0;
+  const TWO_WEEKS_MS = 1000 * 60 * 60 * 24 * 14;
+  // (1) nace hace <30 días  (2) o viene con tag “new”
+  const isNewByDate = Boolean(
+    createdMs && Date.now() - createdMs < TWO_WEEKS_MS
+  );
+  const hasNewTag = p.tags?.some((t) => t.toLowerCase() === "new");
+  return { ...p, isNew: isNewByDate || hasNewTag };
 }
 
 export async function getProductsByHandles(
@@ -767,10 +780,10 @@ export async function getCollectionsForMenu(): Promise<NavItem[]> {
 
     /* --- heurística adicional por fecha o tag --- */
     const newestProduct = node.products.edges[0]?.node;
+    const TWO_WEEKS_MS = 1000 * 60 * 60 * 24 * 14;
     const recentlyAdded =
       newestProduct &&
-      Date.now() - Date.parse(newestProduct.createdAt) <
-        1000 * 60 * 60 * 24 * 30;
+      Date.now() - Date.parse(newestProduct.createdAt) < TWO_WEEKS_MS;
     const hasNewTag = newestProduct?.tags?.includes("new");
 
     /* --- decide la sección --- */
