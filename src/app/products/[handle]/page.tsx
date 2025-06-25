@@ -34,7 +34,7 @@ export default async function ProductDetailPage({
   ).then((c) => c?.products.edges.map((e) => e.node) ?? []);
 
   return (
-    <section className="grid grid-cols-1 gap-y-6 gap-x-6">
+    <section className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar">
       {/* Columna de la Galería de Imágenes */}
       {/* ▶ Carrusel principal */}
       <ProductGallery images={product.images.edges} />
@@ -45,7 +45,7 @@ export default async function ProductDetailPage({
           <h1 className="heading-06-medium text-text-primary-default">
             {product.title}
           </h1>
-
+          {/* ► Botón de Favoritos */}
           {product.productType && (
             <span className="body-02-medium text-text-secondary-default">
               {product.productType}

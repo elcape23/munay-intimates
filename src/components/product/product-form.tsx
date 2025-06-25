@@ -123,8 +123,8 @@ export function ProductForm({ product }: ProductFormProps) {
                     className={`body-01-regular transition-colors 
                                         ${
                                           isActive
-                                            ? "text-text-primary-default"
-                                            : "text-text-secondary-default hover:bg-gray-100"
+                                            ? "text-text-primary-default border-b-[2px] border-border-primary-default"
+                                            : "text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
                                         }`}
                   >
                     {option.name.toLowerCase() === "color" && (
