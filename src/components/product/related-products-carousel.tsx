@@ -14,34 +14,33 @@ export default function RelatedProductsCarousel({
   products,
 }: RelatedProductsCarouselProps) {
   return (
-    <section>
+    <section className="space-y-5">
       <h2 className="heading-06-medium text-text-primary-default">
         Te puede interesar
       </h2>
-      <div className="flex space-x-4 overflow-x-auto snap-x snap-mandatory no-scrollbar">
+      <div className="-m-6 flex space-x-2 overflow-x-auto snap-x snap-mandatory no-scrollbar [&>div>a>div:nth-child(2)]:ml-4">
         {products.map((product) => {
           // Mapea ShopifyProduct a las props de ProductCard
-          const isNew = product.createdAt
-            ? Date.now() - new Date(product.createdAt).getTime() <
-              1000 * 3600 * 24 * 30
-            : false;
+          const variant = product.variants?.edges[0]?.node;
+          const price = variant?.price?.amount
+            ? parseFloat(variant.price.amount).toFixed(0)
+            : parseFloat(product.priceRange.minVariantPrice.amount).toFixed(0);
+          const compareAt = variant?.compareAtPrice?.amount;
           const cardProps: ProductCardProps = {
             id: product.id,
             title: product.title,
             handle: product.handle,
             imageSrc: product.images.edges[0]?.node.url || "/placeholder.png",
             altText: product.images.edges[0]?.node.altText || product.title,
-            price: parseFloat(
-              product.priceRange.minVariantPrice.amount
-            ).toFixed(0),
-            compareAtPrice: product.priceRange.maxVariantPrice.amount
-              ? parseFloat(product.priceRange.maxVariantPrice.amount).toFixed(0)
+            price,
+            compareAtPrice: compareAt
+              ? parseFloat(compareAt).toFixed(0)
               : undefined,
             colorVariants:
               product.options.find((o) => o.name.toLowerCase() === "color")
                 ?.values || [],
 
-            isNew,
+            isNew: product.isNew,
           };
 
           return (

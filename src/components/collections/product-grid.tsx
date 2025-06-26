@@ -463,7 +463,7 @@ export function ProductGrid({
       </div>
 
       {/* --- Barra de Filtros y Ordenamiento --- */}
-      <div className="mb-8 space-y-4">
+      <div className="space-y-4">
         {Object.entries(primaryFilterGroup).map(([groupName, tags]) => (
           <div key={groupName}>
             <div className="flex flex-wrap gap-2 mt-5">
@@ -486,7 +486,7 @@ export function ProductGrid({
       </div>
 
       {/* --- Grilla de Productos --- */}
-      <div className="-mx-6 h-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5 ">
+      <div className="-mx-6 my-6 h-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5 ">
         {filteredAndSortedProducts.map((product) => (
           <div
             key={product.handle}

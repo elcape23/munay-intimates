@@ -745,6 +745,22 @@ export async function getRecommendedProducts(
         handle
         tags
         createdAt
+        variants(first: 10) {
+          edges {
+            node {
+              selectedOptions {
+                name
+                value
+              }
+              price {
+                amount
+              }
+              compareAtPrice {
+                amount
+              }
+            }
+          }
+        }
         priceRange {
           minVariantPrice {
             amount
@@ -778,8 +794,14 @@ export async function getRecommendedProducts(
       variables: { productId },
     }
   );
-  // la API devuelve todos, aquí cortamos a `limit` en cliente
-  return data.productRecommendations.slice(0, limit);
+  // la API devuelve todos, aquí cortamos a `limit` y calculamos flag NEW
+  const TWO_WEEKS_MS = 1000 * 60 * 60 * 24 * 14;
+  return data.productRecommendations.slice(0, limit).map((p) => {
+    const createdMs = p.createdAt ? Date.parse(p.createdAt) : 0;
+    const isNewByDate = createdMs && Date.now() - createdMs < TWO_WEEKS_MS;
+    const hasNewTag = p.tags?.some((t) => t.toLowerCase() === "new");
+    return { ...p, isNew: Boolean(isNewByDate || hasNewTag) };
+  });
 }
 
 // --- Funciones de Navegación desde Colecciones ---

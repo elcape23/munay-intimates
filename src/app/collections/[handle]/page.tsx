@@ -28,15 +28,13 @@ export default async function CollectionPage({
   const collections = await getCollections();
 
   return (
-    <main className="pt-[67px] bg-gray-50 min-h-screen">
-      <section className="container bg-background-primary-default mx-auto px-6 pb-16">
-        <ProductGrid
-          title={collection.title}
-          products={products}
-          collections={collections}
-        />
-      </section>
+    <section className="container pt-[60px] mx-auto px-6 min-h-screen">
+      <ProductGrid
+        title={collection.title}
+        products={products}
+        collections={collections}
+      />
       <Footer />
-    </main>
+    </section>
   );
 }

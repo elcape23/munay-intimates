@@ -1,13 +1,6 @@
 // src/app/products/[handle]/page.tsx
 
-import {
-  getProductByHandle,
-  getRecommendedProducts,
-  ShopifyProduct,
-} from "@/lib/shopify";
-import { FavoriteButton } from "@/components/common/favorite-button";
-import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
+import { getProductByHandle, getRecommendedProducts } from "@/lib/shopify";
 import { notFound } from "next/navigation";
 import { ProductForm } from "@/components/product/product-form";
 import {
@@ -17,9 +10,9 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import RelatedProductsCarousel from "@/components/product/related-products-carousel";
-import { getCollectionByHandle } from "@/lib/shopify";
 import ProductGallery from "@/components/product/product-gallery";
 import { COLOR_MAP } from "@/lib/color-map";
+import { Footer } from "@/components/common/footer";
 
 // Esta es una página dinámica. Next.js le pasará los 'params' desde la URL.
 export default async function ProductDetailPage({
@@ -160,6 +153,7 @@ export default async function ProductDetailPage({
           currency: product.priceRange.minVariantPrice.currencyCode,
         }).format(parseFloat(product.priceRange.minVariantPrice.amount))}
       </p>
+      <Footer />
     </section>
   );
 }

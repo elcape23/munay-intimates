@@ -8,7 +8,7 @@ import {
 import Link from "next/link";
 
 export const Footer: React.FC = () => (
-  <footer className="py-2 px-6 bg-background-primary-default">
+  <footer className="py-2 bg-background-primary-default">
     <div className="max-w-screen-xl mx-auto flex flex-col items-start space-y-6">
       {/* Social Icons */}
       <div className="flex space-x-1">
