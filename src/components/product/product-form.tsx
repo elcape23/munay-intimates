@@ -1,8 +1,7 @@
 // src/components/product/ProductForm.tsx
 
 "use client";
-
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
 import { COLOR_MAP } from "@/lib/color-map";
@@ -48,6 +47,25 @@ export function ProductForm({ product }: ProductFormProps) {
   // Obtenemos el estado y las acciones directamente desde nuestro store de Zustand.
   const { addItemToCart, isLoading } = useCartStore();
   const [message, setMessage] = useState(""); // Mantenemos un mensaje local para feedback inmediato
+
+  const buttonContainerRef = useRef<HTMLDivElement | null>(null);
+  const [showSticky, setShowSticky] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowSticky(!entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    const current = buttonContainerRef.current;
+    if (current) observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, []);
 
   const selectedVariant: ShopifyProductVariant | undefined = useMemo(() => {
     if (!product.variants) return undefined;
@@ -229,8 +247,8 @@ export function ProductForm({ product }: ProductFormProps) {
             );
           })}
       </div>
-      {/* Botón de Añadir al Carrito */}
-      <div className="flex flex-row gap-4">
+      {/* Botones de acción */}
+      <div ref={buttonContainerRef} className="flex flex-row gap-4">
         <button
           onClick={handleAddToCart}
           disabled={isAddToCartDisabled}
@@ -267,6 +285,35 @@ export function ProductForm({ product }: ProductFormProps) {
       {/* Mensajes para el usuario */}
       {message && (
         <p className="text-center text-sm text-gray-600 mt-4">{message}</p>
+      )}
+
+      {showSticky && (
+        <div className="fixed bottom-0 left-0 w-screen h-24 bg-background-primary-default border-t border-gray-200 z-50 flex items-center justify-between px-4">
+          <button
+            onClick={handleAddToCart}
+            disabled={isAddToCartDisabled}
+            className={`body-01-semibold py-3 px-6 transition-colors mr-4
+            ${
+              isAddToCartDisabled
+                ? "bg-background-fill-neutral-hover text-text-primary-invert cursor-not-allowed"
+                : "bg-background-fill-neutral-default text-text-primary-invert hover:bg-blue-700"
+            }`}
+          >
+            {isLoading ? "Añadiendo..." : "Añadir"}
+          </button>
+          <div className="flex flex-col items-end">
+            <p className="body-01-semibold text-text-primary-default">
+              {selectedVariant &&
+                new Intl.NumberFormat("es-AR", {
+                  style: "currency",
+                  currency: selectedVariant.price.currencyCode,
+                }).format(parseFloat(selectedVariant.price.amount))}
+            </p>
+            <p className="body-02-regular text-text-secondary-default">
+              Envío calculado en el checkout
+            </p>
+          </div>
+        </div>
       )}
     </div>
   );
