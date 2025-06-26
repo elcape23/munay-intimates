@@ -135,10 +135,10 @@ export function ProductForm({ product }: ProductFormProps) {
                           type="button"
                           aria-label={value}
                           onClick={() => handleOptionChange(option.name, value)}
-                          className={`w-5 h-5 rounded-full border-[1px] ${
+                          className={`w-6 h-6 rounded-full border-[1.5px] ${
                             isActive
-                              ? "border-border-primary-default"
-                              : "border-transparent"
+                              ? "p-2 border-border-primary-default"
+                              : "p-2 border-transparent"
                           }`}
                           style={{ backgroundColor: hex }}
                         />
@@ -176,8 +176,8 @@ export function ProductForm({ product }: ProductFormProps) {
                           onClick={() => handleOptionChange(option.name, value)}
                           className={`transition-colors ${
                             isActive
-                              ? "body-01-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
-                              : "text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
+                              ? "p-1 body-01-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
+                              : "p-1 text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
                           }`}
                         >
                           {value}

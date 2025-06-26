@@ -207,7 +207,7 @@ export async function getMenu(
     id: item.id,
     title: item.title,
     // quitamos el dominio para obtener path relativo
-    url: item.url.replace(/^https?:\/\/[^/]+/, ""),
+    url: item.url.replace(/^https?:\/\/[^/]/, ""),
     section: (item.section?.value as any) ?? "categories",
     isNew: item.isNew?.value === "true",
   }));
@@ -727,6 +727,59 @@ export async function getProductsByHandles(
         ?.node;
     })
     .filter(Boolean) as ShopifyProduct[];
+}
+
+/**
+ * Devuelve hasta `limit` productos recomendados por Shopify
+ * basados en el producto dado.
+ */
+export async function getRecommendedProducts(
+  productId: string,
+  limit: number = 4
+): Promise<ShopifyProduct[]> {
+  const query = gql`
+    query GetRecommendations($productId: ID!) {
+      productRecommendations(productId: $productId) {
+        id
+        title
+        handle
+        tags
+        createdAt
+        priceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+          maxVariantPrice {
+            amount
+            currencyCode
+          }
+        }
+        images(first: 1) {
+          edges {
+            node {
+              url
+              altText
+            }
+          }
+        }
+        options {
+          id
+          name
+          values
+        }
+      }
+    }
+  `;
+  // shopifyFetch viene de la configuración inicial de GraphQLClient :contentReference[oaicite:1]{index=1}
+  const data = await shopifyFetch<{ productRecommendations: ShopifyProduct[] }>(
+    {
+      query,
+      variables: { productId },
+    }
+  );
+  // la API devuelve todos, aquí cortamos a `limit` en cliente
+  return data.productRecommendations.slice(0, limit);
 }
 
 // --- Funciones de Navegación desde Colecciones ---

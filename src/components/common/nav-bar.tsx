@@ -74,26 +74,21 @@ export function Navbar() {
         </button>
 
         {/* Logo brand */}
-        {!isProduct ||
-          (scrolled && (
-            <Link
-              href="/"
-              aria-label="Ir al home"
-              className="flex items-center"
-            >
-              {/* El SVG está en /public/munay-wordmark.svg */}
-              <img
-                src={
-                  isHome && !scrolled
-                    ? "/munay-wordmark-white.svg"
-                    : "/munay-wordmark.svg"
-                }
-                alt="Logo Munay"
-                className="h-auto w-[106px]"
-                loading="eager"
-              />
-            </Link>
-          ))}
+        {(!isProduct || scrolled) && (
+          <Link href="/" aria-label="Ir al home" className="flex items-center">
+            {/* El SVG está en /public/munay-wordmark.svg */}
+            <img
+              src={
+                isHome && !scrolled
+                  ? "/munay-wordmark-white.svg"
+                  : "/munay-wordmark.svg"
+              }
+              alt="Logo Munay"
+              className="h-auto w-[106px]"
+              loading="eager"
+            />
+          </Link>
+        )}
 
         {/* Icono carrito */}
         <Link
@@ -108,7 +103,7 @@ export function Navbar() {
             })}
           />
           {totalQuantity > 0 && (
-            <span className="absolute -right-1 -top-1 flex items-center justify-center rounded-full bg-status-error text-xs font-medium text-white">
+            <span className="absolute -right-1 -top-1 flex items-center justify-center rounded-full body-03-medium bg-background-fill-neutral-default text-text-primary-invert w-4 h-4">
               {totalQuantity}
             </span>
           )}

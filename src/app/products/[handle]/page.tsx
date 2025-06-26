@@ -1,6 +1,10 @@
 // src/app/products/[handle]/page.tsx
 
-import { getProductByHandle, ShopifyProduct } from "@/lib/shopify";
+import {
+  getProductByHandle,
+  getRecommendedProducts,
+  ShopifyProduct,
+} from "@/lib/shopify";
 import { FavoriteButton } from "@/components/common/favorite-button";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
@@ -31,9 +35,7 @@ export default async function ProductDetailPage({
   // 2️⃣ Averigua el handle de su primera colección (o la que prefieras)
   const firstCollectionHandle = product.collections?.edges?.[0]?.node.handle;
 
-  const relatedProducts: ShopifyProduct[] = await getCollectionByHandle(
-    product.collections?.edges[0]?.node.handle ?? ""
-  ).then((c) => c?.products.edges.map((e) => e.node) ?? []);
+  const relatedProducts = await getRecommendedProducts(product.id, 4);
 
   return (
     <section className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar">

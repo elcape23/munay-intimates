@@ -14,7 +14,7 @@ export default function RelatedProductsCarousel({
   products,
 }: RelatedProductsCarouselProps) {
   return (
-    <section className="">
+    <section>
       <h2 className="heading-06-medium text-text-primary-default">
         Te puede interesar
       </h2>
@@ -45,15 +45,8 @@ export default function RelatedProductsCarousel({
           };
 
           return (
-            <div className="flex space-x-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4">
-              {products.map((p) => (
-                <div
-                  key={product.handle}
-                  className="snap-start flex-shrink-0 w-64"
-                >
-                  <ProductCard {...cardProps} />
-                </div>
-              ))}
+            <div key={product.handle} className="snap-start flex-shrink-0 w-64">
+              <ProductCard {...cardProps} />
             </div>
           );
         })}
