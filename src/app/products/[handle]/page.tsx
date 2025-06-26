@@ -146,13 +146,6 @@ export default async function ProductDetailPage({
       <div className="">
         <RelatedProductsCarousel products={relatedProducts} />
       </div>
-      {/* ► Precio destacado */}
-      <p className="body-02-regular text-text-secondary-default">
-        {new Intl.NumberFormat("es-AR", {
-          style: "currency",
-          currency: product.priceRange.minVariantPrice.currencyCode,
-        }).format(parseFloat(product.priceRange.minVariantPrice.amount))}
-      </p>
       <Footer />
     </section>
   );
