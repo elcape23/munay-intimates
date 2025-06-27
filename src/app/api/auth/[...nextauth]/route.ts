@@ -16,31 +16,24 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const { email, password } = credentials as {
-          email: string;
-          password: string;
-        };
+        if (!credentials?.email || !credentials.password) return null;
 
-        // 1) Intentamos crear el token
-        const response = await customerAccessTokenCreate({ email, password });
-        if (!response.customerAccessToken) {
-          // Si no hay token, salimos con null
-          return null;
-        }
+        // Lógica antigua de tu auth-store:
+        const response = await customerAccessTokenCreate({
+          email: credentials.email,
+          password: credentials.password,
+        });
+        if (!response.customerAccessToken) return null;
 
-        // 2) Con el accessToken válido, pedimos el customer
         const customer = await getCustomer(
           response.customerAccessToken.accessToken
         );
-        if (!customer) {
-          // Si no existe customer, también salimos
-          return null;
-        }
+        if (!customer) return null;
 
-        // 3) Aquí TS ya sabe que customer no es null
+        // Lo que vamos a guardar en el JWT:
         return {
           id: customer.id,
-          name: customer.firstName,
+          name: `${customer.firstName} ${customer.lastName}`,
           email: customer.email,
           shopifyToken: response.customerAccessToken.accessToken,
         };
@@ -70,6 +63,11 @@ export const authOptions = {
       return session;
     },
   },
+  pages: {
+    signIn: "/login",
+  },
+
+  debug: false,
 };
 
 console.log("🔑 GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);

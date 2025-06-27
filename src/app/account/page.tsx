@@ -13,24 +13,12 @@ export default function AccountPage() {
   const handleGoogle = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    // 1) Abrimos la ventana YA en el click (user gesture)
-    const popup = window.open("about:blank", "_blank", "noopener");
-
-    // 2) Llamamos a NextAuth para obtener la URL, sin redirigir esta pestaña
-    signIn("google", { redirect: false, callbackUrl: "/account" })
-      .then((result) => {
-        if (popup && result?.url) {
-          // 3) Redirigimos el pop-up al login de Google
-          popup.location.href = result.url;
-        } else {
-          popup?.close();
-          console.error("No se obtuvo URL de NextAuth:", result);
-        }
-      })
-      .catch((err) => {
-        popup?.close();
-        console.error("Error en signIn:", err);
-      });
+    // Abrimos la URL de login directamente en una nueva pestaña
+    window.open(
+      "/api/auth/signin/google?callbackUrl=/account",
+      "_blank",
+      "noopener"
+    );
   };
 
   // 2) Si no hay session, mostramos botones de login

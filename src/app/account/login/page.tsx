@@ -115,12 +115,14 @@ export default function LoginPage() {
           <form onSubmit={handleCredsLogin}>
             {/* Campos email/password */}
             <button type="submit">Ingresar</button>
-            <button
-              type="button"
-              onClick={() => signIn("google", { callbackUrl: "/account" })}
+            <a
+              href="/api/auth/signin/google?callbackUrl=/account"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-2 text-center text-blue-600 hover:underline"
             >
               Iniciar sesión con Google
-            </button>
+            </a>
           </form>
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">

@@ -5,6 +5,7 @@ import "./globals.css";
 import { Navbar } from "@/components/common/nav-bar";
 import { SideMenu } from "@/components/common/side-menu";
 import { Providers } from "@/components/providers";
+import { SplashScreen } from "@/components/splash-screen";
 
 // 2. Configura la fuente con los pesos que usas
 const manrope = Manrope({
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="es" className={manrope.className}>
       <Providers>
         <body>
+          <SplashScreen />
           <Navbar />
           <SideMenu /> {/* El SideMenu se superpone y se controla solo */}
           <main className="bg-background-primary-default">{children}</main>
