@@ -3,7 +3,6 @@ import { HeroSection } from "@/components/home/hero-section";
 import { ExploreSection } from "@/components/home/explore-section";
 import { ProductCarousel } from "@/components/home/product-carousel";
 import { NoClipSection } from "@/components/home/noclip-section";
-import { Navbar } from "@/components/common/nav-bar";
 import { Footer } from "@/components/common/footer";
 import {
   getSaleProducts,
@@ -12,9 +11,9 @@ import {
 } from "@/lib/shopify";
 
 export default async function HomePage() {
-  // 1) Traemos primero los productos en oferta y los más nuevos
-  const newest: FeaturedProduct[] = await getNewProducts(12);
-  const sale: FeaturedProduct[] = await getSaleProducts(12, 50);
+  // 1) Traemos los productos en oferta y los más nuevos en paralelo
+  const [newest, sale]: [FeaturedProduct[], FeaturedProduct[]] =
+    await Promise.all([getNewProducts(12), getSaleProducts(12, 50)]);
 
   // 2) Combinamos los productos en oferta con los más nuevos, evitando duplicados
   const saleIds = new Set(sale.map((p) => p.id));
@@ -25,8 +24,6 @@ export default async function HomePage() {
 
   return (
     <>
-      <Navbar />
-
       {/* Hero carousel */}
       <HeroSection />
 

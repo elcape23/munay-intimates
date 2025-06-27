@@ -19,7 +19,7 @@ interface HeroSlide {
 const SLIDES: HeroSlide[] = [
   {
     id: "1",
-    image: "/images/hero/hero-1.png",
+    image: "/images/hero/hero-1.webp",
     title: "New Arrivals",
     subtitle: "",
     buttonText: "Descubrir",
@@ -27,7 +27,7 @@ const SLIDES: HeroSlide[] = [
   },
   {
     id: "2",
-    image: "/images/hero/hero-2.png",
+    image: "/images/hero/hero-2.webp",
     title: "Íntimos sin clip",
     subtitle: "Comodidad absoluta cada día",
     buttonText: "Descubrir más",
@@ -35,7 +35,7 @@ const SLIDES: HeroSlide[] = [
   },
   {
     id: "3",
-    image: "/images/hero/hero-3.png",
+    image: "/images/hero/hero-3.webp",
     title: "Nuevos lanzamientos",
     subtitle: "Lo último en lencería Munay",
     buttonText: "Explorar novedades",
@@ -87,7 +87,7 @@ export function HeroSection({
         className="flex transition-transform duration-700 ease-in-out"
         style={{ transform: `translateX(-${current * 100}%)` }}
       >
-        {SLIDES.map((slide) => (
+        {SLIDES.map((slide, idx) => (
           <div
             key={slide.id}
             className="relative w-full h-screen max-h-[640px] flex-shrink-0"
@@ -97,7 +97,7 @@ export function HeroSection({
               alt={slide.title}
               fill
               className="object-cover"
-              priority
+              priority={idx === 0}
             />
             <div className="absolute inset-0 bg-black/10" />
             <div className="relative z-10 flex h-full flex-col px-6 justify-end text-left text-text-primary-invert">

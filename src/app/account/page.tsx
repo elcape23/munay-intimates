@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { getCustomer } from "@/lib/shopify";
 import { OrderHistory } from "@/components/account/order-history";
+import LoginForm from "@/components/account/login-form";
 
 export default function AccountPage() {
   // rawSession lo casteamos a any para saltarnos el TS
@@ -26,20 +27,15 @@ export default function AccountPage() {
     return (
       <div className="flex flex-col justify-center items-center h-screen space-y-4">
         <p className="text-center text-lg">No estás logueado.</p>
-        <div className="space-x-2">
-          <button
-            onClick={() => signIn("credentials", { callbackUrl: "/account" })}
-            className="px-4 py-2 border rounded"
-          >
-            Iniciar con Email
-          </button>
-          <button
-            type="button"
-            onClick={handleGoogle}
-            className="mt-4 inline-block px-6 py-2 bg-white border rounded shadow-sm text-sm font-medium hover:bg-gray-50"
-          >
-            Iniciar sesión con Google
-          </button>
+        <button
+          type="button"
+          onClick={handleGoogle}
+          className="w-full max-w-xs inline-block px-6 py-2 bg-white border rounded shadow-sm text-sm font-medium hover:bg-gray-50"
+        >
+          Iniciar sesión con Google
+        </button>
+        <div className="w-full max-w-xs">
+          <LoginForm />
         </div>
       </div>
     );
