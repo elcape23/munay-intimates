@@ -44,12 +44,7 @@ export default function CartPage() {
         {/* — Lista de productos (cada tarjeta según PDF página 1) */}
         <div className="lg:col-span-2 space-y-6">
           {cart.lines.edges.map(({ node: line }) => (
-            <CartItem
-              key={line.id}
-              line={line}
-              onSave={() => console.log("save", line.id)}
-              onDelete={() => console.log("delete", line.id)}
-            />
+            <CartItem key={line.id} line={line} />
           ))}
         </div>
         {/* — Resumen del pedido (PDF página 2) */}

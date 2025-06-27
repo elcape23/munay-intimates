@@ -7,6 +7,7 @@ import { useSwipeable } from "react-swipeable";
 import type { ShopifyCart } from "@/lib/shopify";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/cart-store";
+import { useFavoritesStore } from "@/store/favorites-store";
 
 type CartLine = ShopifyCart["lines"]["edges"][number]["node"];
 
@@ -22,8 +23,9 @@ export function CartItem({ line }: CartItemProps) {
   // ✔️ Nuevo: estado que guardará ese ancho
   const [slideAmt, setSlideAmt] = useState(0);
   // ✅ Importa tu store y extrae los métodos
-  const addItemToCart = useCartStore((s) => s.addItemToCart);
-  const removeItem    = useCartStore((s) => s.removeItem);
+  const removeItem = useCartStore((s) => s.removeItem);
+  const updateQuantity = useCartStore((s) => s.updateQuantity);
+  const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
 
   // ✅ Mide ancho de los botones al montar
   useEffect(() => {
@@ -33,24 +35,18 @@ export function CartItem({ line }: CartItemProps) {
   }, []);
 
   // ✅ Handlers internos usando el store
-  const handleSave     = () => addItemToCart(line.id, line.quantity);
-  const handleDelete   = () => removeItem(line.id);
-  const handleDecrease = () =>
-    useCartStore.getState().updateQuantity(line.id, line.quantity - 1);
-  const handleIncrease = () =>
-    useCartStore.getState().updateQuantity(line.id, line.quantity  1);
+  const handleSave = () => {
+    toggleFavorite(line.merchandise.product.handle);
+    removeItem(line.id);
+  };
+  const handleDelete = () => removeItem(line.id);
+  const handleDecrease = () => updateQuantity(line.id, line.quantity - 1);
+  const handleIncrease = () => updateQuantity(line.id, line.quantity + 1);
   const handlers = useSwipeable({
     onSwipedLeft: () => setOpen(true),
     onSwipedRight: () => setOpen(false),
     trackMouse: true,
   });
-
-  // ✔️ Nuevo: al montar, medimos el ancho de los dos botones
-  useEffect(() => {
-    if (buttonsRef.current) {
-      setSlideAmt(buttonsRef.current.offsetWidth);
-    }
-  }, []);
 
   const precio = new Intl.NumberFormat("es-AR", {
     style: "currency",
@@ -75,20 +71,22 @@ export function CartItem({ line }: CartItemProps) {
     (t) => t.toLowerCase() === "new"
   );
 
-  const handleDecrease = () => {
-    // TODO: integrate with cart update logic
-  };
-
-  const handleIncrease = () => {
-    // TODO: integrate with cart update logic
-  };
-
   return (
     <div className="relative overflow-hidden my-3" {...handlers}>
       {/* Botones ocultos a la derecha */}
       <div ref={buttonsRef} className="absolute inset-y-0 right-0 flex">
-        <button onClick={handleSave}  className="w-max px-[10px] bg-black text-white">Guardar</button>
-        <button onClick={handleDelete}className="w-max px-[10px] bg-red-600 text-white">Eliminar</button>
+        <button
+          onClick={handleSave}
+          className="w-max px-[10px] bg-black text-white"
+        >
+          Guardar
+        </button>
+        <button
+          onClick={handleDelete}
+          className="w-max px-[10px] bg-red-600 text-white"
+        >
+          Eliminar
+        </button>
       </div>
       <div
         className="flex items-stretch gap-4 bg-background-primary-default transform transition-transform duration-200"
@@ -159,7 +157,7 @@ export function CartItem({ line }: CartItemProps) {
             </button>
           </div>
           <button
-            onClick={() => onDelete(line.id)}
+            onClick={handleDelete}
             className="my-2 mr-2 body-02-regular text-text-secondary-default hover:text-text-secondary-hover transition-colors"
           >
             Eliminar

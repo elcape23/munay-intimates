@@ -1,7 +1,14 @@
 // src/store/cartStore.ts
 
 import { create } from "zustand";
-import { getCart, createCart, addToCart, ShopifyCart } from "@/lib/shopify";
+import {
+  getCart,
+  createCart,
+  addToCart,
+  removeFromCart,
+  updateCartItemQuantity,
+  ShopifyCart,
+} from "@/lib/shopify";
 
 // Definimos la "forma" de nuestro estado
 interface CartState {
@@ -10,6 +17,8 @@ interface CartState {
   error: string | null;
   fetchCart: () => Promise<void>;
   addItemToCart: (variantId: string) => Promise<void>;
+  removeItem: (lineId: string) => Promise<void>;
+  updateQuantity: (lineId: string, quantity: number) => Promise<void>;
 }
 
 // Creamos el store con zustand
@@ -82,6 +91,39 @@ export const useCartStore = create<CartState>((set, get) => ({
     } catch (e) {
       const errorMessage =
         e instanceof Error ? e.message : "No se pudo añadir el producto.";
+      set({ error: errorMessage, isLoading: false });
+      console.error(e);
+    }
+  },
+  removeItem: async (lineId: string) => {
+    const cartId = get().cart?.id;
+    if (!cartId) return;
+    set({ isLoading: true, error: null });
+    try {
+      const updatedCart = await removeFromCart(cartId, [lineId]);
+      set({ cart: updatedCart, isLoading: false });
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : "No se pudo eliminar el producto.";
+      set({ error: errorMessage, isLoading: false });
+      console.error(e);
+    }
+  },
+
+  updateQuantity: async (lineId: string, quantity: number) => {
+    const cartId = get().cart?.id;
+    if (!cartId) return;
+    set({ isLoading: true, error: null });
+    try {
+      const updatedCart = await updateCartItemQuantity(
+        cartId,
+        lineId,
+        quantity
+      );
+      set({ cart: updatedCart, isLoading: false });
+    } catch (e) {
+      const errorMessage =
+        e instanceof Error ? e.message : "No se pudo actualizar el carrito.";
       set({ error: errorMessage, isLoading: false });
       console.error(e);
     }

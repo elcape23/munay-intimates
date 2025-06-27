@@ -139,6 +139,8 @@ type GetCollectionsResponse = {
 type GetCollectionByHandleResponse = { collection: ShopifyCollection };
 type CreateCartResponse = { cartCreate: { cart: ShopifyCart } };
 type AddToCartResponse = { cartLinesAdd: { cart: ShopifyCart } };
+type RemoveFromCartResponse = { cartLinesRemove: { cart: ShopifyCart } };
+type UpdateCartResponse = { cartLinesUpdate: { cart: ShopifyCart } };
 type GetCartResponse = { cart: ShopifyCart };
 
 // --- Función Principal de Peticiones ---
@@ -1195,6 +1197,153 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
   } catch (e) {
     return null;
   }
+}
+
+export async function removeFromCart(
+  cartId: string,
+  lineIds: string[]
+): Promise<ShopifyCart> {
+  const query = gql`
+    mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+      cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+        cart {
+          id
+          checkoutUrl
+          totalQuantity
+          lines(first: 100) {
+            edges {
+              node {
+                id
+                quantity
+                cost {
+                  totalAmount {
+                    amount
+                    currencyCode
+                  }
+                }
+                merchandise {
+                  ... on ProductVariant {
+                    id
+                    title
+                    selectedOptions {
+                      name
+                      value
+                    }
+                    price {
+                      amount
+                      currencyCode
+                    }
+                    compareAtPrice {
+                      amount
+                      currencyCode
+                    }
+                    product {
+                      title
+                      handle
+                      tags
+                    }
+                    image {
+                      url
+                      altText
+                    }
+                  }
+                }
+              }
+            }
+          }
+          cost {
+            totalAmount {
+              amount
+              currencyCode
+            }
+            subtotalAmount {
+              amount
+              currencyCode
+            }
+          }
+        }
+      }
+    }
+  `;
+  const response = await shopifyFetch<RemoveFromCartResponse>({
+    query,
+    variables: { cartId, lineIds },
+  });
+  return response.cartLinesRemove.cart;
+}
+
+export async function updateCartItemQuantity(
+  cartId: string,
+  lineId: string,
+  quantity: number
+): Promise<ShopifyCart> {
+  const query = gql`
+    mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+      cartLinesUpdate(cartId: $cartId, lines: $lines) {
+        cart {
+          id
+          checkoutUrl
+          totalQuantity
+          lines(first: 100) {
+            edges {
+              node {
+                id
+                quantity
+                cost {
+                  totalAmount {
+                    amount
+                    currencyCode
+                  }
+                }
+                merchandise {
+                  ... on ProductVariant {
+                    id
+                    title
+                    selectedOptions {
+                      name
+                      value
+                    }
+                    price {
+                      amount
+                      currencyCode
+                    }
+                    compareAtPrice {
+                      amount
+                      currencyCode
+                    }
+                    product {
+                      title
+                      handle
+                      tags
+                    }
+                    image {
+                      url
+                      altText
+                    }
+                  }
+                }
+              }
+            }
+          }
+          cost {
+            totalAmount {
+              amount
+              currencyCode
+            }
+            subtotalAmount {
+              amount
+              currencyCode
+            }
+          }
+        }
+      }
+    }
+  `;
+  const response = await shopifyFetch<UpdateCartResponse>({
+    query,
+    variables: { cartId, lines: [{ id: lineId, quantity }] },
+  });
+  return response.cartLinesUpdate.cart;
 }
 
 // --- Funciones para Cuentas de Cliente ---
