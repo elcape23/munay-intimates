@@ -77,7 +77,10 @@ export type ShopifyCartLine = {
   merchandise: {
     id: string;
     title: string;
-    product: { title: string; handle: string };
+    selectedOptions: { name: string; value: string }[];
+    price: ShopifyPrice;
+    compareAtPrice?: ShopifyPrice;
+    product: { title: string; handle: string; tags: string[] };
     image: ShopifyImage;
   };
 };
@@ -1075,9 +1078,22 @@ export async function addToCart(
                   ... on ProductVariant {
                     id
                     title
+                    selectedOptions {
+                      name
+                      value
+                    }
+                    price {
+                      amount
+                      currencyCode
+                    }
+                    compareAtPrice {
+                      amount
+                      currencyCode
+                    }
                     product {
                       title
                       handle
+                      tags
                     }
                     image {
                       url
@@ -1141,9 +1157,22 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
                 ... on ProductVariant {
                   id
                   title
+                  selectedOptions {
+                    name
+                    value
+                  }
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  compareAtPrice {
+                    amount
+                    currencyCode
+                  }
                   product {
                     title
                     handle
+                    tags
                   }
                   image {
                     url

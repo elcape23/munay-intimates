@@ -4,7 +4,7 @@
 
 import { useCartStore } from "@/store/cart-store"; // ¡NUEVO! Importamos el store.
 import Link from "next/link";
-import Image from "next/image";
+import { CartItem } from "@/components/cart/cart-item";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 
 export default function CartPage() {
@@ -43,56 +43,14 @@ export default function CartPage() {
       <div className="grid grid-cols-1 gap-8 items-start">
         {/* — Lista de productos (cada tarjeta según PDF página 1) */}
         <div className="lg:col-span-2 space-y-6">
-          {cart.lines.edges.map(({ node: line }) => {
-            const precio = new Intl.NumberFormat("es-AR", {
-              style: "currency",
-              currency: line.cost.totalAmount.currencyCode,
-            }).format(parseFloat(line.cost.totalAmount.amount));
-            return (
-              <div
-                key={line.id}
-                className="flex items-start gap-4 p-4 bg-white rounded-lg shadow"
-              >
-                {/* Imagen */}
-                <div className="relative w-24 h-24 rounded-md overflow-hidden flex-shrink-0">
-                  <Image
-                    src={line.merchandise.image.url}
-                    alt={line.merchandise.image.altText || ""}
-                    fill
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
-                {/* Info */}
-                <div className="flex-1">
-                  <Link
-                    href={`/products/${line.merchandise.product.handle}`}
-                    className="block text-lg font-semibold hover:underline"
-                  >
-                    {line.merchandise.product.title}
-                  </Link>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {line.merchandise.title}
-                  </p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Cantidad: {line.quantity}
-                  </p>
-                  {/* Acciones “Guardar”  “Eliminar” */}
-                  <div className="mt-3 flex gap-4">
-                    <button className="text-sm text-blue-600 font-medium">
-                      Guardar
-                    </button>
-                    <button className="text-sm text-red-600 font-medium">
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-                {/* Precio a la derecha */}
-                <div className="text-right">
-                  <p className="text-lg font-semibold">{precio}</p>
-                </div>
-              </div>
-            );
-          })}
+          {cart.lines.edges.map(({ node: line }) => (
+            <CartItem
+              key={line.id}
+              line={line}
+              onSave={() => console.log("save", line.id)}
+              onDelete={() => console.log("delete", line.id)}
+            />
+          ))}
         </div>
         {/* — Resumen del pedido (PDF página 2) */}
         <div className="lg:col-span-1">

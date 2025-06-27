@@ -50,12 +50,11 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const buttonContainerRef = useRef<HTMLDivElement | null>(null);
   const [showSticky, setShowSticky] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setShowSticky(!entry.isIntersecting && hasScrolled);
+        setShowSticky(!entry.isIntersecting);
       },
       {
         // Show the sticky modal as soon as the button block starts
@@ -69,18 +68,6 @@ export function ProductForm({ product }: ProductFormProps) {
 
     return () => {
       if (current) observer.unobserve(current);
-    };
-  }, [hasScrolled]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setHasScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
