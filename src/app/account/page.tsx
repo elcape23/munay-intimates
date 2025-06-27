@@ -1,57 +1,78 @@
-// src/app/(pages)/account/page.tsx
-
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuthStore } from "@/store/auth-store";
-import { useRouter } from "next/navigation";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { getCustomer } from "@/lib/shopify";
 import { OrderHistory } from "@/components/account/order-history";
 
 export default function AccountPage() {
-  const router = useRouter();
+  // rawSession lo casteamos a any para saltarnos el TS
+  const { data: rawSession, status } = useSession();
+  const session = rawSession as any;
+  const [customer, setCustomer] = useState<any>(null);
+  const handleGoogle = (e: React.MouseEvent) => {
+    e.preventDefault();
 
-  const { customer, isLoggedIn, isLoading: isAuthLoading } = useAuthStore();
+    // 1) Abrimos la ventana YA en el click (user gesture)
+    const popup = window.open("about:blank", "_blank", "noopener");
 
-  // Este estado es la clave para evitar el error del servidor.
-  const [hasMounted, setHasMounted] = useState(false);
-
-  // Este useEffect se ejecuta solo una vez en el cliente, después del renderizado inicial.
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  // Este useEffect se encarga de la redirección, pero solo si el componente ya está en el cliente.
-  useEffect(() => {
-    if (hasMounted && !isAuthLoading && !isLoggedIn) {
-      router.push("/account/login");
-    }
-  }, [hasMounted, isAuthLoading, isLoggedIn, router]);
-
-  const handleLogout = () => {
-    useAuthStore.getState().logout();
-    router.push("/");
+    // 2) Llamamos a NextAuth para obtener la URL, sin redirigir esta pestaña
+    signIn("google", { redirect: false, callbackUrl: "/account" })
+      .then((result) => {
+        if (popup && result?.url) {
+          // 3) Redirigimos el pop-up al login de Google
+          popup.location.href = result.url;
+        } else {
+          popup?.close();
+          console.error("No se obtuvo URL de NextAuth:", result);
+        }
+      })
+      .catch((err) => {
+        popup?.close();
+        console.error("Error en signIn:", err);
+      });
   };
 
-  // Condición de carga robusta: no renderizamos nada hasta estar en el cliente Y que la auth termine.
-  if (!hasMounted || isAuthLoading) {
+  // 2) Si no hay session, mostramos botones de login
+  if (!session) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-center p-12">Cargando tu cuenta...</div>
+      <div className="flex flex-col justify-center items-center h-screen space-y-4">
+        <p className="text-center text-lg">No estás logueado.</p>
+        <div className="space-x-2">
+          <button
+            onClick={() => signIn("credentials", { callbackUrl: "/account" })}
+            className="px-4 py-2 border rounded"
+          >
+            Iniciar con Email
+          </button>
+          <button
+            type="button"
+            onClick={handleGoogle}
+            className="mt-4 inline-block px-6 py-2 bg-white border rounded shadow-sm text-sm font-medium hover:bg-gray-50"
+          >
+            Iniciar sesión con Google
+          </button>
+        </div>
       </div>
     );
   }
 
-  // Si después de cargar, el usuario no está logueado, el useEffect de arriba ya lo está redirigiendo.
-  // Mostramos un mensaje mientras tanto para evitar cualquier error.
-  if (!isLoggedIn || !customer) {
+  // 3) Con session garantizado, traemos el customer
+  useEffect(() => {
+    const token: string = session.user.shopifyToken;
+    getCustomer(token).then((data) => setCustomer(data));
+  }, [session.user.shopifyToken]);
+
+  // 4) Spinner mientras cargan los datos del customer
+  if (customer === null) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="text-center p-12">Verificando sesión...</div>
+        <div className="text-center p-12">Cargando datos del cliente…</div>
       </div>
     );
   }
 
-  // Si llegamos aquí, es 100% seguro que tenemos los datos del cliente.
+  // 5) Render final
   return (
     <div className="container mx-auto p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
@@ -59,11 +80,11 @@ export default function AccountPage() {
           <div>
             <h1 className="text-3xl font-bold">Mi Cuenta</h1>
             <p className="text-lg text-gray-600 mt-1">
-              ¡Hola, {customer.firstName}! Bienvenido a tu panel.
+              ¡Hola, {session.user.name}! Bienvenido a tu panel.
             </p>
           </div>
           <button
-            onClick={handleLogout}
+            onClick={() => signOut({ callbackUrl: "/" })}
             className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Cerrar Sesión

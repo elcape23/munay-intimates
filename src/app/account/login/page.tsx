@@ -6,6 +6,7 @@ import { useState, useEffect, FormEvent } from "react";
 import { useAuthStore } from "@/store/auth-store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,6 +16,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const handleCredsLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await signIn("credentials", {
+      email,
+      password,
+      callbackUrl: "/account",
+    });
+  };
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -102,6 +111,16 @@ export default function LoginPage() {
                 {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
               </button>
             </div>
+          </form>
+          <form onSubmit={handleCredsLogin}>
+            {/* Campos email/password */}
+            <button type="submit">Ingresar</button>
+            <button
+              type="button"
+              onClick={() => signIn("google", { callbackUrl: "/account" })}
+            >
+              Iniciar sesión con Google
+            </button>
           </form>
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">

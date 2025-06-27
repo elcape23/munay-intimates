@@ -19,14 +19,19 @@ export default function CartPage() {
 
   if (!cart || cart.lines.edges.length === 0) {
     return (
-      <main className="container mx-auto text-center p-12">
-        <h1 className="body-02-regular text-text-primary-default mb-4">
-          Tu carrito está vacío
-        </h1>
-        <Link href="/" className="text-blue-600 hover:underline font-semibold">
-          Seguir comprando
-        </Link>
-      </main>
+      <section className="flex flex-col h-screen items-center justify-center text-center mx-auto text-center p-12">
+        <div className="">
+          <h1 className="heading-06-regular text-text-primary-default my-4">
+            Tu carrito está vacío
+          </h1>
+          <Link
+            href="/"
+            className="body-01-medium underline text-text-primary-default hover:underline text-text-secondary-default body-01-semibold"
+          >
+            Seguir comprando
+          </Link>
+        </div>
+      </section>
     );
   }
 

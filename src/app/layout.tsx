@@ -4,6 +4,7 @@ import { Manrope } from "next/font/google"; // 1. Importa la fuente
 import "./globals.css";
 import { Navbar } from "@/components/common/nav-bar";
 import { SideMenu } from "@/components/common/side-menu";
+import { Providers } from "@/components/providers";
 
 // 2. Configura la fuente con los pesos que usas
 const manrope = Manrope({
@@ -25,11 +26,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={manrope.className}>
-      <body>
-        <Navbar />
-        <SideMenu /> {/* El SideMenu se superpone y se controla solo */}
-        <main className="bg-background-primary-default">{children}</main>
-      </body>
+      <Providers>
+        <body>
+          <Navbar />
+          <SideMenu /> {/* El SideMenu se superpone y se controla solo */}
+          <main className="bg-background-primary-default">{children}</main>
+        </body>
+      </Providers>
     </html>
   );
 }

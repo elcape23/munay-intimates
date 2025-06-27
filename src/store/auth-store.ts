@@ -34,9 +34,11 @@ export const useAuthStore = create(
 
       // Acción para iniciar sesión (¡LÓGICA CORREGIDA Y FINAL!)
       login: async (input) => {
+        console.log("Login, input:", input);
         set({ isLoading: true, error: null });
         try {
           const response = await customerAccessTokenCreate(input);
+          console.log("customerAccessTokenCreate response:", response);
 
           // Si la respuesta contiene un token, el login fue un éxito.
           if (response.customerAccessToken) {
@@ -45,6 +47,7 @@ export const useAuthStore = create(
               isLoggedIn: true, // Marcamos como logueado inmediatamente
               error: null,
             });
+            console.log("customerUserErrors:", response.customerUserErrors);
             // Intentamos obtener los datos del cliente en segundo plano.
             // Si esto falla, checkAuthStatus lo manejará sin bloquear el login.
             get().checkAuthStatus();
