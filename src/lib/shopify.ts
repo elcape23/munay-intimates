@@ -933,6 +933,104 @@ export async function getCollectionsBySeason(
   return response.collections.edges.map((edge) => edge.node);
 }
 
+export async function getProductsBySeason(
+  season: string,
+  first: number = 250
+): Promise<ShopifyProduct[]> {
+  const query = gql`
+    query GetProductsBySeason($first: Int!, $query: String!) {
+      products(
+        first: $first
+        sortKey: CREATED_AT
+        reverse: true
+        query: $query
+      ) {
+        edges {
+          node {
+            id
+            title
+            handle
+            tags
+            createdAt
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            options {
+              name
+              values
+            }
+            color: metafield(
+              namespace: "shopify.metaobject_reference"
+              key: "color"
+            ) {
+              reference {
+                ... on Metaobject {
+                  fields {
+                    key
+                    value
+                  }
+                }
+              }
+            }
+            talle: metafield(namespace: "custom", key: "talle") {
+              key
+              value
+            }
+            estacion: metafield(namespace: "custom", key: "estacion") {
+              key
+              value
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  compareAtPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+              }
+            }
+            collections(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const seasonQuery = `metafield:custom.estacion:${season}`;
+  const response = await shopifyFetch<{
+    products: { edges: { node: ShopifyProduct }[] };
+  }>({
+    query,
+    variables: { first, query: seasonQuery },
+  });
+
+  return response.products.edges.map((edge) => edge.node);
+}
+
 export async function getCollectionByHandle(
   handle: string
 ): Promise<ShopifyCollection | null> {

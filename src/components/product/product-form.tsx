@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
 import { COLOR_MAP } from "@/lib/color-map";
+import { toast } from "@/hooks/use-toast";
 
 type ProductFormProps = {
   product: ShopifyProduct;
@@ -46,7 +47,6 @@ export function ProductForm({ product }: ProductFormProps) {
 
   // Obtenemos el estado y las acciones directamente desde nuestro store de Zustand.
   const { addItemToCart, isLoading } = useCartStore();
-  const [message, setMessage] = useState(""); // Mantenemos un mensaje local para feedback inmediato
 
   const buttonContainerRef = useRef<HTMLDivElement | null>(null);
   const [showSticky, setShowSticky] = useState(false);
@@ -88,25 +88,24 @@ export function ProductForm({ product }: ProductFormProps) {
       ...prev,
       [optionName]: value,
     }));
-    setMessage("");
   };
 
   const handleAddToCart = async () => {
     if (!selectedVariant) {
-      setMessage("Variante no disponible.");
+      toast({ title: "Variante no disponible." });
       return;
     }
 
     if (!selectedVariant.availableForSale) {
-      setMessage("Esta variante no está disponible.");
+      toast({ title: "Esta variante no está disponible." });
       return;
     }
 
     try {
       await addItemToCart(selectedVariant.id);
-      setMessage("¡Producto añadido al carrito!");
+      toast({ title: "¡Producto añadido al carrito!" });
     } catch (error) {
-      setMessage("Hubo un error al añadir el producto.");
+      toast({ title: "Hubo un error al añadir el producto." });
     }
   };
 
@@ -286,10 +285,6 @@ export function ProductForm({ product }: ProductFormProps) {
             : "No Disponible"}
         </button>
       </div>
-      {/* Mensajes para el usuario */}
-      {message && (
-        <p className="text-center text-sm text-gray-600 mt-4">{message}</p>
-      )}
 
       {showSticky && (
         <div className="fixed bottom-0 left-0 w-screen h-24 bg-background-primary-default border-t border-gray-200 z-50 flex items-center justify-between px-4">

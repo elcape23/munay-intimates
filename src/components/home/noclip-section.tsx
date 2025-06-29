@@ -1,14 +1,15 @@
 import React from "react";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 interface NoClipSectionProps {
   images: string[];
-  onVerMas?: () => void;
+  href?: string;
 }
 
 export const NoClipSection: React.FC<NoClipSectionProps> = ({
   images,
-  onVerMas,
+  href,
 }) => (
   <section
     id="noclip-section"
@@ -33,13 +34,13 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
       ))}
 
       {/* Slide de "Ver más" al final */}
-      <div
+      <Link
+        href={href ?? "#"}
         className="snap-start flex-shrink-0 inline-flex flex-col px-8 h-75 justify-center cursor-pointer space-y-3"
-        onClick={onVerMas}
       >
         <ArrowLongRightIcon className="w-8 h-8 mt-2 text-icon-primary-default" />
         <span className="heading-05-medium text-primary-default">Ver más</span>
-      </div>
+      </Link>
     </div>
   </section>
 );

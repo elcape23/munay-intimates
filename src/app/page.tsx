@@ -37,6 +37,7 @@ export default async function HomePage() {
           "/images/noclip/home-no-clip-2.png",
           "/images/noclip/home-no-clip-3.png",
         ]}
+        href="/collections/season/invierno"
       />
 
       <ExploreSection
