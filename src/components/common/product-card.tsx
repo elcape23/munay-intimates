@@ -3,8 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
-import { Button } from "../ui/button";
+import { FavoriteButton } from "./favorite-button";
 import { COLOR_MAP } from "@/lib/color-map";
 
 export interface ProductCardProps {
@@ -49,13 +48,9 @@ export function ProductCard({
           priority
         />
         {/* Icono Favorito */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-2 right-2 z-10"
-        >
-          <HeartOutline />
-        </Button>
+        <div className="absolute top-2 right-2 z-10">
+          <FavoriteButton productHandle={handle} />
+        </div>
         {/* Badge Oferta o NEW */}
         {compareAtPrice ? (
           <div className="absolute bottom-3 left-3 z-10 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert">
