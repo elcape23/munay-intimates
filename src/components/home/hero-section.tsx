@@ -23,7 +23,7 @@ const SLIDES: HeroSlide[] = [
     title: "New Arrivals",
     subtitle: "",
     buttonText: "Descubrir",
-    href: "/season/primavera",
+    href: "/collections/new",
   },
   {
     id: "2",
@@ -101,7 +101,7 @@ export function HeroSection({
             />
             <div className="absolute inset-0 bg-black/10" />
             <div className="relative z-10 flex h-full flex-col px-6 justify-end text-left text-text-primary-invert">
-              <h2 className="text-[70px] font-bold leading-none mb-4">
+              <h2 className="text-[70px] heading-02-semibold leading-none mb-4">
                 {slide.title}
               </h2>
               <Button

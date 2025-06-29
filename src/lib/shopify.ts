@@ -839,7 +839,7 @@ export async function getCollectionsForMenu(): Promise<NavItem[]> {
               value
             }
 
-            products(first: 1, sortKey: CREATED) {
+            products(first: 1, sortKey: CREATED, reverse: true) {
               edges {
                 node {
                   createdAt

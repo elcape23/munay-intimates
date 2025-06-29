@@ -5,7 +5,8 @@
 
 /* Importa tus clases personalizadas DENTRO de la capa 'components' */
 @layer components {
-  @import "/src/styles/foundations/semantic/typography.css";
+  /* Importamos usando una ruta relativa para evitar errores al compilar */
+  @import "../styles/foundations/semantic/typography.css";
 }
 
 @layer base {

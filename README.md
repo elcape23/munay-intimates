@@ -8,6 +8,14 @@ NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN="munayintimates.myshopify.com"
 NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN="a36c7c3e5ad984b377929a406a4960c0"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
+## Installation
+
+Install the project dependencies after cloning the repository:
+
+```bash
+npm install
+```
+
 ## Getting Started
 
 First, run the development server.

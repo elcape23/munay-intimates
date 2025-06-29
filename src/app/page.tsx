@@ -23,7 +23,7 @@ export default async function HomePage() {
   ];
 
   return (
-    <>
+    <section>
       {/* Hero carousel */}
       <HeroSection />
 
@@ -50,7 +50,9 @@ export default async function HomePage() {
           price: "49.99",
         }}
       />
-      <Footer />
-    </>
+      <footer className="px-4">
+        <Footer />
+      </footer>
+    </section>
   );
 }

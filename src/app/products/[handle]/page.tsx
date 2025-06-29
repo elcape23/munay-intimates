@@ -31,7 +31,7 @@ export default async function ProductDetailPage({
   const relatedProducts = await getRecommendedProducts(product.id, 4);
 
   return (
-    <section className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar">
+    <section className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar mb-24">
       {/* Columna de la Galería de Imágenes */}
       {/* ▶ Carrusel principal */}
       <ProductGallery images={product.images.edges} />

@@ -45,7 +45,7 @@ export default function CartPage() {
         <h1 className="body-01-medium">CARRITO</h1>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 items-start">
+      <div className="grid grid-cols-1 gap-8 items-start mt-6">
         {/* — Lista de productos (cada tarjeta según PDF página 1) */}
         <div className="lg:col-span-2 space-y-6">
           {cart.lines.edges.map(({ node: line }) => (
@@ -53,14 +53,10 @@ export default function CartPage() {
           ))}
         </div>
         {/* — Resumen del pedido (PDF página 2) */}
-        <div className="lg:col-span-1">
-          <div className="p-6 bg-white rounded-lg shadow sticky top-28">
-            <h2 className="text-xl font-semibold mb-4 border-b pb-2">
-              Resumen del Pedido
-            </h2>
+        <div className="flex flex-row">
+          <div className="flex-1 bg-white rounded-lg shadow sticky bottom-1">
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span>Subtotal</span>
                 <span>{/* mismo Intl.NumberFormat de arriba */}</span>
               </div>
               <div className="flex justify-between text-sm text-gray-500">
