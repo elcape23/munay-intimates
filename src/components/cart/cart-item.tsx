@@ -49,6 +49,7 @@ export function CartItem({ line }: CartItemProps) {
     onSwipedLeft: () => setOpen(true),
     onSwipedRight: () => setOpen(false),
     trackMouse: true,
+    preventScrollOnSwipe: true,
   });
 
   const precio = new Intl.NumberFormat("es-AR", {

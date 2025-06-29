@@ -1,6 +1,7 @@
 "use client";
 // src/components/common/FavoriteButton.tsx
 
+import { useEffect } from "react";
 import { useFavoritesStore } from "@/store/favorites-store";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
@@ -16,7 +17,15 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
     toggleFavorite,
     favoriteHandles = [],
     _hasHydrated,
+    setHasHydrated,
   } = useFavoritesStore();
+
+  // Asegura que la bandera de hidratación se active incluso si no había datos guardados
+  useEffect(() => {
+    if (!_hasHydrated) {
+      setHasHydrated(true);
+    }
+  }, [_hasHydrated, setHasHydrated]);
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
