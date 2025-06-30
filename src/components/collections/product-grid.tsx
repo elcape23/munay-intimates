@@ -43,6 +43,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       const modal: Record<string, Set<string>> = {};
       const prices: number[] = [];
       const seasonSet: Set<string> = new Set();
+      const collectionsSet: Set<string> = new Set();
 
       products.forEach((product) => {
         // 1. Procesa las etiquetas (tags) para los filtros principales
@@ -93,6 +94,13 @@ export function ProductGrid({ title, products }: ProductGridProps) {
           seasonSet.add(seasonValue);
         }
 
+        product.collections?.edges.forEach((edge) => {
+          const title = edge.node.title?.trim();
+          if (title) {
+            collectionsSet.add(title);
+          }
+        });
+
         // 3. Procesa metacampos personalizados
         const customMetafields = [product.talle];
         customMetafields.forEach((metafield) => {
@@ -141,10 +149,13 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       });
 
       const collectionGroup = "Colección";
-      if (seasonSet.size > 0) {
+      if (seasonSet.size > 0 || collectionsSet.size > 0) {
         if (!modal[collectionGroup]) modal[collectionGroup] = new Set();
         seasonSet.forEach((season) => {
           modal[collectionGroup].add(`${collectionGroup}:${season}`);
+        });
+        collectionsSet.forEach((col) => {
+          modal[collectionGroup].add(`${collectionGroup}:${col}`);
         });
       }
 
@@ -214,7 +225,12 @@ export function ProductGrid({ title, products }: ProductGridProps) {
 
         if (activeCollection) {
           const season = product.estacion?.value?.toLowerCase() || "";
-          if (season !== activeCollection) return false;
+          const inSeason = season === activeCollection.toLowerCase();
+          const inCollection = product.collections?.edges.some(
+            (edge) =>
+              edge.node.title?.toLowerCase() === activeCollection.toLowerCase()
+          );
+          if (!inSeason && !inCollection) return false;
         }
 
         return Object.entries(activeGroups).every(
