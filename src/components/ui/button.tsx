@@ -35,6 +35,7 @@ const buttonVariants = cva(
         md: "px-4 py-2 gap-1 body-02-semibold",
         lg: "px-4 py-3 gap-1 body-01-bold",
         icon: "h-6 w-6",
+        text: "h-6 w-auto",
       },
     },
     defaultVariants: {

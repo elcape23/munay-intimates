@@ -44,9 +44,11 @@ export default function CartPage() {
   const total = subtotal;
   const grandTotal = subtotal + shipping;
   const formatPrice = (value: number) =>
-    new Intl.NumberFormat("es-AR", { style: "currency", currency }).format(
-      value
-    );
+    new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    }).format(value);
 
   return (
     <>
@@ -88,13 +90,10 @@ export default function CartPage() {
                 <span>{formatPrice(shipping)}</span>
               </div>
               {/* Botón fijo “Continuar” según diseño */}
-              <Button>
-                <a
-                  href={cart.checkoutUrl}
-                  className="block mt-6 w-full py-3 bg-black text-white text-center rounded hover:bg-gray-800 transition"
-                >
+              <Button asChild variant="primary" size="lg">
+                <Link href={cart.checkoutUrl}>
                   Continuar - {formatPrice(grandTotal)}
-                </a>
+                </Link>
               </Button>
             </div>
           </div>
@@ -112,6 +111,7 @@ export default function CartPage() {
             {new Intl.NumberFormat("es-AR", {
               style: "currency",
               currency: cart.cost.totalAmount.currencyCode,
+              maximumFractionDigits: 0,
             }).format(parseFloat(cart.cost.totalAmount.amount))}
           </p>
           <p className="text-[10px] leading-none text-text-secondary-default">

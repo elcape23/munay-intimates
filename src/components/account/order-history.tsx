@@ -64,6 +64,7 @@ export function OrderHistory() {
                 {new Intl.NumberFormat("es-AR", {
                   style: "currency",
                   currency: order.totalPrice.currencyCode,
+                  maximumFractionDigits: 0,
                 }).format(parseFloat(order.totalPrice.amount))}
               </p>
               <span

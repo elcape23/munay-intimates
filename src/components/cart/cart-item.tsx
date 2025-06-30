@@ -56,12 +56,14 @@ export function CartItem({ line }: CartItemProps) {
   const precio = new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: line.merchandise.price.currencyCode,
+    maximumFractionDigits: 0,
   }).format(parseFloat(line.merchandise.price.amount));
 
   const precioAnterior = line.merchandise.compareAtPrice
     ? new Intl.NumberFormat("es-AR", {
         style: "currency",
         currency: line.merchandise.compareAtPrice.currencyCode,
+        maximumFractionDigits: 0,
       }).format(parseFloat(line.merchandise.compareAtPrice.amount))
     : null;
 
@@ -84,16 +86,16 @@ export function CartItem({ line }: CartItemProps) {
           <Button
             onClick={handleSave}
             className="w-max px-8 body-02-semibold bg-background-fill-neutral-default text-text-primary-invert"
-            variant="primary"
-            size="lg"
+            variant="ghost"
+            size="icon"
           >
             Guardar
           </Button>
           <Button
             onClick={handleDelete}
             className="w-max px-8 body-02-semibold bg-background-fill-danger-default text-text-primary-invert"
-            variant="primary"
-            size="lg"
+            variant="ghost"
+            size="icon"
           >
             Eliminar
           </Button>
@@ -155,8 +157,8 @@ export function CartItem({ line }: CartItemProps) {
                 onClick={handleDecrease}
                 className="m-1"
                 aria-label="disminuir cantidad"
-                variant="primary"
-                size="lg"
+                variant="ghost"
+                size="icon"
               >
                 <MinusIcon className="w-5 h-5 p-1 text-icon-primary-default" />
               </Button>
@@ -167,8 +169,8 @@ export function CartItem({ line }: CartItemProps) {
                 onClick={handleIncrease}
                 className="m-1"
                 aria-label="incrementar cantidad"
-                variant="primary"
-                size="lg"
+                variant="ghost"
+                size="icon"
               >
                 <PlusIcon className="w-5 h-5 p-1 text-icon-primary-default" />
               </Button>
@@ -176,8 +178,8 @@ export function CartItem({ line }: CartItemProps) {
             <Button
               onClick={handleDelete}
               className="my-2 mr-2 body-02-regular text-text-secondary-default hover:text-text-secondary-hover transition-colors"
-              variant="primary"
-              size="lg"
+              variant="ghost"
+              size="text"
             >
               Eliminar
             </Button>

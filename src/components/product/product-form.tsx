@@ -162,8 +162,8 @@ export function ProductForm({ product }: ProductFormProps) {
                               : "p-2 border-transparent"
                           }`}
                           style={{ backgroundColor: hex }}
-                          variant="primary"
-                          size="lg"
+                          variant="ghost"
+                          size="icon"
                         />
                       );
                     })}
@@ -201,8 +201,8 @@ export function ProductForm({ product }: ProductFormProps) {
                               ? "p-1 body-01-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
                               : "p-1 text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
                           }`}
-                          variant="primary"
-                          size="lg"
+                          variant="ghost"
+                          size="icon"
                         >
                           {value}
                         </Button>
@@ -235,8 +235,8 @@ export function ProductForm({ product }: ProductFormProps) {
                             ? "text-text-primary-default border-b-[2px] border-border-primary-default"
                             : "body-01-medium text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
                         }`}
-                        variant="primary"
-                        size="lg"
+                        variant="ghost"
+                        size="icon"
                       >
                         {option.name.toLowerCase() === "color" && (
                           <span
@@ -260,11 +260,9 @@ export function ProductForm({ product }: ProductFormProps) {
         <Button
           onClick={handleAddToCart}
           disabled={isAddToCartDisabled}
-          className={`w-full body-01-semibold text-text-primary-default py-3 px-6 transition-colors
+          className={`w-full body-01-semibold py-3 px-6 transition-colors
               ${
-                isAddToCartDisabled
-                  ? "bg-background-fill-neutral-hover text-text-primary-invert cursor-not-allowed"
-                  : "bg-background-fill-neutral-default text-text-primary-invert hover:bg-blue-700"
+                isAddToCartDisabled ? "cursor-not-allowed" : "hover:bg-blue-700"
               }`}
           variant="primary"
           size="lg"
@@ -280,11 +278,9 @@ export function ProductForm({ product }: ProductFormProps) {
           disabled={isAddToCartDisabled}
           className={`w-full body-01-semibold py-3 px-6 transition-colors
               ${
-                isAddToCartDisabled
-                  ? "bg-transparent text-text-primary-default border cursor-not-allowed"
-                  : "bg-transparent text-text-primary-default border border-border-primary-default hover:bg-blue-700"
+                isAddToCartDisabled ? "cursor-not-allowed" : "hover:bg-blue-700"
               }`}
-          variant="primary"
+          variant="outline"
           size="lg"
         >
           {isLoading
@@ -302,9 +298,7 @@ export function ProductForm({ product }: ProductFormProps) {
             disabled={isAddToCartDisabled}
             className={`body-01-semibold py-3 px-6 transition-colors mr-4
             ${
-              isAddToCartDisabled
-                ? "bg-background-fill-neutral-hover text-text-primary-invert cursor-not-allowed"
-                : "bg-background-fill-neutral-default text-text-primary-invert hover:bg-blue-700"
+              isAddToCartDisabled ? "cursor-not-allowed" : "hover:bg-blue-700"
             }`}
             variant="primary"
             size="lg"
@@ -317,6 +311,7 @@ export function ProductForm({ product }: ProductFormProps) {
                 new Intl.NumberFormat("es-AR", {
                   style: "currency",
                   currency: selectedVariant.price.currencyCode,
+                  maximumFractionDigits: 0,
                 }).format(parseFloat(selectedVariant.price.amount))}
             </p>
             <p className="body-02-regular text-text-secondary-default">

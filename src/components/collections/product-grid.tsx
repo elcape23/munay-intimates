@@ -522,6 +522,7 @@ export function ProductGrid({
                 product.priceRange.minVariantPrice.amount
               ).toLocaleString("es-AR", {
                 useGrouping: true,
+                maximumFractionDigits: 0,
               })}
               compareAtPrice={(() => {
                 const cmp =
@@ -530,6 +531,7 @@ export function ProductGrid({
                 if (!cmp) return undefined;
                 return parseFloat(cmp).toLocaleString("es-AR", {
                   useGrouping: true,
+                  maximumFractionDigits: 0,
                 });
               })()}
               colorVariants={extractColorVariants(product)}

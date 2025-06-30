@@ -62,6 +62,7 @@ export default function FavoritesPage() {
                     {new Intl.NumberFormat("es-AR", {
                       style: "currency",
                       currency: product.priceRange.minVariantPrice.currencyCode,
+                      maximumFractionDigits: 0,
                     }).format(
                       parseFloat(product.priceRange.minVariantPrice.amount)
                     )}

@@ -104,8 +104,8 @@ export function SideMenu() {
                 <Button
                   aria-label="Buscar"
                   className="hover:text-brand-primary"
-                  variant="primary"
-                  size="lg"
+                  variant="ghost"
+                  size="icon"
                 >
                   <MagnifyingGlassIcon className="h-6 w-6" />
                 </Button>
@@ -113,8 +113,8 @@ export function SideMenu() {
                   aria-label="Cerrar menú"
                   onClick={closeMenu}
                   className="hover:text-brand-primary"
-                  variant="primary"
-                  size="lg"
+                  variant="ghost"
+                  size="icon"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </Button>
@@ -133,8 +133,8 @@ export function SideMenu() {
                         ? "body-02-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
                         : "body-02-regular text-text-secondary-default hover:text-brand-primary"
                     }`}
-                    variant="primary"
-                    size="lg"
+                    variant="ghost"
+                    size="text"
                   >
                     {t === "categories"
                       ? "CATEGORIAS"

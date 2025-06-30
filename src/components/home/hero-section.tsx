@@ -120,15 +120,13 @@ export function HeroSection({
       {/* Indicadores */}
       <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 space-x-2">
         {SLIDES.map((_, idx) => (
-          <Button
+          <button
             key={idx}
             onClick={() => setCurrent(idx)}
             aria-label={`Slide ${idx + 1}`}
             className={`h-2 w-2 rounded-full transition-colors ${
               idx === current ? "bg-white" : "bg-white/50"
             }`}
-            variant="primary"
-            size="lg"
           />
         ))}
       </div>

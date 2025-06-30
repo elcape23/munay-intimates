@@ -59,8 +59,8 @@ export function Navbar() {
           aria-label={isProduct ? "Volver atrás" : "Abrir menú"}
           onClick={handleMenuOrBack}
           className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring-primary"
-          variant="primary"
-          size="lg"
+          variant="ghost"
+          size="icon"
         >
           {" "}
           {isProduct ? (
