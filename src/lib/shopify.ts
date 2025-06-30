@@ -615,6 +615,115 @@ export async function getSaleProducts(
   return topSale.map(({ discount, ...rest }) => rest);
 }
 
+export async function getSaleProductsFull(
+  num: number = 60,
+  fetchCount: number = 250
+): Promise<ShopifyProduct[]> {
+  const query = gql`
+    query SaleProducts($first: Int!) {
+      products(first: $first) {
+        edges {
+          node {
+            id
+            title
+            handle
+            tags
+            createdAt
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            options {
+              name
+              values
+            }
+            color: metafield(
+              namespace: "shopify.metaobject_reference"
+              key: "color"
+            ) {
+              reference {
+                ... on Metaobject {
+                  fields {
+                    key
+                    value
+                  }
+                }
+              }
+            }
+            talle: metafield(namespace: "custom", key: "talle") {
+              key
+              value
+            }
+            estacion: metafield(namespace: "custom", key: "estacion") {
+              key
+              value
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  compareAtPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+              }
+            }
+            collections(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const { products } = await shopifyFetch<{
+    products: { edges: { node: ShopifyProduct }[] };
+  }>({ query, variables: { first: fetchCount } });
+
+  const TWO_WEEKS_MS = 1000 * 60 * 60 * 24 * 14;
+
+  const sale = products.edges
+    .map((edge) => edge.node)
+    .filter((p) => {
+      const variant = p.variants?.edges?.[0]?.node;
+      const price = variant ? Number(variant.price.amount) : 0;
+      const cmp = variant?.compareAtPrice
+        ? Number(variant.compareAtPrice.amount)
+        : 0;
+      return cmp > price;
+    })
+    .slice(0, num)
+    .map((p) => {
+      const createdMs = p.createdAt ? Date.parse(p.createdAt) : 0;
+      const isNewByDate = createdMs && Date.now() - createdMs < TWO_WEEKS_MS;
+      const hasNewTag = p.tags?.some((t) => t.toLowerCase() === "new");
+      return { ...p, isNew: Boolean(isNewByDate || hasNewTag) };
+    });
+
+  return sale;
+}
+
 export async function getProductByHandle(
   handle: string
 ): Promise<ShopifyProduct | null> {

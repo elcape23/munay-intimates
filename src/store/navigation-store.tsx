@@ -16,6 +16,13 @@ export const useNavigationStore = create<NavigationState>()((set) => ({
     set({ isLoading: true, error: null });
     try {
       const items = await getCollectionsForMenu();
+      items.push({
+        id: "special-prices",
+        title: "SPECIAL PRICES",
+        url: "/special-prices",
+        section: "categories",
+        isNew: false,
+      });
       set({ menuItems: items, isLoading: false });
     } catch (e) {
       set({
