@@ -1,18 +1,17 @@
-import { getNewProducts } from "@/lib/shopify";
+import { getNewestProductsFull, getCollections } from "@/lib/shopify";
+import { ProductGrid } from "@/components/collections/product-grid";
 import { Footer } from "@/components/common/footer";
-import { ProductCard } from "@/components/common/product-card";
-
 export default async function NewProductsPage() {
-  const products = await getNewProducts(60);
+  const products = await getNewestProductsFull(60);
+  const collections = await getCollections();
   return (
-    <main className="container pt-[60px] mx-auto px-6 min-h-screen">
-      <h1 className="heading-06-medium mb-4">Nuevos lanzamientos</h1>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {products.map((p) => (
-          <ProductCard key={p.id} {...p} />
-        ))}
-      </div>
+    <section className="container pt-[60px] mx-auto px-6 min-h-screen">
+      <ProductGrid
+        title="Nuevos lanzamientos"
+        products={products}
+        collections={collections}
+      />
       <Footer />
-    </main>
+    </section>
   );
 }

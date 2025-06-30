@@ -90,32 +90,29 @@ export default function CartPage() {
                 <span>{formatPrice(shipping)}</span>
               </div>
               {/* Botón fijo “Continuar” según diseño */}
-              <Button asChild variant="primary" size="lg">
-                <Link href={cart.checkoutUrl}>
+              <Button asChild value="primary" size="lg">
+                <a href={cart.checkoutUrl}>
                   Continuar - {formatPrice(grandTotal)}
-                </Link>
+                </a>
               </Button>
             </div>
           </div>
         </div>
       </section>
-      <div className="fixed bottom-0 left-0 w-screen h-10 bg-background-primary-default border-t border-gray-200 z-50 flex items-center justify-between px-4 sm:hidden">
-        <a
-          href={cart.checkoutUrl}
-          className="body-02-semibold py-1 px-4 bg-black text-white rounded mr-2"
-        >
-          Continuar
-        </a>
-        <div className="flex flex-col items-end">
-          <p className="body-02-semibold text-text-primary-default">
+      <div className="fixed bottom-0 left-0 w-screen h-auto bg-background-primary-default border-t border-border-secondary-default z-50 flex items-center justify-between px-6 pt-3 pb-9 sm:hidden">
+        <Button asChild value="primary" size="lg" className="w-1/2">
+          <a href={cart.checkoutUrl}>Continuar</a>
+        </Button>
+        <div className="flex flex-col items-end gap-1">
+          <p className="body-01-medium text-text-primary-default">
             {new Intl.NumberFormat("es-AR", {
               style: "currency",
               currency: cart.cost.totalAmount.currencyCode,
               maximumFractionDigits: 0,
             }).format(parseFloat(cart.cost.totalAmount.amount))}
           </p>
-          <p className="text-[10px] leading-none text-text-secondary-default">
-            <span>+ {formatPrice(shipping)} de envío</span>
+          <p className="body-02-regular leading-none text-text-secondary-default">
+            <span>Envío en checkout</span>
           </p>
         </div>
       </div>

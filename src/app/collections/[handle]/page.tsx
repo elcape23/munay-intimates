@@ -1,10 +1,6 @@
 // src/app/(pages)/collections/[handle]/page.tsx
 
-import {
-  getCollectionByHandle,
-  getCollections,
-  ShopifyCollection,
-} from "@/lib/shopify";
+import { getCollectionByHandle, getCollections } from "@/lib/shopify";
 import { notFound } from "next/navigation";
 import { ProductGrid } from "@/components/collections/product-grid";
 import { Footer } from "@/components/common/footer";

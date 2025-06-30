@@ -27,4 +27,7 @@ export const useNavigationStore = create<NavigationState>()((set) => ({
 }));
 
 /* dispara la carga al iniciar la app */
-useNavigationStore.getState().fetchMenu();
+// Solo en el browser para evitar esperar a la petición en el servidor
+if (typeof window !== "undefined") {
+  useNavigationStore.getState().fetchMenu();
+}

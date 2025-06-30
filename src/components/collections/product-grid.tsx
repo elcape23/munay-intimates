@@ -289,8 +289,8 @@ export function ProductGrid({
           <Button
             onClick={() => setIsFilterModalOpen(true)}
             className="flex items-center gap-1 body-02-regular uppercase text-text-primary-default hover:bg-gray-50"
-            variant="primary"
-            size="lg"
+            variant="ghost"
+            size="text"
           >
             {activeFilterCount > 0 && (
               <span className="ml-1 bg-background-fill-neutral-default body-03-semibold text-text-primary-invert rounded-full h-4 w-4 flex items-center justify-center">
@@ -321,8 +321,8 @@ export function ProductGrid({
             <h2 className="text-lg font-bold">Filtrar por</h2>
             <Button
               onClick={() => setIsFilterModalOpen(false)}
-              variant="primary"
-              size="lg"
+              variant="ghost"
+              size="icon"
             >
               <XMarkIcon className="h-6 w-6" />
             </Button>
@@ -388,8 +388,8 @@ export function ProductGrid({
                               active ? "ring-2 ring-gray-900" : ""
                             }`}
                             style={{ backgroundColor: bgColor }}
-                            variant="primary"
-                            size="lg"
+                            variant="ghost"
+                            size="icon"
                           />
                         );
                       })}
@@ -409,8 +409,8 @@ export function ProductGrid({
                                 ? "bg-gray-900 text-white border-gray-900"
                                 : "bg-white text-gray-700 border-gray-300"
                             }`}
-                            variant="primary"
-                            size="lg"
+                            variant="ghost"
+                            size="text"
                           >
                             {value}
                           </Button>
@@ -444,8 +444,8 @@ export function ProductGrid({
                               ? "text-text-primary-default border-gray-900"
                               : "text-text-secondary-default border-gray-300 hover:bg-gray-100"
                           }`}
-                          variant="primary"
-                          size="lg"
+                          variant="ghost"
+                          size="icon"
                         >
                           {filterString.split(":")[1].trim()}
                         </Button>
@@ -462,7 +462,7 @@ export function ProductGrid({
             <Button
               onClick={() => setActiveFilters([])}
               className="text-sm font-medium text-gray-700 hover:underline"
-              variant="primary"
+              variant="ghost"
               size="lg"
             >
               Limpiar filtros
@@ -491,9 +491,9 @@ export function ProductGrid({
                   className={`px-3 py-1 border rounded-full text-sm font-medium transition-colors ${
                     activeFilters.includes(tag)
                       ? "text-text-primary-default border-border-primary-default"
-                      : "text-text-secondary-default border-border-secondary-default hover:bg-gray-100"
+                      : "text-text-secondary-default border-border-secondary-default hover:"
                   }`}
-                  variant="primary"
+                  variant="outline"
                   size="lg"
                 >
                   {tag.split(":")[1].trim()}
@@ -507,10 +507,7 @@ export function ProductGrid({
       {/* --- Grilla de Productos --- */}
       <div className="-mx-6 my-6 h-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5 ">
         {filteredAndSortedProducts.map((product) => (
-          <div
-            key={product.handle}
-            className="h-full [&>a>div]:px-4 [&>a>div>h3]:mb-4"
-          >
+          <div key={product.handle} className="h-full [&>div>a>div]:px-4">
             <ProductCard
               key={product.handle}
               id={product.id}

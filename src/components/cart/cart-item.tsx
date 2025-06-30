@@ -44,7 +44,11 @@ export function CartItem({ line }: CartItemProps) {
     setTimeout(() => setShowSaved(false), 2000);
   };
   const handleDelete = () => removeItem(line.id);
-  const handleDecrease = () => updateQuantity(line.id, line.quantity - 1);
+  const handleDecrease = () => {
+    if (line.quantity > 1) {
+      updateQuantity(line.id, line.quantity - 1);
+    }
+  };
   const handleIncrease = () => updateQuantity(line.id, line.quantity + 1);
   const handlers = useSwipeable({
     onSwipedLeft: () => setOpen(true),
@@ -85,9 +89,8 @@ export function CartItem({ line }: CartItemProps) {
         <div ref={buttonsRef} className="absolute inset-y-0 right-0 flex">
           <Button
             onClick={handleSave}
-            className="w-max px-8 body-02-semibold bg-background-fill-neutral-default text-text-primary-invert"
+            className="w-max px-8 body-02-semibold bg-background-fill-neutral-default text-text-primary-invert rounded-l-1"
             variant="ghost"
-            size="icon"
           >
             Guardar
           </Button>
@@ -95,7 +98,6 @@ export function CartItem({ line }: CartItemProps) {
             onClick={handleDelete}
             className="w-max px-8 body-02-semibold bg-background-fill-danger-default text-text-primary-invert"
             variant="ghost"
-            size="icon"
           >
             Eliminar
           </Button>
@@ -159,6 +161,7 @@ export function CartItem({ line }: CartItemProps) {
                 aria-label="disminuir cantidad"
                 variant="ghost"
                 size="icon"
+                disabled={line.quantity <= 1}
               >
                 <MinusIcon className="w-5 h-5 p-1 text-icon-primary-default" />
               </Button>

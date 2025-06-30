@@ -22,7 +22,7 @@ const buttonVariants = cva(
         destructive:
           "bg-background-fill-danger-default text-text-danger-invert hover:bg-background-fill-danger-hover hover:text-text-danger-invert",
         outline:
-          "border border-border-primary-default bg-transparent hover:bg-accent hover:text-accent-foreground",
+          "border border-border-primary-default bg-transparent text-text-primary-default hover:bg-accent hover:text-accent-foreground",
         ghost: "hover:accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 text-decoration: underline hover:underline-0",
       },

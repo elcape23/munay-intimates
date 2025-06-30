@@ -17,38 +17,53 @@ interface SplashScreenProps {
  * 4. loaded (fade-out completo) + onComplete()
  */
 export function SplashScreen({ onComplete }: SplashScreenProps) {
+  const [show, setShow] = useState<boolean | null>(null);
   const [step, setStep] = useState<
     "logoEnter" | "logoExit" | "spinner" | "loaded"
   >("logoEnter");
 
+  // Decide si mostrar la animación según localStorage
+  useEffect(() => {
+    const seen = localStorage.getItem("splashSeen") === "true";
+    if (seen) {
+      setShow(false);
+      if (onComplete) onComplete();
+    } else {
+      setShow(true);
+      localStorage.setItem("splashSeen", "true");
+    }
+  }, [onComplete]);
+
   // Desencadena salida del logo tras 3s
   useEffect(() => {
+    if (!show || step !== "logoEnter") return;
     const timer = setTimeout(() => setStep("logoExit"), 3000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [show, step]);
 
   // Tras logoExit, iniciamos spinner tras 0.8s
   useEffect(() => {
-    if (step === "logoExit") {
-      const timer = setTimeout(() => setStep("spinner"), 800);
-      return () => clearTimeout(timer);
-    }
-  }, [step]);
+    if (!show || step !== "logoExit") return;
+    const timer = setTimeout(() => setStep("spinner"), 800);
+    return () => clearTimeout(timer);
+  }, [show, step]);
 
   // Tras spinner, completamos carga tras 2s
   useEffect(() => {
-    if (step === "spinner") {
-      const timer = setTimeout(() => setStep("loaded"), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [step]);
+    if (!show || step !== "spinner") return;
+    const timer = setTimeout(() => setStep("loaded"), 2000);
+    return () => clearTimeout(timer);
+  }, [show, step]);
 
   // Cuando termina, notificamos al layout
   useEffect(() => {
+    if (!show) return;
     if (step === "loaded" && onComplete) {
       onComplete();
     }
-  }, [step, onComplete]);
+  }, [show, step, onComplete]);
+
+  if (!show) return null;
 
   return (
     <AnimatePresence>
