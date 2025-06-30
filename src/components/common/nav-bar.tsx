@@ -11,7 +11,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { useUiStore } from "@/store/ui-store";
 import { useCartStore } from "@/store/cart-store";
-import { cn } from "@/lib/utils"; // tu helper de clases condicionales
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   const path = usePathname();
@@ -54,11 +55,12 @@ export function Navbar() {
     >
       <div className="max-w-7xl h-[55px] mx-auto flex items-center justify-between px-6 py-3">
         {/* Menú hamburguesa */}
-        <button
-          type="button"
+        <Button
           aria-label={isProduct ? "Volver atrás" : "Abrir menú"}
           onClick={handleMenuOrBack}
           className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring-primary"
+          variant="primary"
+          size="lg"
         >
           {" "}
           {isProduct ? (
@@ -71,7 +73,7 @@ export function Navbar() {
               })}
             />
           )}
-        </button>
+        </Button>
 
         {/* Logo brand */}
         {(!isProduct || scrolled) && (

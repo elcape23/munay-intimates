@@ -11,7 +11,7 @@ interface HeroSlide {
   image: string; // Ruta relativa en /public o URL completa
   title: string;
   subtitle: string;
-  buttonText: string;
+  ButtonText: string;
   href?: string;
 }
 
@@ -22,7 +22,7 @@ const SLIDES: HeroSlide[] = [
     image: "/images/hero/hero-1.webp",
     title: "New Arrivals",
     subtitle: "",
-    buttonText: "Descubrir",
+    ButtonText: "Descubrir",
     href: "/collections/new",
   },
   {
@@ -30,7 +30,7 @@ const SLIDES: HeroSlide[] = [
     image: "/images/hero/hero-2.webp",
     title: "Íntimos sin clip",
     subtitle: "Comodidad absoluta cada día",
-    buttonText: "Descubrir más",
+    ButtonText: "Descubrir más",
     href: "/no-clip",
   },
   {
@@ -38,7 +38,7 @@ const SLIDES: HeroSlide[] = [
     image: "/images/hero/hero-3.webp",
     title: "Nuevos lanzamientos",
     subtitle: "Lo último en lencería Munay",
-    buttonText: "Explorar novedades",
+    ButtonText: "Explorar novedades",
     href: "/new",
   },
 ];
@@ -110,7 +110,7 @@ export function HeroSection({
                 className="flex justify-start px-0 mb-20"
               >
                 <ArrowLongRightIcon className="ml-1 h-6 w-6 inline" />
-                <a href={slide.href ?? "#"}>{slide.buttonText}</a>
+                <a href={slide.href ?? "#"}>{slide.ButtonText}</a>
               </Button>
             </div>
           </div>
@@ -120,13 +120,15 @@ export function HeroSection({
       {/* Indicadores */}
       <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 space-x-2">
         {SLIDES.map((_, idx) => (
-          <button
+          <Button
             key={idx}
             onClick={() => setCurrent(idx)}
             aria-label={`Slide ${idx + 1}`}
             className={`h-2 w-2 rounded-full transition-colors ${
               idx === current ? "bg-white" : "bg-white/50"
             }`}
+            variant="primary"
+            size="lg"
           />
         ))}
       </div>

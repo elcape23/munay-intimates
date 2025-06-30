@@ -6,6 +6,7 @@ import { useCartStore } from "@/store/cart-store"; // ¡NUEVO! Importamos el sto
 import Link from "next/link";
 import { CartItem } from "@/components/cart/cart-item";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { Button } from "@/components/ui/button";
 
 export default function CartPage() {
   // Obtenemos todo el estado directamente desde nuestro store de Zustand.
@@ -52,9 +53,13 @@ export default function CartPage() {
       <section className="mt-[55px] mx-6">
         {/* — HEADER: flecha  título */}
         <div className="flex items-center justify-between">
-          <button onClick={() => window.history.back()}>
+          <Button
+            onClick={() => window.history.back()}
+            variant="ghost"
+            size="icon"
+          >
             <ChevronLeftIcon className="w-6 h-6 text-black" />
-          </button>
+          </Button>
           <h1 className="body-01-medium">CARRITO</h1>
         </div>
 
@@ -83,12 +88,14 @@ export default function CartPage() {
                 <span>{formatPrice(shipping)}</span>
               </div>
               {/* Botón fijo “Continuar” según diseño */}
-              <a
-                href={cart.checkoutUrl}
-                className="block mt-6 w-full py-3 bg-black text-white text-center rounded hover:bg-gray-800 transition"
-              >
-                Continuar - {formatPrice(grandTotal)}
-              </a>
+              <Button>
+                <a
+                  href={cart.checkoutUrl}
+                  className="block mt-6 w-full py-3 bg-black text-white text-center rounded hover:bg-gray-800 transition"
+                >
+                  Continuar - {formatPrice(grandTotal)}
+                </a>
+              </Button>
             </div>
           </div>
         </div>
@@ -108,7 +115,7 @@ export default function CartPage() {
             }).format(parseFloat(cart.cost.totalAmount.amount))}
           </p>
           <p className="text-[10px] leading-none text-text-secondary-default">
-            Envío en el checkout
+            <span>+ {formatPrice(shipping)} de envío</span>
           </p>
         </div>
       </div>

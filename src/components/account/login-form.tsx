@@ -2,6 +2,7 @@
 
 import { useState, FormEvent, useEffect } from "react";
 import { useAuthStore } from "@/store/auth-store";
+import { Button } from "@/components/ui/button";
 
 export default function LoginForm() {
   const { login, isLoggedIn, error: authError, isLoading } = useAuthStore();
@@ -80,13 +81,15 @@ export default function LoginForm() {
       </div>
       {error && <p className="text-red-600 text-sm text-center">{error}</p>}
       <div>
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
+          variant="primary"
+          size="lg"
         >
           {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
-        </button>
+        </Button>
       </div>
     </form>
   );

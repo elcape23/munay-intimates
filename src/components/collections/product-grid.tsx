@@ -5,6 +5,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { ShopifyProduct, ShopifyCollection } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/common/product-card";
 import { extractColorVariants } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
@@ -285,9 +286,11 @@ export function ProductGrid({
           </h1>
         </div>
         <div className="items-center flex ">
-          <button
+          <Button
             onClick={() => setIsFilterModalOpen(true)}
             className="flex items-center gap-1 body-02-regular uppercase text-text-primary-default hover:bg-gray-50"
+            variant="primary"
+            size="lg"
           >
             {activeFilterCount > 0 && (
               <span className="ml-1 bg-background-fill-neutral-default body-03-semibold text-text-primary-invert rounded-full h-4 w-4 flex items-center justify-center">
@@ -295,7 +298,7 @@ export function ProductGrid({
               </span>
             )}
             <span>Filtrar</span>
-          </button>
+          </Button>
         </div>
       </div>
       <div
@@ -316,9 +319,13 @@ export function ProductGrid({
         >
           <div className="flex justify-between items-center p-4 border-b">
             <h2 className="text-lg font-bold">Filtrar por</h2>
-            <button onClick={() => setIsFilterModalOpen(false)}>
+            <Button
+              onClick={() => setIsFilterModalOpen(false)}
+              variant="primary"
+              size="lg"
+            >
               <XMarkIcon className="h-6 w-6" />
-            </button>
+            </Button>
           </div>
           <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
             <div>
@@ -373,7 +380,7 @@ export function ProductGrid({
                           ? value
                           : COLOR_MAP[value] ?? "#cccccc";
                         return (
-                          <button
+                          <Button
                             key={filterString}
                             onClick={() => handleFilterToggle(filterString)}
                             aria-label={value}
@@ -381,6 +388,8 @@ export function ProductGrid({
                               active ? "ring-2 ring-gray-900" : ""
                             }`}
                             style={{ backgroundColor: bgColor }}
+                            variant="primary"
+                            size="lg"
                           />
                         );
                       })}
@@ -391,7 +400,7 @@ export function ProductGrid({
                         const value = filterString.split(":")[1].trim();
                         const active = activeFilters.includes(filterString);
                         return (
-                          <button
+                          <Button
                             key={filterString}
                             onClick={() => handleFilterToggle(filterString)}
                             aria-label={value}
@@ -400,9 +409,11 @@ export function ProductGrid({
                                 ? "bg-gray-900 text-white border-gray-900"
                                 : "bg-white text-gray-700 border-gray-300"
                             }`}
+                            variant="primary"
+                            size="lg"
                           >
                             {value}
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>
@@ -425,7 +436,7 @@ export function ProductGrid({
                   ) : (
                     <div className="flex flex-wrap gap-2">
                       {values.map((filterString) => (
-                        <button
+                        <Button
                           key={filterString}
                           onClick={() => handleFilterToggle(filterString)}
                           className={`px-3 py-1.5 border rounded-full body-02-medium transition-colors ${
@@ -433,9 +444,11 @@ export function ProductGrid({
                               ? "text-text-primary-default border-gray-900"
                               : "text-text-secondary-default border-gray-300 hover:bg-gray-100"
                           }`}
+                          variant="primary"
+                          size="lg"
                         >
                           {filterString.split(":")[1].trim()}
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )}
@@ -446,18 +459,22 @@ export function ProductGrid({
             )}
           </div>
           <div className="flex justify-between items-center p-4 border-t bg-gray-50 rounded-b-2xl">
-            <button
+            <Button
               onClick={() => setActiveFilters([])}
               className="text-sm font-medium text-gray-700 hover:underline"
+              variant="primary"
+              size="lg"
             >
               Limpiar filtros
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setIsFilterModalOpen(false)}
               className="px-6 py-2 bg-gray-900 text-white font-semibold rounded-lg shadow-md hover:bg-gray-800 transition-colors"
+              variant="primary"
+              size="lg"
             >
               Ver {filteredAndSortedProducts.length} productos
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -468,7 +485,7 @@ export function ProductGrid({
           <div key={groupName}>
             <div className="flex flex-wrap gap-2 mt-5">
               {tags.map((tag) => (
-                <button
+                <Button
                   key={tag}
                   onClick={() => handleFilterToggle(tag)}
                   className={`px-3 py-1 border rounded-full text-sm font-medium transition-colors ${
@@ -476,9 +493,11 @@ export function ProductGrid({
                       ? "text-text-primary-default border-border-primary-default"
                       : "text-text-secondary-default border-border-secondary-default hover:bg-gray-100"
                   }`}
+                  variant="primary"
+                  size="lg"
                 >
                   {tag.split(":")[1].trim()}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

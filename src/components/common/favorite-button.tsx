@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useFavoritesStore } from "@/store/favorites-store";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
+import { Button } from "@/components/ui/button";
 
 type FavoriteButtonProps = {
   productHandle: string;
@@ -47,18 +48,20 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
   const isProductFavorite = favoriteHandles.includes(productHandle);
 
   return (
-    <button
+    <Button
       onClick={handleToggle}
       aria-label={
         isProductFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
       }
       className="text-icon-primary-default hover:bg-gray-200 transition-colors"
+      variant="ghost"
+      size="lg"
     >
       {isProductFavorite ? (
         <HeartIconSolid className="h-6 w-6 text-icon-primary-default" />
       ) : (
         <HeartIconOutline className="h-6 w-6 text-icon-primary-default" />
       )}
-    </button>
+    </Button>
   );
 }

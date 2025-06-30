@@ -8,6 +8,7 @@ import type { ShopifyCart } from "@/lib/shopify";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/cart-store";
 import { useFavoritesStore } from "@/store/favorites-store";
+import { Button } from "@/components/ui/button";
 
 type CartLine = ShopifyCart["lines"]["edges"][number]["node"];
 
@@ -80,18 +81,22 @@ export function CartItem({ line }: CartItemProps) {
       <div className="relative overflow-hidden my-3" {...handlers}>
         {/* Botones ocultos a la derecha */}
         <div ref={buttonsRef} className="absolute inset-y-0 right-0 flex">
-          <button
+          <Button
             onClick={handleSave}
             className="w-max px-8 body-02-semibold bg-background-fill-neutral-default text-text-primary-invert"
+            variant="primary"
+            size="lg"
           >
             Guardar
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleDelete}
             className="w-max px-8 body-02-semibold bg-background-fill-danger-default text-text-primary-invert"
+            variant="primary"
+            size="lg"
           >
             Eliminar
-          </button>
+          </Button>
         </div>
         <div
           className="flex items-stretch gap-4 bg-background-primary-default transform transition-transform duration-200"
@@ -146,30 +151,36 @@ export function CartItem({ line }: CartItemProps) {
               )}
             </div>
             <div className="flex items-center gap-2 mt-2">
-              <button
+              <Button
                 onClick={handleDecrease}
                 className="m-1"
                 aria-label="disminuir cantidad"
+                variant="primary"
+                size="lg"
               >
                 <MinusIcon className="w-5 h-5 p-1 text-icon-primary-default" />
-              </button>
+              </Button>
               <span className="body-02-regular text-center">
                 {line.quantity}
               </span>
-              <button
+              <Button
                 onClick={handleIncrease}
                 className="m-1"
                 aria-label="incrementar cantidad"
+                variant="primary"
+                size="lg"
               >
                 <PlusIcon className="w-5 h-5 p-1 text-icon-primary-default" />
-              </button>
+              </Button>
             </div>
-            <button
+            <Button
               onClick={handleDelete}
               className="my-2 mr-2 body-02-regular text-text-secondary-default hover:text-text-secondary-hover transition-colors"
+              variant="primary"
+              size="lg"
             >
               Eliminar
-            </button>
+            </Button>
           </div>
         </div>
       </div>

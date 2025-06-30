@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import LoginForm from "@/components/account/login-form";
 import { useAuthStore } from "@/store/auth-store";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -26,13 +27,14 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-center mb-6">
             Iniciar Sesión
           </h1>
-          <button
-            type="button"
+          <Button
             onClick={() => signIn("google", { callbackUrl: "/account" })}
             className="w-full mb-4 inline-block px-6 py-2 bg-white border rounded shadow-sm text-sm font-medium hover:bg-gray-50"
+            variant="secondary"
+            size="lg"
           >
             Iniciar sesión con Google
-          </button>
+          </Button>
           <LoginForm />
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">

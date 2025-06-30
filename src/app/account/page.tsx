@@ -5,6 +5,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { getCustomer } from "@/lib/shopify";
 import { OrderHistory } from "@/components/account/order-history";
 import LoginForm from "@/components/account/login-form";
+import { Button } from "@/components/ui/button";
 
 export default function AccountPage() {
   // rawSession lo casteamos a any para saltarnos el TS
@@ -27,13 +28,14 @@ export default function AccountPage() {
     return (
       <div className="flex flex-col justify-center items-center h-screen space-y-4">
         <p className="text-center text-lg">No estás logueado.</p>
-        <button
-          type="button"
+        <Button
           onClick={handleGoogle}
           className="w-full max-w-xs inline-block px-6 py-2 bg-white border rounded shadow-sm text-sm font-medium hover:bg-gray-50"
+          variant="secondary"
+          size="lg"
         >
           Iniciar sesión con Google
-        </button>
+        </Button>
         <div className="w-full max-w-xs">
           <LoginForm />
         </div>
@@ -67,12 +69,14 @@ export default function AccountPage() {
               ¡Hola, {session.user.name}! Bienvenido a tu panel.
             </p>
           </div>
-          <button
+          <Button
             onClick={() => signOut({ callbackUrl: "/" })}
             className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            variant="secondary"
+            size="lg"
           >
             Cerrar Sesión
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">

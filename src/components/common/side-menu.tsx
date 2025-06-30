@@ -10,9 +10,9 @@ import {
   HeartIcon as HeartIconOutline,
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
-
 import { useUiStore } from "@/store/ui-store";
 import { useNavigationStore } from "@/store/navigation-store";
+import { Button } from "@/components/ui/button";
 
 const SEASONS = [
   { label: "INVIERNO", slug: "invierno" },
@@ -101,19 +101,23 @@ export function SideMenu() {
               </Link>
 
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   aria-label="Buscar"
                   className="hover:text-brand-primary"
+                  variant="primary"
+                  size="lg"
                 >
                   <MagnifyingGlassIcon className="h-6 w-6" />
-                </button>
-                <button
+                </Button>
+                <Button
                   aria-label="Cerrar menú"
                   onClick={closeMenu}
                   className="hover:text-brand-primary"
+                  variant="primary"
+                  size="lg"
                 >
                   <XMarkIcon className="h-6 w-6" />
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -121,7 +125,7 @@ export function SideMenu() {
               {/* Tabs */}
               <div className="flex justify-between py-2 px-2 space-x-6">
                 {(["categories", "new", "collections"] as const).map((t) => (
-                  <button
+                  <Button
                     key={t}
                     onClick={() => setTab(t)}
                     className={`pb-[0px] tracking-wide transition-colors ${
@@ -129,13 +133,15 @@ export function SideMenu() {
                         ? "body-02-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
                         : "body-02-regular text-text-secondary-default hover:text-brand-primary"
                     }`}
+                    variant="primary"
+                    size="lg"
                   >
                     {t === "categories"
                       ? "CATEGORIAS"
                       : t === "new"
                       ? "NEW"
                       : "COLECCIONES"}
-                  </button>
+                  </Button>
                 ))}
               </div>
 

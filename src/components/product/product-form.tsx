@@ -6,6 +6,7 @@ import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
 import { COLOR_MAP } from "@/lib/color-map";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 type ProductFormProps = {
   product: ShopifyProduct;
@@ -151,9 +152,8 @@ export function ProductForm({ product }: ProductFormProps) {
                       const hex = COLOR_MAP[value] ?? value;
                       const isActive = selectedValue === value;
                       return (
-                        <button
+                        <Button
                           key={value}
-                          type="button"
                           aria-label={value}
                           onClick={() => handleOptionChange(option.name, value)}
                           className={`w-6 h-6 rounded-full border-[1.5px] ${
@@ -162,6 +162,8 @@ export function ProductForm({ product }: ProductFormProps) {
                               : "p-2 border-transparent"
                           }`}
                           style={{ backgroundColor: hex }}
+                          variant="primary"
+                          size="lg"
                         />
                       );
                     })}
@@ -191,18 +193,19 @@ export function ProductForm({ product }: ProductFormProps) {
                     {option.values.map((value) => {
                       const isActive = selectedValue === value;
                       return (
-                        <button
+                        <Button
                           key={value}
-                          type="button"
                           onClick={() => handleOptionChange(option.name, value)}
                           className={`transition-colors ${
                             isActive
                               ? "p-1 body-01-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
                               : "p-1 text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
                           }`}
+                          variant="primary"
+                          size="lg"
                         >
                           {value}
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>
@@ -223,7 +226,7 @@ export function ProductForm({ product }: ProductFormProps) {
                   {option.values.map((value) => {
                     const isActive = selectedOptions[option.name] === value;
                     return (
-                      <button
+                      <Button
                         key={value}
                         onClick={() => handleOptionChange(option.name, value)}
                         className={`m-2 body-01-semibold transition-colors 
@@ -232,6 +235,8 @@ export function ProductForm({ product }: ProductFormProps) {
                             ? "text-text-primary-default border-b-[2px] border-border-primary-default"
                             : "body-01-medium text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
                         }`}
+                        variant="primary"
+                        size="lg"
                       >
                         {option.name.toLowerCase() === "color" && (
                           <span
@@ -242,7 +247,7 @@ export function ProductForm({ product }: ProductFormProps) {
                           />
                         )}
                         {value}
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>
@@ -252,7 +257,7 @@ export function ProductForm({ product }: ProductFormProps) {
       </div>
       {/* Botones de acción */}
       <div ref={buttonContainerRef} className="flex flex-row gap-4">
-        <button
+        <Button
           onClick={handleAddToCart}
           disabled={isAddToCartDisabled}
           className={`w-full body-01-semibold text-text-primary-default py-3 px-6 transition-colors
@@ -261,14 +266,16 @@ export function ProductForm({ product }: ProductFormProps) {
                   ? "bg-background-fill-neutral-hover text-text-primary-invert cursor-not-allowed"
                   : "bg-background-fill-neutral-default text-text-primary-invert hover:bg-blue-700"
               }`}
+          variant="primary"
+          size="lg"
         >
           {isLoading
             ? "Añadiendo..."
             : selectedVariant?.availableForSale
             ? "Añadir"
             : "No Disponible"}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={handleAddToCart}
           disabled={isAddToCartDisabled}
           className={`w-full body-01-semibold py-3 px-6 transition-colors
@@ -277,18 +284,20 @@ export function ProductForm({ product }: ProductFormProps) {
                   ? "bg-transparent text-text-primary-default border cursor-not-allowed"
                   : "bg-transparent text-text-primary-default border border-border-primary-default hover:bg-blue-700"
               }`}
+          variant="primary"
+          size="lg"
         >
           {isLoading
             ? "Añadiendo..."
             : selectedVariant?.availableForSale
             ? "Comprar"
             : "No Disponible"}
-        </button>
+        </Button>
       </div>
 
       {showSticky && (
         <div className="fixed bottom-0 left-0 w-screen h-24 bg-background-primary-default border-t border-gray-200 z-50 flex items-center justify-between px-4">
-          <button
+          <Button
             onClick={handleAddToCart}
             disabled={isAddToCartDisabled}
             className={`body-01-semibold py-3 px-6 transition-colors mr-4
@@ -297,9 +306,11 @@ export function ProductForm({ product }: ProductFormProps) {
                 ? "bg-background-fill-neutral-hover text-text-primary-invert cursor-not-allowed"
                 : "bg-background-fill-neutral-default text-text-primary-invert hover:bg-blue-700"
             }`}
+            variant="primary"
+            size="lg"
           >
             {isLoading ? "Añadiendo..." : "Añadir"}
-          </button>
+          </Button>
           <div className="flex flex-col items-end">
             <p className="body-01-semibold text-text-primary-default">
               {selectedVariant &&
