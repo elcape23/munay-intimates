@@ -232,8 +232,30 @@ export function ProductGrid({
                     (f.key === "name" && f.value === value) ||
                     (f.key === "value" && f.value === value)
                 )
-              )
+              ) {
                 return true;
+              }
+
+              if (["talle", "talla", "size"].includes(key)) {
+                const meta = product.talle?.value;
+                if (
+                  meta &&
+                  meta
+                    .split(",")
+                    .map((v) => v.trim())
+                    .includes(value)
+                ) {
+                  return true;
+                }
+                const opt = product.options?.find((o) =>
+                  ["talle", "talla", "size"].includes(o.name.toLowerCase())
+                );
+                if (opt && opt.values.some((v) => v.trim() === value)) {
+                  return true;
+                }
+              }
+
+              // @ts-ignore
               // @ts-ignore
               if (product[key] && product[key].value === value) {
                 return true;
@@ -329,11 +351,7 @@ export function ProductGrid({
         >
           <div className="flex justify-between items-center">
             <Button
-              onClick={() => {
-                setActiveFilters([]);
-                setMinPriceFilter(minPrice);
-                setMaxPriceFilter(maxPrice);
-              }}
+              onClick={() => setActiveFilters([])}
               className="body-02-regular text-text-secondary-default uppercase hover:underline"
               variant="ghost"
               size="text"

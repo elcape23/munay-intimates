@@ -17,10 +17,22 @@ interface SplashScreenProps {
  * 4. loaded (fade-out completo) + onComplete()
  */
 export function SplashScreen({ onComplete }: SplashScreenProps) {
-  const [show] = useState<boolean>(true);
+  const [show, setShow] = useState<boolean | null>(null);
   const [step, setStep] = useState<
     "logoEnter" | "logoExit" | "spinner" | "loaded"
   >("logoEnter");
+
+  // Decide si mostrar la animación según localStorage
+  useEffect(() => {
+    const seen = localStorage.getItem("splashSeen") === "true";
+    if (seen) {
+      setShow(false);
+      if (onComplete) onComplete();
+    } else {
+      setShow(true);
+      localStorage.setItem("splashSeen", "true");
+    }
+  }, [onComplete]);
 
   // Desencadena salida del logo tras 3s
   useEffect(() => {
