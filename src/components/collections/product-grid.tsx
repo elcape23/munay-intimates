@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/common/product-card";
 import { extractColorVariants } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
+import { useRouter } from "next/navigation";
 
 type ProductGridProps = {
   title: string;
@@ -26,6 +27,7 @@ export function ProductGrid({
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [minPriceFilter, setMinPriceFilter] = useState(0);
   const [maxPriceFilter, setMaxPriceFilter] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     if (isFilterModalOpen) {
@@ -280,7 +282,14 @@ export function ProductGrid({
       {/* Título renderizado aquí */}
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-2">
-          <ChevronLeftIcon className="h-6 w-6 text-icon-primary-default" />
+          <Button
+            onClick={() => router.back()}
+            aria-label="Volver atrás"
+            variant="ghost"
+            size="icon"
+          >
+            <ChevronLeftIcon className="h-6 w-6 text-icon-primary-default" />
+          </Button>
           <h1 className="body-01-medium uppercase tracking-tight text-text-primary-default">
             {title}
           </h1>
@@ -313,12 +322,19 @@ export function ProductGrid({
           }`}
         />
         <div
-          className={`relative bg-white w-full max-w-lg rounded-t-2xl shadow-xl transition-transform duration-300 transform ${
+          className={`relative py-10 px-6 bg-background-primary-default space-y-10 w-full transition-transform duration-300 transform ${
             isFilterModalOpen ? "translate-y-0" : "translate-y-full"
           }`}
         >
-          <div className="flex justify-between items-center p-4 border-b">
-            <h2 className="text-lg font-bold">Filtrar por</h2>
+          <div className="flex justify-between items-center">
+            <Button
+              onClick={() => setActiveFilters([])}
+              className="body-02-regular text-text-secondary-default uppercase hover:underline"
+              variant="ghost"
+              size="text"
+            >
+              Limpiar filtros
+            </Button>
             <Button
               onClick={() => setIsFilterModalOpen(false)}
               variant="ghost"
@@ -327,48 +343,14 @@ export function ProductGrid({
               <XMarkIcon className="h-6 w-6" />
             </Button>
           </div>
-          <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
-            <div>
-              <h3 className="body-02-medium text-text-seconday-default mb-3">
-                Precio
-              </h3>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min={minPrice}
-                    max={maxPrice}
-                    value={minPriceFilter}
-                    onChange={(e) => {
-                      const val = Number(e.target.value);
-                      setMinPriceFilter(val);
-                      if (val > maxPriceFilter) setMaxPriceFilter(val);
-                    }}
-                    className="w-full"
-                  />
-                  <input
-                    type="range"
-                    min={minPrice}
-                    max={maxPrice}
-                    value={maxPriceFilter}
-                    onChange={(e) => {
-                      const val = Number(e.target.value);
-                      setMaxPriceFilter(val);
-                      if (val < minPriceFilter) setMinPriceFilter(val);
-                    }}
-                    className="w-full"
-                  />
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span>{minPriceFilter}</span>
-                  <span>{maxPriceFilter}</span>
-                </div>
-              </div>
-            </div>
+          <div className="space-y-10 max-h-[60vh] overflow-y-auto">
             {Object.keys(modalFilterGroups).length > 0 ? (
               Object.entries(modalFilterGroups).map(([groupName, values]) => (
-                <div key={groupName} className="space-y-2">
-                  <h3 className="body-02-medium text-text-seconday-default mb-3">
+                <div
+                  key={groupName}
+                  className="space-y-2 flex flex-row justify-between items-center"
+                >
+                  <h3 className="body-02-regular uppercase text-text-seconday-default">
                     {groupName}
                   </h3>
                   {groupName === "Color" ? (
@@ -384,7 +366,7 @@ export function ProductGrid({
                             key={filterString}
                             onClick={() => handleFilterToggle(filterString)}
                             aria-label={value}
-                            className={`h-8 w-8 rounded-full border ${
+                            className={`h-6 w-6 items-start rounded-full border ${
                               active ? "ring-2 ring-gray-900" : ""
                             }`}
                             style={{ backgroundColor: bgColor }}
@@ -404,10 +386,10 @@ export function ProductGrid({
                             key={filterString}
                             onClick={() => handleFilterToggle(filterString)}
                             aria-label={value}
-                            className={`h-8 w-8 flex items-center justify-center rounded-full border text-xs ${
+                            className={`h-6 w-6 flex items-start body-02-regular ${
                               active
-                                ? "bg-gray-900 text-white border-gray-900"
-                                : "bg-white text-gray-700 border-gray-300"
+                                ? "text-text-primary-default border-b-[2px] border-border-primary-default"
+                                : "body-02-medium text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
                             }`}
                             variant="ghost"
                             size="text"
@@ -458,19 +440,48 @@ export function ProductGrid({
               <p className="text-gray-500">No hay filtros disponibles.</p>
             )}
           </div>
-          <div className="flex justify-between items-center p-4 border-t bg-gray-50 rounded-b-2xl">
-            <Button
-              onClick={() => setActiveFilters([])}
-              className="text-sm font-medium text-gray-700 hover:underline"
-              variant="ghost"
-              size="lg"
-            >
-              Limpiar filtros
-            </Button>
+          <div className="flex flex-row">
+            <h3 className="body-02-medium uppercase text-text-primary-default">
+              Precio
+            </h3>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 px-10">
+                <input
+                  type="range"
+                  min={minPrice}
+                  max={maxPrice}
+                  value={minPriceFilter}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setMinPriceFilter(val);
+                    if (val > maxPriceFilter) setMaxPriceFilter(val);
+                  }}
+                  className="w-full"
+                />
+                <input
+                  type="range"
+                  min={minPrice}
+                  max={maxPrice}
+                  value={maxPriceFilter}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setMaxPriceFilter(val);
+                    if (val < minPriceFilter) setMinPriceFilter(val);
+                  }}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex justify-between body-03-regular px-10">
+                <span>${minPriceFilter}</span>
+                <span>${maxPriceFilter}</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-between items-center pt-10">
             <Button
               onClick={() => setIsFilterModalOpen(false)}
-              className="px-6 py-2 bg-gray-900 text-white font-semibold rounded-lg shadow-md hover:bg-gray-800 transition-colors"
-              variant="primary"
+              className="w-full hover:bg-background-fill-neutral-hover transition-colors"
+              variant="outline"
               size="lg"
             >
               Ver {filteredAndSortedProducts.length} productos

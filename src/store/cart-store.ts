@@ -113,7 +113,41 @@ export const useCartStore = create<CartState>((set, get) => ({
   updateQuantity: async (lineId: string, quantity: number) => {
     const cartId = get().cart?.id;
     if (!cartId) return;
-    set({ isLoading: true, error: null });
+    // Optimistic update: reflejamos el nuevo valor inmediatamente
+    set((state) => {
+      if (!state.cart) return { isLoading: true, error: null };
+      const cart = { ...state.cart };
+      const edgeIndex = cart.lines.edges.findIndex((e) => e.node.id === lineId);
+      if (edgeIndex !== -1) {
+        const edge = cart.lines.edges[edgeIndex];
+        const diff = quantity - edge.node.quantity;
+        const unitPrice =
+          parseFloat(edge.node.cost.totalAmount.amount) / edge.node.quantity;
+        cart.lines.edges[edgeIndex] = {
+          ...edge,
+          node: { ...edge.node, quantity },
+        };
+        cart.totalQuantity += diff;
+        cart.cost = {
+          ...cart.cost,
+          subtotalAmount: {
+            ...cart.cost.subtotalAmount,
+            amount: (
+              parseFloat(cart.cost.subtotalAmount.amount) +
+              diff * unitPrice
+            ).toString(),
+          },
+          totalAmount: {
+            ...cart.cost.totalAmount,
+            amount: (
+              parseFloat(cart.cost.totalAmount.amount) +
+              diff * unitPrice
+            ).toString(),
+          },
+        };
+      }
+      return { cart, isLoading: true, error: null };
+    });
     try {
       const updatedCart = await updateCartItemQuantity(
         cartId,
