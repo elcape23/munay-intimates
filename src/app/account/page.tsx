@@ -26,17 +26,21 @@ export default function AccountPage() {
   // 2) Si no hay session, mostramos botones de login
   if (!session) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-4">
-        <p className="text-center text-lg">No estás logueado.</p>
+      <div className="flex flex-col justify-center items-center h-screen space-y-10 px-6">
         <Button
           onClick={handleGoogle}
-          className="w-full max-w-xs inline-block px-6 py-2 bg-white border rounded shadow-sm text-sm font-medium hover:bg-gray-50"
-          variant="secondary"
-          size="lg"
+          className="w-full py-3 hover:bg-gray-50"
+          variant="outline"
+          size="md"
         >
-          Iniciar sesión con Google
+          Continuar con Google
         </Button>
-        <div className="w-full max-w-xs">
+        <div className="flex w-full items-center gap-3">
+          <hr className="flex-grow border-t border-border-secondary-default" />
+          <p className="body-02-regular text-text-secondary-default">O</p>
+          <hr className="flex-grow border-t border-border-secondary-default" />
+        </div>
+        <div className="w-full ">
           <LoginForm />
         </div>
       </div>

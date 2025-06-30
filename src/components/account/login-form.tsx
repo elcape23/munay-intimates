@@ -3,6 +3,7 @@
 import { useState, FormEvent, useEffect } from "react";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function LoginForm() {
   const { login, isLoggedIn, error: authError, isLoading } = useAuthStore();
@@ -42,15 +43,9 @@ export default function LoginForm() {
   }, [isLoggedIn]);
 
   return (
-    <form className="space-y-4" onSubmit={handleLogin}>
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Correo Electrónico
-        </label>
-        <input
+    <form className="space-y-10" onSubmit={handleLogin}>
+      <div className="space-y-8">
+        <Input
           id="email"
           name="email"
           type="email"
@@ -58,17 +53,10 @@ export default function LoginForm() {
           required
           value={email}
           onChange={(e) => handleInputChange(setEmail, e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className=""
+          placeholder="Email"
         />
-      </div>
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Contraseña
-        </label>
-        <input
+        <Input
           id="password"
           name="password"
           type="password"
@@ -76,17 +64,18 @@ export default function LoginForm() {
           required
           value={password}
           onChange={(e) => handleInputChange(setPassword, e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          className=""
+          placeholder="Contraseña"
         />
+        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
       </div>
-      {error && <p className="text-red-600 text-sm text-center">{error}</p>}
       <div>
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
+          className="w-full py-4 px-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
           variant="primary"
-          size="lg"
+          size="md"
         >
           {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
         </Button>
