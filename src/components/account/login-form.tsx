@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent, useEffect } from "react";
+import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,11 +70,14 @@ export default function LoginForm() {
         />
         {error && <p className="text-red-600 text-sm text-center">{error}</p>}
       </div>
-      <div>
+      <div className="flex flex-row sm:flex-row gap-4">
+        <Button asChild variant="outline" size="md" className="w-full py-3">
+          <Link href="/account/register">Registrarse</Link>
+        </Button>
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full py-4 px-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
+          className="w-full py-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
           variant="primary"
           size="md"
         >

@@ -47,7 +47,11 @@ export function SideMenu() {
           <Link
             href={item.url}
             onClick={closeMenu}
-            className="flex items-topline uppercase body-01-regular text-text-secondary-default tracking-wide hover:text-brand-primary"
+            className={`flex items-topline uppercase body-01-regular tracking-wide hover:text-brand-primary ${
+              item.id === "special-prices"
+                ? "text-text-danger-default"
+                : "text-text-secondary-default"
+            }`}
           >
             {item.title}
             {item.isNew && (
@@ -155,11 +159,13 @@ export function SideMenu() {
                         <Link
                           href={item.url}
                           onClick={closeMenu}
-                          className="flex items-topline uppercase body-01-regular text-text-secondary-default tracking-wide hover:text-brand-primary"
+                          className={`flex items-topline uppercase body-01-regular tracking-wide hover:text-brand-primary ${
+                            item.id === "special-prices"
+                              ? "text-text-danger-default"
+                              : "text-text-secondary-default"
+                          }`}
                         >
-                          <span className="body-01-regular text-text-secondary-default">
-                            {item.title}
-                          </span>
+                          <span className="body-01-regular">{item.title}</span>
                           {item.isNew && (
                             <span className="body-03-regular ml-[2px] text-text-secondary-default">
                               NEW

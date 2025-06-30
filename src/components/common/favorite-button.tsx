@@ -55,7 +55,7 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
       }
       className="text-icon-primary-default hover:bg-gray-200 transition-colors"
       variant="ghost"
-      size="lg"
+      size="icon"
     >
       {isProductFavorite ? (
         <HeartIconSolid className="h-6 w-6 text-icon-primary-default" />

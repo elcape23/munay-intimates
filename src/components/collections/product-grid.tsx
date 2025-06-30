@@ -43,7 +43,6 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       const modal: Record<string, Set<string>> = {};
       const prices: number[] = [];
       const seasonSet: Set<string> = new Set();
-      const collectionsSet: Set<string> = new Set();
 
       products.forEach((product) => {
         // 1. Procesa las etiquetas (tags) para los filtros principales
@@ -94,13 +93,6 @@ export function ProductGrid({ title, products }: ProductGridProps) {
           seasonSet.add(seasonValue);
         }
 
-        product.collections?.edges.forEach((edge) => {
-          const title = edge.node.title?.trim();
-          if (title) {
-            collectionsSet.add(title);
-          }
-        });
-
         // 3. Procesa metacampos personalizados
         const customMetafields = [product.talle];
         customMetafields.forEach((metafield) => {
@@ -148,14 +140,11 @@ export function ProductGrid({ title, products }: ProductGridProps) {
         }
       });
 
-      const collectionGroup = "Colección";
-      if (seasonSet.size > 0 || collectionsSet.size > 0) {
+      const collectionGroup = "Estación";
+      if (seasonSet.size > 0) {
         if (!modal[collectionGroup]) modal[collectionGroup] = new Set();
         seasonSet.forEach((season) => {
           modal[collectionGroup].add(`${collectionGroup}:${season}`);
-        });
-        collectionsSet.forEach((col) => {
-          modal[collectionGroup].add(`${collectionGroup}:${col}`);
         });
       }
 
@@ -190,13 +179,13 @@ export function ProductGrid({ title, products }: ProductGridProps) {
     );
   };
 
-  const activeCollection = useMemo(() => {
-    const col = activeFilters.find((f) => f.startsWith("Colección:"));
+  const activeSeason = useMemo(() => {
+    const col = activeFilters.find((f) => f.startsWith("Estación:"));
     return col ? col.split(":")[1].trim() : "";
   }, [activeFilters]);
 
-  const handleCollectionChange = (value: string) => {
-    const prefix = "Colección:";
+  const handleSeasonChange = (value: string) => {
+    const prefix = "Estación:";
     setActiveFilters((prev) => {
       const other = prev.filter((f) => !f.startsWith(prefix));
       return value ? [...other, `${prefix}${value}`] : other;
@@ -223,14 +212,9 @@ export function ProductGrid({ title, products }: ProductGridProps) {
         const price = parseFloat(product.priceRange.minVariantPrice.amount);
         if (price < minPriceFilter || price > maxPriceFilter) return false;
 
-        if (activeCollection) {
+        if (activeSeason) {
           const season = product.estacion?.value?.toLowerCase() || "";
-          const inSeason = season === activeCollection.toLowerCase();
-          const inCollection = product.collections?.edges.some(
-            (edge) =>
-              edge.node.title?.toLowerCase() === activeCollection.toLowerCase()
-          );
-          if (!inSeason && !inCollection) return false;
+          if (season !== activeSeason.toLowerCase()) return false;
         }
 
         return Object.entries(activeGroups).every(
@@ -326,7 +310,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
     sortMethod,
     minPriceFilter,
     maxPriceFilter,
-    activeCollection,
+    activeSeason,
     minPrice,
     maxPrice,
   ]);
@@ -455,11 +439,11 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                         );
                       })}
                     </div>
-                  ) : groupName === "Colección" ? (
+                  ) : groupName === "Estación" ? (
                     <select
                       className="w-full border rounded p-2"
-                      value={activeCollection}
-                      onChange={(e) => handleCollectionChange(e.target.value)}
+                      value={activeSeason}
+                      onChange={(e) => handleSeasonChange(e.target.value)}
                     >
                       <option value="">Todas</option>
                       {values.map((filterString) => {

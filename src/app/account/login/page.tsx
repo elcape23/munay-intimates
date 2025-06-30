@@ -3,16 +3,27 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import LoginForm from "@/components/account/login-form";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 export default function LoginPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
+
+  const handleGoogle = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    // Abrimos la URL de login directamente en una nueva pestaña
+    window.open(
+      "/api/auth/signin/google?callbackUrl=/account",
+      "_blank",
+      "noopener"
+    );
+  };
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -28,11 +39,13 @@ export default function LoginPage() {
             Iniciar Sesión
           </h1>
           <Button
-            onClick={() => signIn("google", { callbackUrl: "/account" })}
-            className="w-full mb-4 inline-block px-6 py-2 bg-white border rounded shadow-sm text-sm font-medium hover:bg-gray-50"
+            onClick={handleGoogle}
+            className="w-full mb-4 inline-block px-6 py-3 hover:bg-gray-50"
             variant="secondary"
             size="lg"
           >
+            {" "}
+            <FontAwesomeIcon icon={faGoogle} className="h-5 w-5 mr-2" />
             Iniciar sesión con Google
           </Button>
           <LoginForm />

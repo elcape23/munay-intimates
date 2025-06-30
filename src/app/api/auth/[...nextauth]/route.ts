@@ -65,7 +65,7 @@ export const authOptions = {
   },
   pages: {
     // Ajustamos la URL de login para que coincida con la ruta existente
-    signIn: "/account/login",
+    signIn: "/login",
   },
 
   debug: false,

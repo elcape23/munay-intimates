@@ -4,11 +4,15 @@ import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
 
+import { FavoriteButton } from "@/components/common/favorite-button";
+import { ShareButton } from "@/components/common/share-button";
+
 type Props = {
   images: { node: { url: string; altText?: string | null } }[];
+  productHandle: string;
 };
 
-export default function ProductGallery({ images }: Props) {
+export default function ProductGallery({ images, productHandle }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selected, setSelected] = useState(0);
 
@@ -27,6 +31,11 @@ export default function ProductGallery({ images }: Props) {
   /* ───────── Render ───────── */
   return (
     <div className="-mx-6 relative overflow-hidden">
+      {/* Botones de acción */}
+      <div className="absolute top-16 right-6 z-10 flex flex-col gap-5">
+        <FavoriteButton productHandle={productHandle} />
+        <ShareButton />
+      </div>
       {/* Carrusel */}
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex">

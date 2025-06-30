@@ -34,7 +34,10 @@ export default async function ProductDetailPage({
     <section className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar mb-24">
       {/* Columna de la Galería de Imágenes */}
       {/* ▶ Carrusel principal */}
-      <ProductGallery images={product.images.edges} />
+      <ProductGallery
+        images={product.images.edges}
+        productHandle={product.handle}
+      />
       {/* Columna de Información y Acciones */}
       <div className="flex flex-col space-y-1">
         <div className="flex items-center justify-between">

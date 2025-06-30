@@ -1,29 +1,30 @@
 "use client";
-import { ShareIcon } from "@heroicons/react/24/outline";
+
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
 interface ShareButtonProps {
-  url: string;
+  url?: string;
+  title?: string;
 }
 
-export function ShareButton({ url }: ShareButtonProps) {
-  const handleShare = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (navigator.share) {
-      try {
-        await navigator.share({ url });
-        return;
-      } catch (err) {
-        // ignore
-      }
-    }
+export function ShareButton({ url, title }: ShareButtonProps) {
+  const handleShare = async () => {
+    const shareUrl =
+      url ?? (typeof window !== "undefined" ? window.location.href : "");
     try {
-      await navigator.clipboard.writeText(url);
-      toast({ title: "Link copiado al portapapeles" });
+      if (navigator.share) {
+        await navigator.share({ url: shareUrl, title });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({ title: "Enlace copiado" });
+      }
     } catch (err) {
-      toast({ title: "No se pudo copiar el link" });
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        toast({ title: "Enlace copiado" });
+      }
     }
   };
 
@@ -33,9 +34,9 @@ export function ShareButton({ url }: ShareButtonProps) {
       aria-label="Compartir"
       className="text-icon-primary-default hover:bg-gray-200 transition-colors"
       variant="ghost"
-      size="lg"
+      size="icon"
     >
-      <ShareIcon className="h-6 w-6 text-icon-primary-default" />
+      <ArrowUpTrayIcon className="h-6 w-6 text-icon-primary-default" />
     </Button>
   );
 }

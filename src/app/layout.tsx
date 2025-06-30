@@ -28,15 +28,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={manrope.className}>
-      <Providers>
-        <body className="bg-background-primary-default">
+      <body className="bg-background-primary-default">
+        <Providers>
           <SplashScreen />
           <Navbar />
           <SideMenu /> {/* El SideMenu se superpone y se controla solo */}
           <main>{children}</main>
           <Toaster />
-        </body>
-      </Providers>
+        </Providers>
+      </body>
     </html>
   );
 }
