@@ -224,20 +224,19 @@ export function ProductGrid({
 
               // Filtra por metacampos
               const key = groupKey.toLowerCase();
-              if (key === "color") {
-                const variants = extractColorVariants(product).map((v) =>
-                  v.trim()
-                );
-                if (variants.includes(value)) return true;
-              }
-
-              // @ts-ignore - acceder dinámicamente al metafield
-              const metafield = product[key];
-              if (metafield?.value) {
-                const values = metafield.value
-                  .split(",")
-                  .map((v: string) => v.trim());
-                if (values.includes(value)) return true;
+              if (
+                key === "color" &&
+                product.color?.reference?.fields.some(
+                  (f) =>
+                    (f.key === "hex" && f.value === value) ||
+                    (f.key === "name" && f.value === value) ||
+                    (f.key === "value" && f.value === value)
+                )
+              )
+                return true;
+              // @ts-ignore
+              if (product[key] && product[key].value === value) {
+                return true;
               }
 
               return false;

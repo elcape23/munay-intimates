@@ -80,6 +80,7 @@ export type ShopifyCartLine = {
     selectedOptions: { name: string; value: string }[];
     price: ShopifyPrice;
     compareAtPrice?: ShopifyPrice;
+    quantityAvailable?: number;
     product: { title: string; handle: string; tags: string[] };
     image: ShopifyImage;
   };
@@ -1367,6 +1368,7 @@ export async function addToCart(
                   ... on ProductVariant {
                     id
                     title
+                    quantityAvailable
                     selectedOptions {
                       name
                       value
@@ -1446,6 +1448,7 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
                 ... on ProductVariant {
                   id
                   title
+                  quantityAvailable
                   selectedOptions {
                     name
                     value
@@ -1512,6 +1515,7 @@ export async function removeFromCart(
                   ... on ProductVariant {
                     id
                     title
+                    quantityAvailable
                     selectedOptions {
                       name
                       value
@@ -1586,6 +1590,7 @@ export async function updateCartItemQuantity(
                   ... on ProductVariant {
                     id
                     title
+                    quantityAvailable
                     selectedOptions {
                       name
                       value

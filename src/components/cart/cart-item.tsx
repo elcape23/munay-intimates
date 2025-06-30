@@ -49,7 +49,12 @@ export function CartItem({ line }: CartItemProps) {
       updateQuantity(line.id, line.quantity - 1);
     }
   };
-  const handleIncrease = () => updateQuantity(line.id, line.quantity + 1);
+  const handleIncrease = () => {
+    const available = line.merchandise.quantityAvailable;
+    if (available === undefined || line.quantity < available) {
+      updateQuantity(line.id, line.quantity + 1);
+    }
+  };
   const handlers = useSwipeable({
     onSwipedLeft: () => setOpen(true),
     onSwipedRight: () => setOpen(false),
@@ -174,6 +179,10 @@ export function CartItem({ line }: CartItemProps) {
                 aria-label="incrementar cantidad"
                 variant="ghost"
                 size="icon"
+                disabled={
+                  line.merchandise.quantityAvailable !== undefined &&
+                  line.quantity >= line.merchandise.quantityAvailable
+                }
               >
                 <PlusIcon className="w-5 h-5 p-1 text-icon-primary-default" />
               </Button>
