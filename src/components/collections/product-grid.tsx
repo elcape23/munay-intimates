@@ -224,16 +224,31 @@ export function ProductGrid({
 
               // Filtra por metacampos
               const key = groupKey.toLowerCase();
-              if (
-                key === "color" &&
-                product.color?.reference?.fields.some(
+              if (key === "color") {
+                const matchesMetafield = product.color?.reference?.fields.some(
                   (f) =>
                     (f.key === "hex" && f.value === value) ||
                     (f.key === "name" && f.value === value) ||
                     (f.key === "value" && f.value === value)
-                )
-              ) {
-                return true;
+                );
+
+                const colorOption = product.options?.find(
+                  (o) => o.name.toLowerCase() === "color"
+                );
+                const matchesOption = colorOption?.values.some(
+                  (v) => v.trim() === value
+                );
+
+                const matchesVariant = product.variants?.edges.some((edge) =>
+                  edge.node.selectedOptions?.some(
+                    (sel) =>
+                      sel.name.toLowerCase() === "color" && sel.value === value
+                  )
+                );
+
+                if (matchesMetafield || matchesOption || matchesVariant) {
+                  return true;
+                }
               }
 
               if (["talle", "talla", "size"].includes(key)) {
