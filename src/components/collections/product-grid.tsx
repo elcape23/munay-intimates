@@ -6,6 +6,7 @@ import { useState, useMemo, useEffect } from "react";
 import { ShopifyProduct, ShopifyCollection } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { ProductCard } from "@/components/common/product-card";
 import { extractColorVariants } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
@@ -440,38 +441,23 @@ export function ProductGrid({
               <p className="text-gray-500">No hay filtros disponibles.</p>
             )}
           </div>
-          <div className="flex flex-row">
+          <div className="flex flex-row gap-20">
             <h3 className="body-02-medium uppercase text-text-primary-default">
               Precio
             </h3>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 px-10">
-                <input
-                  type="range"
-                  min={minPrice}
-                  max={maxPrice}
-                  value={minPriceFilter}
-                  onChange={(e) => {
-                    const val = Number(e.target.value);
-                    setMinPriceFilter(val);
-                    if (val > maxPriceFilter) setMaxPriceFilter(val);
-                  }}
-                  className="w-full"
-                />
-                <input
-                  type="range"
-                  min={minPrice}
-                  max={maxPrice}
-                  value={maxPriceFilter}
-                  onChange={(e) => {
-                    const val = Number(e.target.value);
-                    setMaxPriceFilter(val);
-                    if (val < minPriceFilter) setMinPriceFilter(val);
-                  }}
-                  className="w-full"
-                />
-              </div>
-              <div className="flex justify-between body-03-regular px-10">
+            <div className="flex flex-col gap-2 w-full">
+              <Slider
+                min={minPrice}
+                max={maxPrice}
+                step={1}
+                value={[minPriceFilter, maxPriceFilter]}
+                onValueChange={(val) => {
+                  const [min, max] = val as number[];
+                  setMinPriceFilter(min);
+                  setMaxPriceFilter(max);
+                }}
+              />
+              <div className="flex justify-between body-03-regular pt-2">
                 <span>${minPriceFilter}</span>
                 <span>${maxPriceFilter}</span>
               </div>
