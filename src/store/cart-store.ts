@@ -15,6 +15,8 @@ interface CartState {
   cart: ShopifyCart | null;
   isLoading: boolean;
   error: string | null;
+  /** Identificador incremental para las actualizaciones de cantidad */
+  updateVersion: number;
   fetchCart: () => Promise<void>;
   addItemToCart: (variantId: string) => Promise<void>;
   removeItem: (lineId: string) => Promise<void>;
@@ -26,6 +28,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   cart: null,
   isLoading: true,
   error: null,
+  updateVersion: 0,
 
   /**
    * Obtiene el carrito desde Shopify usando el ID guardado en localStorage,
@@ -113,7 +116,9 @@ export const useCartStore = create<CartState>((set, get) => ({
   updateQuantity: async (lineId: string, quantity: number) => {
     const cartId = get().cart?.id;
     if (!cartId) return;
-    // Optimistic update: reflejamos el nuevo valor inmediatamente
+    // Optimistic update: reflejamos el nuevo valor inmediatamente y
+    // registramos la version de esta actualización
+    const currentVersion = get().updateVersion + 1;
     set((state) => {
       if (!state.cart) return { isLoading: true, error: null };
       const cart = { ...state.cart };
@@ -146,7 +151,12 @@ export const useCartStore = create<CartState>((set, get) => ({
           },
         };
       }
-      return { cart, isLoading: true, error: null };
+      return {
+        cart,
+        isLoading: true,
+        error: null,
+        updateVersion: currentVersion,
+      };
     });
     try {
       const updatedCart = await updateCartItemQuantity(
@@ -154,11 +164,16 @@ export const useCartStore = create<CartState>((set, get) => ({
         lineId,
         quantity
       );
-      set({ cart: updatedCart, isLoading: false });
+      // Solo actualizamos el carrito si esta respuesta es la mas reciente
+      if (get().updateVersion === currentVersion) {
+        set({ cart: updatedCart, isLoading: false });
+      }
     } catch (e) {
       const errorMessage =
         e instanceof Error ? e.message : "No se pudo actualizar el carrito.";
-      set({ error: errorMessage, isLoading: false });
+      if (get().updateVersion === currentVersion) {
+        set({ error: errorMessage, isLoading: false });
+      }
       console.error(e);
     }
   },
