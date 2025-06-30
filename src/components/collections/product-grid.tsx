@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { ShopifyProduct, ShopifyCollection } from "@/lib/shopify";
+import { ShopifyProduct } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -15,14 +15,9 @@ import { useRouter } from "next/navigation";
 type ProductGridProps = {
   title: string;
   products: ShopifyProduct[];
-  collections: ShopifyCollection[];
 };
 
-export function ProductGrid({
-  title,
-  products,
-  collections,
-}: ProductGridProps) {
+export function ProductGrid({ title, products }: ProductGridProps) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [sortMethod, setSortMethod] = useState("default");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
@@ -47,6 +42,7 @@ export function ProductGrid({
       const primary: Record<string, Set<string>> = {};
       const modal: Record<string, Set<string>> = {};
       const prices: number[] = [];
+      const seasonSet: Set<string> = new Set();
 
       products.forEach((product) => {
         // 1. Procesa las etiquetas (tags) para los filtros principales
@@ -92,8 +88,13 @@ export function ProductGrid({
 
         prices.push(parseFloat(product.priceRange.minVariantPrice.amount));
 
+        const seasonValue = product.estacion?.value?.toLowerCase();
+        if (seasonValue) {
+          seasonSet.add(seasonValue);
+        }
+
         // 3. Procesa metacampos personalizados
-        const customMetafields = [product.talle, product.estacion];
+        const customMetafields = [product.talle];
         customMetafields.forEach((metafield) => {
           if (metafield?.key && metafield?.value) {
             const key = metafield.key.toLowerCase();
@@ -140,10 +141,12 @@ export function ProductGrid({
       });
 
       const collectionGroup = "Colección";
-      collections.forEach((c) => {
+      if (seasonSet.size > 0) {
         if (!modal[collectionGroup]) modal[collectionGroup] = new Set();
-        modal[collectionGroup].add(`${collectionGroup}:${c.handle}`);
-      });
+        seasonSet.forEach((season) => {
+          modal[collectionGroup].add(`${collectionGroup}:${season}`);
+        });
+      }
 
       const primaryResult: Record<string, string[]> = {};
       for (const groupName in primary) {
@@ -163,7 +166,7 @@ export function ProductGrid({
         minPrice,
         maxPrice,
       };
-    }, [products, collections]);
+    }, [products]);
 
   useEffect(() => {
     setMinPriceFilter(minPrice);
@@ -210,9 +213,8 @@ export function ProductGrid({
         if (price < minPriceFilter || price > maxPriceFilter) return false;
 
         if (activeCollection) {
-          const handles =
-            product.collections?.edges.map((e) => e.node.handle) || [];
-          if (!handles.includes(activeCollection)) return false;
+          const season = product.estacion?.value?.toLowerCase() || "";
+          if (season !== activeCollection) return false;
         }
 
         return Object.entries(activeGroups).every(

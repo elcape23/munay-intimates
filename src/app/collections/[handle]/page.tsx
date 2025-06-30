@@ -1,6 +1,6 @@
 // src/app/(pages)/collections/[handle]/page.tsx
 
-import { getCollectionByHandle, getCollections } from "@/lib/shopify";
+import { getCollectionByHandle } from "@/lib/shopify";
 import { notFound } from "next/navigation";
 import { ProductGrid } from "@/components/collections/product-grid";
 import { Footer } from "@/components/common/footer";
@@ -21,15 +21,10 @@ export default async function CollectionPage({
   }
 
   const products = collection.products.edges.map((edge) => edge.node);
-  const collections = await getCollections();
 
   return (
     <section className="container pt-[60px] mx-auto px-6 min-h-screen">
-      <ProductGrid
-        title={collection.title}
-        products={products}
-        collections={collections}
-      />
+      <ProductGrid title={collection.title} products={products} />
       <Footer />
     </section>
   );
