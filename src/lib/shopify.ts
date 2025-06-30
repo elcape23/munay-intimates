@@ -734,6 +734,104 @@ export async function getProductsByHandles(
     .filter(Boolean) as ShopifyProduct[];
 }
 
+// --- Obtiene productos recientes completos ---
+export async function getNewestProducts(
+  first: number = 250
+): Promise<ShopifyProduct[]> {
+  const query = gql`
+    query GetNewestProducts($first: Int!) {
+      products(first: $first, sortKey: CREATED_AT, reverse: true) {
+        edges {
+          node {
+            id
+            title
+            handle
+            tags
+            createdAt
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            options {
+              name
+              values
+            }
+            color: metafield(
+              namespace: "shopify.metaobject_reference"
+              key: "color"
+            ) {
+              reference {
+                ... on Metaobject {
+                  fields {
+                    key
+                    value
+                  }
+                }
+              }
+            }
+            talle: metafield(namespace: "custom", key: "talle") {
+              key
+              value
+            }
+            estacion: metafield(namespace: "custom", key: "estacion") {
+              key
+              value
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  price {
+                    amount
+                    currencyCode
+                  }
+                  compareAtPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+              }
+            }
+            collections(first: 10) {
+              edges {
+                node {
+                  id
+                  title
+                  handle
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch<{
+    products: { edges: { node: ShopifyProduct }[] };
+  }>({ query, variables: { first } });
+
+  const TWO_WEEKS_MS = 1000 * 60 * 60 * 24 * 14;
+
+  return response.products.edges
+    .map((edge) => edge.node)
+    .filter((p) => {
+      const createdMs = p.createdAt ? Date.parse(p.createdAt) : 0;
+      const byDate = createdMs && Date.now() - createdMs < TWO_WEEKS_MS;
+      const hasNewTag = p.tags?.some((t) => t.toLowerCase() === "new");
+      return Boolean(byDate || hasNewTag);
+    });
+}
+
 /**
  * Devuelve hasta `limit` productos recomendados por Shopify
  * basados en el producto dado.
