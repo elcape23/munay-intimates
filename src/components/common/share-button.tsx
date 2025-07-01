@@ -10,20 +10,36 @@ interface ShareButtonProps {
 }
 
 export function ShareButton({ url, title }: ShareButtonProps) {
+  const fallbackCopy = (text: string) => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "absolute";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+    toast({ title: "Enlace copiado" });
+  };
   const handleShare = async () => {
     const shareUrl =
       url ?? (typeof window !== "undefined" ? window.location.href : "");
     try {
       if (navigator.share) {
         await navigator.share({ url: shareUrl, title });
-      } else if (navigator.clipboard) {
+      } else if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(shareUrl);
         toast({ title: "Enlace copiado" });
+      } else {
+        fallbackCopy(shareUrl);
       }
     } catch (err) {
-      if (navigator.clipboard) {
+      if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(shareUrl);
         toast({ title: "Enlace copiado" });
+      } else {
+        fallbackCopy(shareUrl);
       }
     }
   };

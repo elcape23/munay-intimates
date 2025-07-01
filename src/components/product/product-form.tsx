@@ -2,8 +2,12 @@
 
 "use client";
 import { useState, useMemo, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
+import {
+  ShopifyProduct,
+  ShopifyProductVariant,
+  createCart,
+  addToCart,
+} from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
 import { COLOR_MAP } from "@/lib/color-map";
 import { toast } from "@/hooks/use-toast";
@@ -108,6 +112,26 @@ export function ProductForm({ product }: ProductFormProps) {
       toast({ title: "¡Producto añadido al carrito!" });
     } catch (error) {
       toast({ title: "Hubo un error al añadir el producto." });
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!selectedVariant) {
+      toast({ title: "Variante no disponible." });
+      return;
+    }
+
+    if (!selectedVariant.availableForSale) {
+      toast({ title: "Esta variante no está disponible." });
+      return;
+    }
+
+    try {
+      const cart = await createCart();
+      const updatedCart = await addToCart(cart.id, selectedVariant.id, 1);
+      window.location.href = updatedCart.checkoutUrl;
+    } catch (error) {
+      toast({ title: "Hubo un error al procesar la compra." });
     }
   };
 
@@ -275,7 +299,7 @@ export function ProductForm({ product }: ProductFormProps) {
             : "No Disponible"}
         </Button>
         <Button
-          onClick={handleAddToCart}
+          onClick={handleBuyNow}
           disabled={isAddToCartDisabled}
           className={`w-full body-01-semibold py-3 px-6 transition-colors
               ${

@@ -13,6 +13,7 @@ import RelatedProductsCarousel from "@/components/product/related-products-carou
 import ProductGallery from "@/components/product/product-gallery";
 import { COLOR_MAP } from "@/lib/color-map";
 import { Footer } from "@/components/common/footer";
+import SlideUpSection from "@/components/common/slide-up-section";
 
 // Esta es una página dinámica. Next.js le pasará los 'params' desde la URL.
 export default async function ProductDetailPage({
@@ -31,7 +32,7 @@ export default async function ProductDetailPage({
   const relatedProducts = await getRecommendedProducts(product.id, 4);
 
   return (
-    <section className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar mb-24">
+    <SlideUpSection className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar mb-24">
       {/* Columna de la Galería de Imágenes */}
       {/* ▶ Carrusel principal */}
       <ProductGallery
@@ -150,6 +151,6 @@ export default async function ProductDetailPage({
         <RelatedProductsCarousel products={relatedProducts} />
       </div>
       <Footer />
-    </section>
+    </SlideUpSection>
   );
 }
