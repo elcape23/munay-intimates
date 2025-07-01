@@ -2,6 +2,7 @@
 
 "use client";
 import { useState, useMemo, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
 import { COLOR_MAP } from "@/lib/color-map";
@@ -292,11 +293,11 @@ export function ProductForm({ product }: ProductFormProps) {
       </div>
 
       {showSticky && (
-        <div className="fixed bottom-0 left-0 w-screen h-24 bg-background-primary-default border-t border-gray-200 z-50 flex items-center justify-between px-4">
+        <div className="fixed bottom-0 left-0 w-screen h-auto pt-3 pb-9 bg-background-primary-default border-t border-border-tertiary-default z-50 flex items-center justify-between px-6 gap-6">
           <Button
             onClick={handleAddToCart}
             disabled={isAddToCartDisabled}
-            className={`body-01-semibold py-3 px-6 transition-colors mr-4
+            className={`w-full body-01-semibold py-3 px-6 transition-colors
             ${
               isAddToCartDisabled ? "cursor-not-allowed" : "hover:bg-blue-700"
             }`}
@@ -305,7 +306,7 @@ export function ProductForm({ product }: ProductFormProps) {
           >
             {isLoading ? "Añadiendo..." : "Añadir"}
           </Button>
-          <div className="flex flex-col items-end">
+          <div className="w-full flex flex-col items-end gap-2">
             <p className="body-01-semibold text-text-primary-default">
               {selectedVariant &&
                 new Intl.NumberFormat("es-AR", {
@@ -314,7 +315,7 @@ export function ProductForm({ product }: ProductFormProps) {
                   maximumFractionDigits: 0,
                 }).format(parseFloat(selectedVariant.price.amount))}
             </p>
-            <p className="body-02-regular text-text-secondary-default">
+            <p className="body-03-regular text-text-secondary-default whitespace-nowrap">
               Envío calculado en el checkout
             </p>
           </div>

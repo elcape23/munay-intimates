@@ -52,8 +52,10 @@ export const useCartStore = create<CartState>((set, get) => ({
       }
 
       if (!cartId) {
-        cart = await createCart();
-        localStorage.setItem("cartId", cart.id);
+        const newCart = await createCart();
+        cartId = newCart.id;
+        localStorage.setItem("cartId", cartId);
+        cart = await getCart(cartId);
       }
 
       set({ cart: cart, isLoading: false });
@@ -80,6 +82,10 @@ export const useCartStore = create<CartState>((set, get) => ({
         const newCart = await createCart();
         cartId = newCart.id;
         localStorage.setItem("cartId", cartId);
+        const fullCart = await getCart(cartId);
+        if (fullCart) {
+          set({ cart: fullCart, isLoading: true });
+        }
       } catch (e) {
         const errorMessage =
           e instanceof Error ? e.message : "No se pudo crear el carrito.";

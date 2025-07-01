@@ -55,7 +55,7 @@ export default function ProductGallery({ images, productHandle }: Props) {
       </div>
 
       {/* Dots */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2">
         {images.map((_, i) => (
           <button
             key={i}

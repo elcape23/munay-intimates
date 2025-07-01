@@ -390,7 +390,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                   key={groupName}
                   className="space-y-2 flex flex-row justify-between items-center"
                 >
-                  <h3 className="body-02-regular uppercase text-text-seconday-default">
+                  <h3 className="body-02-regular uppercase text-text-primary-default">
                     {groupName}
                   </h3>
                   {groupName === "Color" ? (
@@ -407,7 +407,9 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                             onClick={() => handleFilterToggle(filterString)}
                             aria-label={value}
                             className={`h-6 w-6 items-start rounded-full border ${
-                              active ? "ring-2 ring-gray-900" : ""
+                              active
+                                ? "border-border-primary-default "
+                                : "border-border-secondary-default"
                             }`}
                             style={{ backgroundColor: bgColor }}
                             variant="ghost"
@@ -456,15 +458,15 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                       })}
                     </select>
                   ) : (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 ">
                       {values.map((filterString) => (
                         <Button
                           key={filterString}
                           onClick={() => handleFilterToggle(filterString)}
-                          className={`px-3 py-1.5 border rounded-full body-02-medium transition-colors ${
+                          className={`border rounded-full body-02-medium transition-colors ${
                             activeFilters.includes(filterString)
-                              ? "text-text-primary-default border-gray-900"
-                              : "text-text-secondary-default border-gray-300 hover:bg-gray-100"
+                              ? "text-text-primary-default border-border-secondary-default"
+                              : "text-text-secondary-default border-border-secondary-default hover:bg-gray-100"
                           }`}
                           variant="ghost"
                           size="icon"
@@ -481,7 +483,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
             )}
           </div>
           <div className="flex flex-row gap-20">
-            <h3 className="body-02-medium uppercase text-text-primary-default">
+            <h3 className="body-02-regular uppercase text-text-primary-default">
               Precio
             </h3>
             <div className="flex flex-col gap-2 w-full">
@@ -497,8 +499,20 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                 }}
               />
               <div className="flex justify-between body-03-regular pt-2">
-                <span>${minPriceFilter}</span>
-                <span>${maxPriceFilter}</span>
+                <span>
+                  $
+                  {minPriceFilter.toLocaleString("es-AR", {
+                    useGrouping: true,
+                    maximumFractionDigits: 0,
+                  })}
+                </span>
+                <span>
+                  $
+                  {maxPriceFilter.toLocaleString("es-AR", {
+                    useGrouping: true,
+                    maximumFractionDigits: 0,
+                  })}
+                </span>
               </div>
             </div>
           </div>

@@ -18,7 +18,7 @@ export default function CartPage() {
     return <div className="text-center p-12">Cargando carrito...</div>;
   }
 
-  if (!cart || cart.lines.edges.length === 0) {
+  if (!cart || cart.lines?.edges?.length === 0) {
     return (
       <section className="flex flex-col h-screen items-center justify-center text-center mx-auto text-center p-12">
         <div className="">
@@ -68,7 +68,7 @@ export default function CartPage() {
         <div className="grid grid-cols-1 gap-8 items-start mt-6">
           {/* — Lista de productos (cada tarjeta según PDF página 1) */}
           <div className="lg:col-span-2 space-y-6">
-            {cart.lines.edges.map(({ node: line }) => (
+            {cart.lines?.edges?.map(({ node: line }) => (
               <CartItem key={line.id} line={line} />
             ))}
           </div>

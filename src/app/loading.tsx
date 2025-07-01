@@ -8,15 +8,20 @@ export default function Loading() {
       <motion.div
         key="loading"
         className="fixed inset-0 flex items-center justify-center bg-background-primary-default z-[9999]"
-        initial={{ opacity: 1 }}
+        initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0, filter: "blur(4px)" }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <motion.div
           className="w-12 h-12 border-4 border-t-transparent border-border-primary-default rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, rotate: 360 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            opacity: { duration: 0.3, ease: "easeInOut" },
+            rotate: { repeat: Infinity, duration: 1.2, ease: "linear" },
+          }}
         />
       </motion.div>
     </AnimatePresence>

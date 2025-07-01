@@ -1897,3 +1897,21 @@ export async function getCustomerOrders(
     return [];
   }
 }
+
+// --- Utilidad para el menú -----------------------------------------------
+/**
+ * Indica si existen productos en oferta marcados como "NEW".
+ * Se consulta usando `getSaleProductsFull` y devuelve `true` cuando se
+ * encuentra al menos un producto con el flag `isNew`.
+ */
+export async function hasNewSaleProducts(
+  first: number = 250,
+  fetchCount: number = 250
+): Promise<boolean> {
+  try {
+    const products = await getSaleProductsFull(first, fetchCount);
+    return products.some((p) => p.isNew);
+  } catch (e) {
+    return false;
+  }
+}

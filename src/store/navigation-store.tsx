@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import { getCollectionsForMenu, NavItem } from "@/lib/shopify";
+import {
+  getCollectionsForMenu,
+  NavItem,
+  hasNewSaleProducts,
+} from "@/lib/shopify";
 
 interface NavigationState {
   menuItems: NavItem[];
@@ -16,12 +20,13 @@ export const useNavigationStore = create<NavigationState>()((set) => ({
     set({ isLoading: true, error: null });
     try {
       const items = await getCollectionsForMenu();
+      const newSale = await hasNewSaleProducts();
       items.push({
         id: "special-prices",
         title: "SPECIAL PRICES",
         url: "/special-prices",
         section: "categories",
-        isNew: false,
+        isNew: newSale,
       });
       set({ menuItems: items, isLoading: false });
     } catch (e) {

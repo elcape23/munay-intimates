@@ -11,7 +11,7 @@ const buttonVariants = cva(
   // LA CORRECCIÓN: He quitado 'text-sm' y 'font-medium' de aquí.
   // Ahora, cada variante de 'size' es 100% responsable de su tipografía.
   // Solo dejamos los estilos que son verdaderamente comunes a TODOS los botones.
-  "inline-flex items-center justify-center whitespace-nowrap  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap  transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
