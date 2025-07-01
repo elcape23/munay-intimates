@@ -7,13 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import RelatedProductsCarousel from "@/components/product/related-products-carousel";
 import { useUiStore } from "@/store/ui-store";
-import type { ShopifyProduct } from "@/lib/shopify";
+import type { ShopifyProduct, FeaturedProduct } from "@/lib/shopify";
 
 export function SearchModal() {
   const { isSearchOpen, closeSearch } = useUiStore();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ShopifyProduct[]>([]);
-  const [suggestions, setSuggestions] = useState<ShopifyProduct[]>([]);
+  const [suggestions, setSuggestions] = useState<
+    (ShopifyProduct | FeaturedProduct)[]
+  >([]);
 
   useEffect(() => {
     if (isSearchOpen) {
@@ -31,6 +33,9 @@ export function SearchModal() {
     const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
     const data = await res.json();
     setResults(data.results ?? []);
+    if (data.suggestions) {
+      setSuggestions(data.suggestions);
+    }
   };
 
   return (
@@ -68,7 +73,7 @@ export function SearchModal() {
                 />
                 <Button type="submit">Buscar</Button>
               </form>
-              <div className="space-y-2">
+              <div className="w-full space-y-2 items-start">
                 {results.map((p) => (
                   <a
                     key={p.id}
