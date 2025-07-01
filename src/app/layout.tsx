@@ -4,6 +4,7 @@ import { Manrope } from "next/font/google"; // 1. Importa la fuente
 import "./globals.css";
 import { Navbar } from "@/components/common/nav-bar";
 import { SideMenu } from "@/components/common/side-menu";
+import { SearchModal } from "@/components/common/search-modal";
 import { Providers } from "@/components/providers";
 import { SplashScreen } from "@/components/splash-screen";
 import { Toaster } from "@/components/ui/toaster";
@@ -33,6 +34,7 @@ export default function RootLayout({
           <SplashScreen />
           <Navbar />
           <SideMenu /> {/* El SideMenu se superpone y se controla solo */}
+          <SearchModal />
           <main>{children}</main>
           <Toaster />
         </Providers>

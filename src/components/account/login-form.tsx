@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, FormEvent, useEffect } from "react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function LoginForm() {
   const { login, isLoggedIn, error: authError, isLoading } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -19,7 +22,16 @@ export default function LoginForm() {
     try {
       const loginSuccess = await login({ email, password });
 
-      if (!loginSuccess) {
+      if (loginSuccess) {
+        const result = await signIn("credentials", {
+          redirect: false,
+          email,
+          password,
+        });
+        if (result?.error) {
+          setError(result.error);
+        }
+      } else {
         setError(authError || "El email o la contraseña son incorrectos.");
       }
     } catch (e) {
@@ -57,17 +69,30 @@ export default function LoginForm() {
           className=""
           placeholder="Email"
         />
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          value={password}
-          onChange={(e) => handleInputChange(setPassword, e.target.value)}
-          className=""
-          placeholder="Contraseña"
-        />
+        <div className="relative">
+          <Input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => handleInputChange(setPassword, e.target.value)}
+            className="pr-10"
+            placeholder="Contraseña"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((p) => !p)}
+            className="absolute inset-y-0 right-0 flex items-center px-3 text-icon-primary-default"
+          >
+            {showPassword ? (
+              <EyeSlashIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </button>
+        </div>
         {error && <p className="text-red-600 text-sm text-center">{error}</p>}
       </div>
       <div className="flex flex-row sm:flex-row gap-4">

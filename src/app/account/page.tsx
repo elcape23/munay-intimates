@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { getCustomer } from "@/lib/shopify";
 import { OrderHistory } from "@/components/account/order-history";
 import LoginForm from "@/components/account/login-form";
@@ -9,9 +9,16 @@ import { Button } from "@/components/ui/button";
 
 export default function AccountPage() {
   // rawSession lo casteamos a any para saltarnos el TS
-  const { data: rawSession, status } = useSession();
+  const { data: rawSession } = useSession();
   const session = rawSession as any;
   const [customer, setCustomer] = useState<any>(null);
+
+  useEffect(() => {
+    if (session?.user?.shopifyToken) {
+      getCustomer(session.user.shopifyToken).then(setCustomer);
+    }
+  }, [session?.user?.shopifyToken]);
+
   const handleGoogle = (e: React.MouseEvent) => {
     e.preventDefault();
 
@@ -46,12 +53,6 @@ export default function AccountPage() {
       </div>
     );
   }
-
-  // 3) Con session garantizado, traemos el customer
-  useEffect(() => {
-    const token: string = session.user.shopifyToken;
-    getCustomer(token).then((data) => setCustomer(data));
-  }, [session.user.shopifyToken]);
 
   // 4) Spinner mientras cargan los datos del customer
   if (customer === null) {

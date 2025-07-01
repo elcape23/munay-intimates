@@ -26,7 +26,7 @@ const SEASONS = [
 
 export function SideMenu() {
   /* estados globales */
-  const { isMenuOpen, closeMenu } = useUiStore();
+  const { isMenuOpen, closeMenu, openSearch } = useUiStore();
   const { menuItems } = useNavigationStore();
 
   /* tabs */
@@ -113,6 +113,10 @@ export function SideMenu() {
               <div className="flex items-center gap-2">
                 <Button
                   aria-label="Buscar"
+                  onClick={() => {
+                    closeMenu();
+                    openSearch();
+                  }}
                   className="hover:text-brand-primary"
                   variant="ghost"
                   size="icon"

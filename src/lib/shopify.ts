@@ -433,6 +433,46 @@ export async function getProducts(
   return response.products.edges.map((edge) => edge.node);
 }
 
+// --- Búsqueda de productos ------------------------------------------------
+export async function searchProducts(
+  queryString: string,
+  first: number = 10
+): Promise<ShopifyProduct[]> {
+  const SEARCH_QUERY = gql`
+    query SearchProducts($query: String!, $first: Int!) {
+      products(first: $first, query: $query) {
+        edges {
+          node {
+            id
+            title
+            handle
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch<{
+    products: { edges: { node: ShopifyProduct }[] };
+  }>({ query: SEARCH_QUERY, variables: { query: queryString, first } });
+
+  return response.products.edges.map((edge) => edge.node);
+}
+
 // ➍ Tipo de respuesta para los productos en oferta
 
 interface SaleResponse {
@@ -1133,7 +1173,9 @@ export async function getCollectionsBySeason(
     }
   `;
 
-  const seasonQuery = `metafield:custom.season:${season}`;
+  // collections are tagged with the "estacion" metafield (Spanish for season)
+  // so the query must use that key to match `getProductsBySeason`
+  const seasonQuery = `metafield:custom.estacion:${season}`;
   const response = await shopifyFetch<GetCollectionsResponse>({
     query,
     variables: { query: seasonQuery },
