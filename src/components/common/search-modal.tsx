@@ -22,12 +22,13 @@ export function SearchModal() {
     const handler = setTimeout(async () => {
       try {
         if (!query) {
-          setSuggestions([]);
+          const res = await fetch("/api/search");
+          const data = await res.json();
+          setSuggestions(data.suggestions ?? []);
           setResults([]);
           return;
         }
         if (query.length < 3) {
-          setSuggestions([]);
           setResults([]);
           return;
         }
@@ -48,7 +49,15 @@ export function SearchModal() {
     if (isSearchOpen) {
       setResults([]);
       setQuery("");
-      setSuggestions([]);
+      (async () => {
+        try {
+          const res = await fetch("/api/search");
+          const data = await res.json();
+          setSuggestions(data.suggestions ?? []);
+        } catch {
+          // ignore errors
+        }
+      })();
     }
   }, [isSearchOpen]);
 
@@ -91,25 +100,25 @@ export function SearchModal() {
           leaveTo="-translate-x-full"
         >
           <Dialog.Panel className="fixed inset-0 w-screen bg-background-primary-default flex flex-col overflow-y-auto ">
-            <Navbar alwaysDark />
+            <Navbar alwaysLight />
             <div className="pt-20 space-y-4">
-              <div className="h-40">
+              <div className="h-[30vh]">
                 <form onSubmit={handleSubmit} className="flex gap-2">
                   <Input
                     autoFocus
-                    placeholder="Buscar..."
+                    placeholder="Que estás buscando?"
                     value={query}
+                    className="text-center mx-6"
                     onChange={(e) => setQuery(e.target.value)}
                   />
-                  <Button type="submit">Buscar</Button>
                 </form>
-                <div className="w-full space-y-2 items-start">
+                <div className="w-full space-y-2 text-center mt-2">
                   {results.map((p) => (
                     <a
                       key={p.id}
                       href={`/products/${p.handle}`}
                       onClick={closeSearch}
-                      className="block py-1 underline"
+                      className="block py-1"
                     >
                       {p.title}
                     </a>
@@ -117,7 +126,7 @@ export function SearchModal() {
                 </div>
               </div>
               {suggestions.length > 0 && (
-                <div className="mx-6">
+                <div className="mx-6 items-start">
                   <RelatedProductsCarousel products={suggestions} />
                 </div>
               )}
