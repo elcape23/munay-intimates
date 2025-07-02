@@ -79,83 +79,97 @@ export default function AccountPage() {
 
   // 5) Render final
   return (
-    <div className="container mx-auto px-6 pt-[55px] space-y-3">
-      <div className="flex flex-row justify-between">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
-          <ChevronLeftIcon className="w-6 h-6" />
-        </Button>
-        <h1 className="body-01-medium text-text-primary-default uppercase">
-          Mi Cuenta
-        </h1>
-      </div>
-      <div className="flex flex-row justify-between items-center">
-        <div className="flex flex-row items-center">
-          <Avatar className="mr-4 bg-background-fill-neutral-tertiary body-01-medium text-text-primary-default">
-            <AvatarImage src={session?.user?.image || undefined} alt="Avatar" />
-            <AvatarFallback>{customer.firstName?.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col">
-            <div className="body-01-semibold">
-              {customer.firstName} {customer.lastName}
-            </div>
-            <div className="body-02-regular"> {customer.email}</div>
-          </div>
+    <div className="container mx-auto px-6 pt-[55px]  justify-between min-h-screen flex flex-col">
+      <div className="space-y-3">
+        <div className="flex flex-row justify-between">
+          <Button onClick={() => router.back()} variant="ghost" size="icon">
+            <ChevronLeftIcon className="w-6 h-6" />
+          </Button>
+          <h1 className="body-01-medium text-text-primary-default uppercase">
+            Mi Cuenta
+          </h1>
         </div>
-        <EllipsisHorizontalIcon className="w-6 h-6" />
-      </div>
-      <div className="max-w mx-auto">
-        <div>
-          <div className="lg:col-span-1">
-            <div className="px-6 sticky top-28">
-              <div className="space-y-3 text-sm"></div>
+        <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row items-center">
+            <Avatar className="mr-4 bg-background-fill-neutral-tertiary body-01-medium text-text-primary-default">
+              <AvatarImage
+                src={session?.user?.image || undefined}
+                alt="Avatar"
+              />
+              <AvatarFallback>{customer.firstName?.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col">
+              <div className="body-01-semibold">
+                {customer.firstName} {customer.lastName}
+              </div>
+              <div className="body-02-regular"> {customer.email}</div>
             </div>
           </div>
-          <div className="grid grid-cols-2 grid-rows-2 items-start gap-4 my-6">
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
-            >
-              <ShoppingBagIcon className="h-6 w-6"></ShoppingBagIcon>Compras
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
-            >
-              <HeartIcon className="h-6 w-6"></HeartIcon>Favoritos
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
-            >
-              <CurrencyDollarIcon className="h-6 w-6"></CurrencyDollarIcon>
-              Métodos de Pago
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
-            >
-              <HomeIcon className="h-6 w-6"></HomeIcon>Direcciones
-            </Button>
+          <EllipsisHorizontalIcon className="w-6 h-6" />
+        </div>
+        <div className="max-w mx-auto">
+          <div>
+            <div className="lg:col-span-1">
+              <div className="px-6 sticky top-28">
+                <div className="space-y-3 text-sm"></div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 grid-rows-2 items-start gap-4 my-6">
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+              >
+                <ShoppingBagIcon className="h-6 w-6"></ShoppingBagIcon>Compras
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+              >
+                <HeartIcon className="h-6 w-6"></HeartIcon>Favoritos
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+              >
+                <CurrencyDollarIcon className="h-6 w-6"></CurrencyDollarIcon>
+                Métodos de Pago
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+              >
+                <HomeIcon className="h-6 w-6"></HomeIcon>Direcciones
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col">
-        <Link href="#" className="flex items-center justify-between px-1 py-2">
-          <span className="body-02-medium">Ajustes</span>
-          <ChevronRightIcon className="w-5 h-5" />
-        </Link>
-        <Link href="#" className="flex items-center justify-between px-1 py-2">
-          <span className="body-02-medium">Locales</span>
-          <ChevronRightIcon className="w-5 h-5" />
-        </Link>
-        <Link href="#" className="flex items-center justify-between px-1 py-2">
-          <span className="body-02-medium">Contacto</span>
-          <ChevronRightIcon className="w-5 h-5" />
-        </Link>
+        <div className="flex flex-col">
+          <Link
+            href="#"
+            className="flex items-center justify-between px-1 py-2"
+          >
+            <span className="body-02-medium">Ajustes</span>
+            <ChevronRightIcon className="w-5 h-5" />
+          </Link>
+          <Link
+            href="#"
+            className="flex items-center justify-between px-1 py-2"
+          >
+            <span className="body-02-medium">Locales</span>
+            <ChevronRightIcon className="w-5 h-5" />
+          </Link>
+          <Link
+            href="#"
+            className="flex items-center justify-between px-1 py-2"
+          >
+            <span className="body-02-medium">Contacto</span>
+            <ChevronRightIcon className="w-5 h-5" />
+          </Link>
+        </div>
       </div>
       <div className="">
         <div className="flex flex-row justify-between items-center">
