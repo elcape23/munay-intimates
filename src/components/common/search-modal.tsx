@@ -18,6 +18,30 @@ export function SearchModal() {
   >([]);
 
   useEffect(() => {
+    if (!isSearchOpen) return;
+    const handler = setTimeout(async () => {
+      try {
+        if (!query) {
+          const res = await fetch("/api/search");
+          const data = await res.json();
+          setSuggestions(data.suggestions ?? []);
+          setResults([]);
+          return;
+        }
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        setResults(data.results ?? []);
+        if (data.suggestions) {
+          setSuggestions(data.suggestions);
+        }
+      } catch {
+        // ignore errors
+      }
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [query, isSearchOpen]);
+
+  useEffect(() => {
     if (isSearchOpen) {
       fetch("/api/search")
         .then((res) => res.json())
@@ -64,26 +88,28 @@ export function SearchModal() {
           <Dialog.Panel className="fixed inset-0 w-screen bg-background-primary-default flex flex-col overflow-y-auto">
             <Navbar />
             <div className="pt-20 space-y-4">
-              <form onSubmit={handleSubmit} className="flex gap-2">
-                <Input
-                  autoFocus
-                  placeholder="Buscar..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-                <Button type="submit">Buscar</Button>
-              </form>
-              <div className="w-full space-y-2 items-start">
-                {results.map((p) => (
-                  <a
-                    key={p.id}
-                    href={`/products/${p.handle}`}
-                    onClick={closeSearch}
-                    className="block py-1 underline"
-                  >
-                    {p.title}
-                  </a>
-                ))}
+              <div className="h-40">
+                <form onSubmit={handleSubmit} className="flex gap-2">
+                  <Input
+                    autoFocus
+                    placeholder="Buscar..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
+                  <Button type="submit">Buscar</Button>
+                </form>
+                <div className="w-full space-y-2 items-start">
+                  {results.map((p) => (
+                    <a
+                      key={p.id}
+                      href={`/products/${p.handle}`}
+                      onClick={closeSearch}
+                      className="block py-1 underline"
+                    >
+                      {p.title}
+                    </a>
+                  ))}
+                </div>
               </div>
               {suggestions.length > 0 && (
                 <RelatedProductsCarousel products={suggestions} />
