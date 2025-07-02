@@ -6,7 +6,7 @@ import { Navbar } from "@/components/common/nav-bar";
 import { SideMenu } from "@/components/common/side-menu";
 import { SearchModal } from "@/components/common/search-modal";
 import { Providers } from "@/components/providers";
-import { SplashScreen } from "@/components/splash-screen";
+import { IntroLogo } from "@/components/intro-logo";
 import { Toaster } from "@/components/ui/toaster";
 
 // 2. Configura la fuente con los pesos que usas
@@ -31,7 +31,7 @@ export default function RootLayout({
     <html lang="es" className={manrope.className}>
       <body className="bg-background-primary-default">
         <Providers>
-          <SplashScreen />
+          <IntroLogo />
           <Navbar />
           <SideMenu /> {/* El SideMenu se superpone y se controla solo */}
           <SearchModal />

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { LoadingSpinner } from "@/components/common/loading-spinner";
 
 export default function Loading() {
   return (
@@ -13,16 +14,7 @@ export default function Loading() {
         exit={{ opacity: 0, filter: "blur(4px)" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
-        <motion.div
-          className="w-12 h-12 border-4 border-t-transparent border-border-primary-default rounded-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, rotate: 360 }}
-          exit={{ opacity: 0 }}
-          transition={{
-            opacity: { duration: 0.3, ease: "easeInOut" },
-            rotate: { repeat: Infinity, duration: 1.2, ease: "linear" },
-          }}
-        />
+        <LoadingSpinner />
       </motion.div>
     </AnimatePresence>
   );

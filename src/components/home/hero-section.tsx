@@ -54,9 +54,28 @@ export function HeroSection({
 }: HeroSectionProps) {
   const [current, setCurrent] = useState(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const [inView, setInView] = useState(false);
 
   useEffect(() => {
-    if (!autoPlay) {
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0 }
+    );
+
+    const current = sectionRef.current;
+    if (current) observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!autoPlay || !inView) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
       return;
     }
 
@@ -75,13 +94,13 @@ export function HeroSection({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [current, autoPlay, intervalMs]);
+  }, [current, autoPlay, intervalMs, inView]);
 
   const prev = () => setCurrent((c) => (c - 1 + SLIDES.length) % SLIDES.length);
   const next = () => setCurrent((c) => (c + 1) % SLIDES.length);
 
   return (
-    <section className="relative w-full overflow-hidden">
+    <section ref={sectionRef} className="relative w-full overflow-hidden">
       {/* Contenedor deslizante */}
       <div
         className="flex transition-transform duration-700 ease-in-out"
