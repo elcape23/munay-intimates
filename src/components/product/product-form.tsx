@@ -2,12 +2,8 @@
 
 "use client";
 import { useState, useMemo, useEffect, useRef } from "react";
-import {
-  ShopifyProduct,
-  ShopifyProductVariant,
-  createCart,
-  addToCart,
-} from "@/lib/shopify";
+import { useRouter } from "next/navigation";
+import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
 import { COLOR_MAP } from "@/lib/color-map";
 import { toast } from "@/hooks/use-toast";
@@ -53,6 +49,7 @@ export function ProductForm({ product }: ProductFormProps) {
 
   // Obtenemos el estado y las acciones directamente desde nuestro store de Zustand.
   const { addItemToCart, isLoading } = useCartStore();
+  const router = useRouter();
 
   const buttonContainerRef = useRef<HTMLDivElement | null>(null);
   const [showSticky, setShowSticky] = useState(false);
@@ -127,9 +124,8 @@ export function ProductForm({ product }: ProductFormProps) {
     }
 
     try {
-      const cart = await createCart();
-      const updatedCart = await addToCart(cart.id, selectedVariant.id, 1);
-      window.location.href = updatedCart.checkoutUrl;
+      await addItemToCart(selectedVariant.id);
+      router.push("/checkout");
     } catch (error) {
       toast({ title: "Hubo un error al procesar la compra." });
     }

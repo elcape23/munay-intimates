@@ -25,7 +25,6 @@ export default function AccountPage() {
   const { data: rawSession } = useSession();
   const session = rawSession as any;
   const router = useRouter();
-  const storeDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
   const [customer, setCustomer] = useState<any>(null);
 
   useEffect(() => {
@@ -154,14 +153,10 @@ export default function AccountPage() {
                 size="lg"
                 className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
               >
-                <a
-                  href={`https://${storeDomain}/account/addresses`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <Link href="/account/addresses">
                   <HomeIcon className="h-6 w-6" />
                   Direcciones
-                </a>
+                </Link>
               </Button>
             </div>
           </div>

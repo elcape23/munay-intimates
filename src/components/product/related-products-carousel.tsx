@@ -22,7 +22,11 @@ export default function RelatedProductsCarousel({
       <h2 className="heading-06-medium text-text-primary-default">
         Te puede interesar
       </h2>
-      <div className="-m-6 flex space-x-2 overflow-x-auto snap-x snap-mandatory no-scrollbar [&>div>a>div:nth-child(2)]:ml-4">
+      <div
+        className={`-m-6 flex space-x-2 overflow-x-auto snap-x snap-mandatory no-scrollbar ${
+          size === "small" ? "" : "[&>div>a>div:nth-child(2)]:ml-4"
+        }`}
+      >
         {products.map((product) => {
           let cardProps: ProductCardProps;
           if ("priceRange" in product) {

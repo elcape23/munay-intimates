@@ -91,9 +91,9 @@ export default function CartPage() {
               </div>
               {/* Botón fijo “Continuar” según diseño */}
               <Button asChild value="primary" size="lg">
-                <a href={cart.checkoutUrl}>
+                <Link href="/checkout">
                   Continuar - {formatPrice(grandTotal)}
-                </a>
+                </Link>
               </Button>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function CartPage() {
       </section>
       <div className="fixed bottom-0 left-0 w-screen h-auto bg-background-primary-default border-t border-border-secondary-default z-50 flex items-center justify-between px-6 pt-3 pb-9 sm:hidden">
         <Button asChild value="primary" size="lg" className="w-1/2">
-          <a href={cart.checkoutUrl}>Continuar</a>
+          <Link href="/checkout">Continuar</Link>
         </Button>
         <div className="flex flex-col items-end gap-1">
           <p className="body-01-medium text-text-primary-default">

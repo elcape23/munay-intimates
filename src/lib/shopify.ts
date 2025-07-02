@@ -99,6 +99,19 @@ export type Customer = {
   email: string;
   phone: string | null;
 };
+export type CustomerAddress = {
+  id: string;
+  address1?: string | null;
+  address2?: string | null;
+  city?: string | null;
+  province?: string | null;
+  country?: string | null;
+  zip?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  formatted?: string[] | null;
+};
 export type CustomerAccessToken = { accessToken: string; expiresAt: string };
 export type CustomerUserError = {
   code: string;
@@ -1946,6 +1959,50 @@ export async function getCustomerOrders(
       return [];
     }
     return response.customer.orders.edges.map((edge) => edge.node);
+  } catch (e) {
+    return [];
+  }
+}
+
+export async function getCustomerAddresses(
+  customerAccessToken: string
+): Promise<CustomerAddress[]> {
+  const query = gql`
+    query getCustomerAddresses($customerAccessToken: String!) {
+      customer(customerAccessToken: $customerAccessToken) {
+        addresses(first: 20) {
+          edges {
+            node {
+              id
+              address1
+              address2
+              city
+              province
+              country
+              zip
+              firstName
+              lastName
+              phone
+              formatted
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await shopifyFetch<{
+      customer: {
+        addresses: { edges: { node: CustomerAddress }[] };
+      } | null;
+    }>({ query, variables: { customerAccessToken } });
+
+    if (!response.customer) {
+      return [];
+    }
+
+    return response.customer.addresses.edges.map((edge) => edge.node);
   } catch (e) {
     return [];
   }

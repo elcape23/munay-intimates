@@ -69,7 +69,9 @@ export function ProductCard({
         </div>
 
         {/* Detalle */}
-        <div className="flex-1 py-2 space-y-2">
+        <div
+          className={`flex-1 py-2 space-y-2 ${size === "small" ? "pl-4" : ""}`}
+        >
           {/* Título */}
           <h3 className="body-01-medium text-text-primary-default truncate whitespace-nowrap line-clamp-2">
             {title}

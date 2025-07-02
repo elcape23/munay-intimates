@@ -126,7 +126,7 @@ export function HeroSection({
               <Button
                 variant="link"
                 size="lg"
-                className="flex justify-start px-0 mb-20"
+                className="flex justify-start px-0 mb-20 text-text-primary-invert body-01-medium underline-offset-[4px]"
               >
                 <ArrowLongRightIcon className="ml-1 h-6 w-6 inline" />
                 <a href={slide.href ?? "#"}>{slide.ButtonText}</a>
