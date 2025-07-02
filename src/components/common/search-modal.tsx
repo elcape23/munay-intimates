@@ -22,9 +22,12 @@ export function SearchModal() {
     const handler = setTimeout(async () => {
       try {
         if (!query) {
-          const res = await fetch("/api/search");
-          const data = await res.json();
-          setSuggestions(data.suggestions ?? []);
+          setSuggestions([]);
+          setResults([]);
+          return;
+        }
+        if (query.length < 3) {
+          setSuggestions([]);
           setResults([]);
           return;
         }
@@ -43,17 +46,19 @@ export function SearchModal() {
 
   useEffect(() => {
     if (isSearchOpen) {
-      fetch("/api/search")
-        .then((res) => res.json())
-        .then((data) => setSuggestions(data.suggestions ?? []))
-        .catch(() => undefined);
       setResults([]);
       setQuery("");
+      setSuggestions([]);
     }
   }, [isSearchOpen]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (query.length < 3) {
+      setResults([]);
+      setSuggestions([]);
+      return;
+    }
     const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
     const data = await res.json();
     setResults(data.results ?? []);
@@ -85,8 +90,8 @@ export function SearchModal() {
           leaveFrom="translate-x-0"
           leaveTo="-translate-x-full"
         >
-          <Dialog.Panel className="fixed inset-0 w-screen bg-background-primary-default flex flex-col overflow-y-auto">
-            <Navbar />
+          <Dialog.Panel className="fixed inset-0 w-screen bg-background-primary-default flex flex-col overflow-y-auto ">
+            <Navbar alwaysDark />
             <div className="pt-20 space-y-4">
               <div className="h-40">
                 <form onSubmit={handleSubmit} className="flex gap-2">
@@ -112,7 +117,9 @@ export function SearchModal() {
                 </div>
               </div>
               {suggestions.length > 0 && (
-                <RelatedProductsCarousel products={suggestions} />
+                <div className="mx-6">
+                  <RelatedProductsCarousel products={suggestions} />
+                </div>
               )}
             </div>
           </Dialog.Panel>

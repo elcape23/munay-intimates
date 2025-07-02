@@ -1,6 +1,5 @@
 import {
   getNewProducts,
-  getRecommendedProducts,
   searchProducts,
   FeaturedProduct,
   ShopifyProduct,
@@ -14,14 +13,7 @@ export async function GET(req: Request) {
 
   if (query) {
     const results: ShopifyProduct[] = await searchProducts(query, limit);
-    let suggestions: ShopifyProduct[] = [];
-    if (results.length > 0) {
-      try {
-        suggestions = await getRecommendedProducts(results[0].id, 4);
-      } catch {
-        suggestions = [];
-      }
-    }
+    const suggestions: FeaturedProduct[] = await getNewProducts(4);
     return NextResponse.json({ results, suggestions });
   }
 
