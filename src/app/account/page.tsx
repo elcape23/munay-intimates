@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { getCustomer } from "@/lib/shopify";
 import { OrderHistory } from "@/components/account/order-history";
 import LoginForm from "@/components/account/login-form";
 import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
+import Link from "next/link";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   ShoppingBagIcon,
   HeartIcon,
@@ -22,6 +24,7 @@ export default function AccountPage() {
   // rawSession lo casteamos a any para saltarnos el TS
   const { data: rawSession } = useSession();
   const session = rawSession as any;
+  const router = useRouter();
   const [customer, setCustomer] = useState<any>(null);
 
   useEffect(() => {
@@ -76,18 +79,21 @@ export default function AccountPage() {
 
   // 5) Render final
   return (
-    <div className="container mx-auto px-6 pt-[55px] space-y-3 h-max-full">
+    <div className="container mx-auto px-6 pt-[55px] space-y-3">
       <div className="flex flex-row justify-between">
-        <Button variant="ghost" size="icon">
-          <ChevronLeftIcon></ChevronLeftIcon>
+        <Button onClick={() => router.back()} variant="ghost" size="icon">
+          <ChevronLeftIcon className="w-6 h-6" />
         </Button>
         <h1 className="body-01-medium text-text-primary-default uppercase">
           Mi Cuenta
         </h1>
       </div>
       <div className="flex flex-row justify-between items-center">
-        <div className="flex flex-row">
-          <Avatar />
+        <div className="flex flex-row items-center">
+          <Avatar className="mr-4 bg-background-fill-neutral-tertiary body-01-medium text-text-primary-default">
+            <AvatarImage src={session?.user?.image || undefined} alt="Avatar" />
+            <AvatarFallback>{customer.firstName?.charAt(0)}</AvatarFallback>
+          </Avatar>
           <div className="flex flex-col">
             <div className="body-01-semibold">
               {customer.firstName} {customer.lastName}
@@ -137,21 +143,37 @@ export default function AccountPage() {
           </div>
         </div>
       </div>
-      <div className="flex flex-row justify-between items-center">
-        <div className="flex flex-row gap-1">
-          <div className="body-02-medium"> {customer.email}</div>
-          <div className="body-02-regular">no sos vos?</div>
-        </div>
-        <Button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="body-01-semibold"
-          variant="link"
-          size="text"
-        >
-          Salir
-        </Button>
+      <div className="flex flex-col">
+        <Link href="#" className="flex items-center justify-between px-1 py-2">
+          <span className="body-02-medium">Ajustes</span>
+          <ChevronRightIcon className="w-5 h-5" />
+        </Link>
+        <Link href="#" className="flex items-center justify-between px-1 py-2">
+          <span className="body-02-medium">Locales</span>
+          <ChevronRightIcon className="w-5 h-5" />
+        </Link>
+        <Link href="#" className="flex items-center justify-between px-1 py-2">
+          <span className="body-02-medium">Contacto</span>
+          <ChevronRightIcon className="w-5 h-5" />
+        </Link>
       </div>
-      <Footer />
+      <div className="bottom-0">
+        <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row gap-1">
+            <div className="body-02-medium"> {customer.email}</div>
+            <div className="body-02-regular">no sos vos?</div>
+          </div>
+          <Button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="body-01-semibold"
+            variant="link"
+            size="text"
+          >
+            Salir
+          </Button>
+        </div>
+        <Footer />
+      </div>
     </div>
   );
 }
