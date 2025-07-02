@@ -7,7 +7,11 @@ import { useAuthStore } from "@/store/auth-store";
 import { getCustomerOrders, OrderLineItem, ShopifyOrder } from "@/lib/shopify";
 import Image from "next/image";
 
-export function OrderHistory() {
+export function OrderHistory({
+  statusFilter,
+}: {
+  statusFilter?: "en-proceso" | "entregadas" | "locales";
+}) {
   const [orders, setOrders] = useState<ShopifyOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { customerAccessToken } = useAuthStore();
@@ -39,13 +43,27 @@ export function OrderHistory() {
     return <p className="text-gray-500">Cargando historial de pedidos...</p>;
   }
 
-  if (orders.length === 0) {
+  const filteredOrders = orders.filter((order) => {
+    if (!statusFilter) return true;
+    if (statusFilter === "en-proceso") {
+      return order.fulfillmentStatus !== "FULFILLED";
+    }
+    if (statusFilter === "entregadas") {
+      return order.fulfillmentStatus === "FULFILLED";
+    }
+    if (statusFilter === "locales") {
+      return !order.shippingAddress?.address1;
+    }
+    return true;
+  });
+
+  if (filteredOrders.length === 0) {
     return <p className="text-gray-500">Aún no has realizado ningún pedido.</p>;
   }
 
   return (
     <div className="space-y-6">
-      {orders.map((order) => (
+      {filteredOrders.map((order) => (
         <div key={order.id} className="border rounded-lg p-4 bg-white">
           <div className="flex justify-between items-start mb-4 border-b pb-3">
             <div>

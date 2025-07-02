@@ -25,6 +25,7 @@ export default function AccountPage() {
   const { data: rawSession } = useSession();
   const session = rawSession as any;
   const router = useRouter();
+  const storeDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
   const [customer, setCustomer] = useState<any>(null);
 
   useEffect(() => {
@@ -105,7 +106,9 @@ export default function AccountPage() {
               <div className="body-02-regular"> {customer.email}</div>
             </div>
           </div>
-          <EllipsisHorizontalIcon className="w-6 h-6" />
+          <Link href="/account/edit">
+            <EllipsisHorizontalIcon className="w-6 h-6" />
+          </Link>
         </div>
         <div className="max-w mx-auto">
           <div>
@@ -116,18 +119,26 @@ export default function AccountPage() {
             </div>
             <div className="grid grid-cols-2 grid-rows-2 items-start gap-4 my-6">
               <Button
+                asChild
                 variant="outline"
                 size="lg"
                 className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
               >
-                <ShoppingBagIcon className="h-6 w-6"></ShoppingBagIcon>Compras
+                <Link href="/account/compras">
+                  <ShoppingBagIcon className="h-6 w-6" />
+                  Compras
+                </Link>
               </Button>
               <Button
+                asChild
                 variant="outline"
                 size="lg"
                 className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
               >
-                <HeartIcon className="h-6 w-6"></HeartIcon>Favoritos
+                <Link href="/favorites">
+                  <HeartIcon className="h-6 w-6" />
+                  Favoritos
+                </Link>
               </Button>
               <Button
                 variant="outline"
@@ -138,11 +149,19 @@ export default function AccountPage() {
                 Métodos de Pago
               </Button>
               <Button
+                asChild
                 variant="outline"
                 size="lg"
                 className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
               >
-                <HomeIcon className="h-6 w-6"></HomeIcon>Direcciones
+                <a
+                  href={`https://${storeDomain}/account/addresses`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <HomeIcon className="h-6 w-6" />
+                  Direcciones
+                </a>
               </Button>
             </div>
           </div>
@@ -172,7 +191,7 @@ export default function AccountPage() {
         </div>
       </div>
       <div className="">
-        <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-row justify-between items-center mb-4">
           <div className="flex flex-row gap-1">
             <div className="body-02-medium"> {customer.email}</div>
             <div className="body-02-regular">no sos vos?</div>

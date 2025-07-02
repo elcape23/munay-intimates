@@ -119,6 +119,9 @@ export type ShopifyOrder = {
   processedAt: string;
   financialStatus: string;
   fulfillmentStatus: string;
+  shippingAddress?: {
+    address1?: string | null;
+  } | null;
   totalPrice: ShopifyPrice;
   lineItems: { edges: { node: OrderLineItem }[] };
 };
@@ -388,7 +391,12 @@ export async function getNewProducts(
       price: Math.round(priceNum).toLocaleString("es-AR", {
         useGrouping: true,
       }),
-      compareAtPrice: cmpNum > priceNum ? cmpNum.toFixed(0) : undefined,
+      compareAtPrice:
+        cmpNum > priceNum
+          ? Math.round(cmpNum).toLocaleString("es-AR", {
+              useGrouping: true,
+            })
+          : undefined,
       colorVariants,
       isNew,
     };
@@ -1902,6 +1910,9 @@ export async function getCustomerOrders(
               processedAt
               financialStatus
               fulfillmentStatus
+              shippingAddress {
+                address1
+              }
               totalPrice {
                 amount
                 currencyCode
