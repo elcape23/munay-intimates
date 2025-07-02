@@ -6,6 +6,16 @@ import { getCustomer } from "@/lib/shopify";
 import { OrderHistory } from "@/components/account/order-history";
 import LoginForm from "@/components/account/login-form";
 import { Button } from "@/components/ui/button";
+import { Avatar } from "@/components/ui/avatar";
+import {
+  ShoppingBagIcon,
+  HeartIcon,
+  CurrencyDollarIcon,
+  HomeIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EllipsisHorizontalIcon,
+} from "@heroicons/react/24/outline";
 
 export default function AccountPage() {
   // rawSession lo casteamos a any para saltarnos el TS
@@ -65,53 +75,75 @@ export default function AccountPage() {
 
   // 5) Render final
   return (
-    <div className="container mx-auto p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Mi Cuenta</h1>
-            <p className="text-lg text-gray-600 mt-1">
-              ¡Hola, {session.user.name}! Bienvenido a tu panel.
-            </p>
+    <div className="container mx-auto px-6 pt-[55px] space-y-3">
+      <div className="flex flex-row justify-between">
+        <Button variant="ghost" size="icon">
+          <ChevronLeftIcon></ChevronLeftIcon>
+        </Button>
+        <h1 className="body-01-medium text-text-primary-default uppercase">
+          Mi Cuenta
+        </h1>
+      </div>
+      <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-row">
+          <Avatar />
+          <div className="flex flex-col">
+            <div className="body-01-semibold">
+              {customer.firstName} {customer.lastName}
+            </div>
+            <div className="body-02-regular"> {customer.email}</div>
           </div>
-          <Button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            variant="secondary"
-            size="lg"
-          >
-            Cerrar Sesión
-          </Button>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <EllipsisHorizontalIcon className="w-6 h-6" />
+      </div>
+      <div className="max-w mx-auto">
+        <div>
           <div className="lg:col-span-1">
-            <div className="bg-white p-6 border border-gray-200 rounded-lg shadow-sm sticky top-28">
-              <h2 className="text-xl font-semibold mb-4">
-                Información del Perfil
-              </h2>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <span className="font-semibold">Nombre:</span>{" "}
-                  {customer.firstName} {customer.lastName}
-                </div>
-                <div>
-                  <span className="font-semibold">Email:</span> {customer.email}
-                </div>
-              </div>
+            <div className="px-6 sticky top-28">
+              <div className="space-y-3 text-sm"></div>
             </div>
           </div>
-
-          <div className="lg:col-span-2">
-            <div className="bg-white p-6 border border-gray-200 rounded-lg shadow-sm">
-              <h2 className="text-xl font-semibold mb-4">
-                Historial de Pedidos
-              </h2>
-              <OrderHistory />
-            </div>
+          <div className="grid grid-cols-2 grid-rows-2 items-start gap-4 my-6">
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+            >
+              <ShoppingBagIcon className="h-6 w-6"></ShoppingBagIcon>Compras
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+            >
+              <HeartIcon className="h-6 w-6"></HeartIcon>Favoritos
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+            >
+              <CurrencyDollarIcon className="h-6 w-6"></CurrencyDollarIcon>
+              Métodos de Pago
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+            >
+              <HomeIcon className="h-6 w-6"></HomeIcon>Direcciones
+            </Button>
           </div>
         </div>
       </div>
+      <Button
+        onClick={() => signOut({ callbackUrl: "/" })}
+        className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        variant="secondary"
+        size="lg"
+      >
+        Cerrar Sesión
+      </Button>
     </div>
   );
 }
