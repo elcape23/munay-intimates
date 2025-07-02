@@ -17,11 +17,13 @@ import { Button } from "@/components/ui/button";
 interface NavbarProps {
   alwaysDark?: boolean;
   alwaysLight?: boolean;
+  onNavigate?: () => void;
 }
 
 export function Navbar({
   alwaysDark = false,
   alwaysLight = false,
+  onNavigate,
 }: NavbarProps) {
   const path = usePathname();
   const router = useRouter();
@@ -44,6 +46,7 @@ export function Navbar({
 
   // Handler: abre menú o vuelve atrás
   const handleMenuOrBack = () => {
+    onNavigate?.();
     if (isProduct) {
       router.back();
     } else {
@@ -91,7 +94,12 @@ export function Navbar({
 
         {/* Logo brand */}
         {(!isProduct || scrolled || alwaysDark || alwaysLight) && (
-          <Link href="/" aria-label="Ir al home" className="flex items-center">
+          <Link
+            href="/"
+            aria-label="Ir al home"
+            className="flex items-center"
+            onClick={onNavigate}
+          >
             {/* El SVG está en /public/munay-wordmark.svg */}
             <img
               src={
@@ -113,6 +121,7 @@ export function Navbar({
           href="/cart"
           aria-label={`Carrito de compras con ${totalQuantity} productos`}
           className="relative rounded-md focus:outline-none focus:ring-2 focus:ring-ring-primary"
+          onClick={onNavigate}
         >
           <ShoppingBagIcon
             className={cn("h-6 w-6 transition-colors", {

@@ -100,7 +100,7 @@ export function SearchModal() {
           leaveTo="-translate-x-full"
         >
           <Dialog.Panel className="fixed inset-0 w-screen bg-background-primary-default flex flex-col overflow-y-auto ">
-            <Navbar alwaysLight />
+            <Navbar alwaysLight onNavigate={closeSearch} />
             <div className="pt-20 space-y-4">
               <div className="h-[30vh]">
                 <form onSubmit={handleSubmit} className="flex gap-2">
@@ -133,6 +133,16 @@ export function SearchModal() {
                   />
                 </div>
               )}
+              <div className="flex justify-center pt-6">
+                <Button
+                  onClick={closeSearch}
+                  aria-label="Cerrar búsqueda"
+                  variant="link"
+                  size="text"
+                >
+                  Cerrar
+                </Button>
+              </div>
             </div>
           </Dialog.Panel>
         </Transition.Child>

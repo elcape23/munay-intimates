@@ -157,7 +157,7 @@ export default function AccountPage() {
           <ChevronRightIcon className="w-5 h-5" />
         </Link>
       </div>
-      <div className="bottom-0">
+      <div className="">
         <div className="flex flex-row justify-between items-center">
           <div className="flex flex-row gap-1">
             <div className="body-02-medium"> {customer.email}</div>
