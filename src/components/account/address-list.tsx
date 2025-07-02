@@ -32,7 +32,7 @@ export function AddressList() {
 
   if (isLoading) {
     return (
-      <p className="heading-06-regular text-text-secondary-default">
+      <p className="heading-06-regular text-text-secondary-default  ">
         Cargando direcciones...
       </p>
     );
