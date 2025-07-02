@@ -16,6 +16,7 @@ export interface ProductCardProps {
   compareAtPrice?: string; // e.g. "29.99"
   isNew?: boolean; // marca NEW
   colorVariants?: string[]; // lista de colores (hex o clases Tailwind)
+  size?: "default" | "small";
 }
 
 export function ProductCard({
@@ -27,6 +28,7 @@ export function ProductCard({
   compareAtPrice,
   isNew = false,
   colorVariants = [],
+  size = "default",
 }: ProductCardProps) {
   // calcula % de descuento redondeado
   const discountPercent = compareAtPrice
@@ -37,10 +39,16 @@ export function ProductCard({
     <div className="relative">
       <Link
         href={`/products/${handle}`}
-        className="flex flex-col bg-transparent h-[420px] overflow-hidden hover:transition-shadow duration-300"
+        className={`flex flex-col bg-transparent ${
+          size === "small" ? "h-[315px]" : "h-[420px]"
+        } overflow-hidden hover:transition-shadow duration-300`}
       >
         {/* Imagen */}
-        <div className="relative h-[328px] w-[100%] overflow-hidden">
+        <div
+          className={`relative ${
+            size === "small" ? "h-[246px]" : "h-[328px]"
+          } w-[100%] overflow-hidden`}
+        >
           <Image
             src={imageSrc}
             alt={altText ?? title}

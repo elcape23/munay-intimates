@@ -127,7 +127,10 @@ export function SearchModal() {
               </div>
               {suggestions.length > 0 && (
                 <div className="mx-6 items-start">
-                  <RelatedProductsCarousel products={suggestions} />
+                  <RelatedProductsCarousel
+                    products={suggestions}
+                    size="small"
+                  />
                 </div>
               )}
             </div>

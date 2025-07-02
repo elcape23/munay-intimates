@@ -10,10 +10,12 @@ type CarouselProduct = ShopifyProduct | FeaturedProduct;
 
 interface RelatedProductsCarouselProps {
   products: CarouselProduct[];
+  size?: "default" | "small";
 }
 
 export default function RelatedProductsCarousel({
   products,
+  size = "default",
 }: RelatedProductsCarouselProps) {
   return (
     <section className="space-y-5">
@@ -63,8 +65,13 @@ export default function RelatedProductsCarousel({
           }
 
           return (
-            <div key={product.handle} className="snap-start flex-shrink-0 w-64">
-              <ProductCard {...cardProps} />
+            <div
+              key={product.handle}
+              className={`snap-start flex-shrink-0 ${
+                size === "small" ? "w-48" : "w-64"
+              }`}
+            >
+              <ProductCard {...cardProps} size={size} />
             </div>
           );
         })}

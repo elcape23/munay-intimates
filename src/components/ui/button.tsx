@@ -24,7 +24,7 @@ const buttonVariants = cva(
         outline:
           "border border-border-primary-default bg-transparent text-text-primary-default hover:bg-accent hover:text-accent-foreground",
         ghost: "hover:accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 text-decoration: underline hover:underline-0",
+        link: "text-text-primary-default underline-offset-2 text-decoration: underline hover:underline-0",
       },
       size: {
         // Ahora, cada size define su propia tipografía sin conflictos.
