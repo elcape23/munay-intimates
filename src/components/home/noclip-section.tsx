@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -14,21 +15,37 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
   href,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
 
-  // Auto-centra el carrusel al montarse
+  // Detectar cuando la sección entra en la vista
   useEffect(() => {
-    const c = containerRef.current;
-    if (!c) return;
-    c.scrollTo({
-      left: (c.scrollWidth - c.clientWidth) / 2,
-      behavior: "auto",
-    });
-  }, [images]);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const current = sectionRef.current;
+    if (current) observer.observe(current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   return (
-    <section
+    <motion.section
+      ref={sectionRef}
       id="noclip-section"
       className="py-8 space-y-3 bg-background-primary-default"
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, ease: "easeOut" }}
     >
       {/* Título */}
       <h2 className="heading-06-medium ml-6">Bienvenido Invierno!</h2>
@@ -62,6 +79,6 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
           </span>
         </Link>
       </div>
-    </section>
+    </motion.section>
   );
 };

@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
 import {
   ProductCard,
@@ -16,18 +17,44 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
   product,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
 
-  // Centrar el contenido horizontalmente al montar
+  // Centrar el contenido horizontalmente cuando entre en pantalla
   useEffect(() => {
     const c = containerRef.current;
-    if (!c) return;
+    if (!c || !inView) return;
     c.scrollTo({ left: (c.scrollWidth - c.clientWidth) / 2, behavior: "auto" });
+  }, [inView]);
+
+  // Detectar cuando la sección entra en la vista
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const current = sectionRef.current;
+    if (current) observer.observe(current);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   return (
-    <section
+    <motion.section
+      ref={sectionRef}
       id="explore-section"
       className="pb-8 px-6 bg-background-primary-default"
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div
         ref={containerRef}
@@ -56,6 +83,6 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
