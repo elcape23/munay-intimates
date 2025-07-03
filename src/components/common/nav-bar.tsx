@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import {
   XMarkIcon,
@@ -55,7 +56,10 @@ export function Navbar({
   };
 
   return (
-    <nav
+    <motion.nav
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-700 ease-in-out",
         {
@@ -138,6 +142,6 @@ export function Navbar({
           )}
         </Link>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
