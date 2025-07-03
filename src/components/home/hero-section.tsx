@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
 
@@ -124,12 +125,15 @@ export function HeroSection({
                 {slide.title}
               </h2>
               <Button
+                asChild
                 variant="link"
                 size="lg"
                 className="flex justify-start px-0 mb-20 text-text-primary-invert body-01-medium underline-offset-[4px]"
               >
-                <ArrowLongRightIcon className="ml-1 h-6 w-6 inline" />
-                <a href={slide.href ?? "#"}>{slide.ButtonText}</a>
+                <Link href={slide.href ?? "#"} className="flex items-center">
+                  <ArrowLongRightIcon className="ml-1 h-6 w-6 inline" />
+                  {slide.ButtonText}
+                </Link>
               </Button>
             </div>
           </div>
