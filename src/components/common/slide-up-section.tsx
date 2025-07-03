@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { PropsWithChildren } from "react";
+import { motion } from "framer-motion";
+import { PropsWithChildren, useEffect } from "react";
 
 interface SlideUpSectionProps {
   className?: string;
@@ -11,6 +11,9 @@ export default function SlideUpSection({
   children,
   className = "",
 }: PropsWithChildren<SlideUpSectionProps>) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <motion.section
       initial={{ y: "100vh" }}

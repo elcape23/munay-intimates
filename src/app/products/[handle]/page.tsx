@@ -147,7 +147,7 @@ export default async function ProductDetailPage({
         </div>
       </div>
       {/* ► Productos relacionados */}
-      <div className="[&>div>a>div:nth-child(2)]:ml-4">
+      <div>
         <RelatedProductsCarousel products={relatedProducts} />
       </div>
       <Footer />
