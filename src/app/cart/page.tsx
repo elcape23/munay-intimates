@@ -9,6 +9,7 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { Footer } from "@/components/common/footer";
 
 export default function CartPage() {
   // Obtenemos todo el estado directamente desde nuestro store de Zustand.
@@ -40,9 +41,19 @@ export default function CartPage() {
 
   if (!cart || showEmpty) {
     return (
-      <section className="flex flex-col h-screen items-center justify-center text-center mx-auto p-12">
-        <div>
-          <h1 className="heading-06-regular text-text-primary-default my-4">
+      <section className="container mx-auto mt-[55px] px-6 justify-between min-h-screen flex flex-col">
+        <div className="flex items-center justify-between">
+          <Button
+            onClick={() => window.history.back()}
+            variant="ghost"
+            size="icon"
+          >
+            <ChevronLeftIcon className="w-6 h-6 text-black" />
+          </Button>
+          <h1 className="body-01-medium">CARRITO</h1>
+        </div>
+        <div className="">
+          <h1 className="heading-06-regular text-text-primary-default my-4 text-center">
             Tu carrito está vacío
           </h1>
           <Link
@@ -52,6 +63,7 @@ export default function CartPage() {
             Seguir comprando
           </Link>
         </div>
+        <Footer />
       </section>
     );
   }
