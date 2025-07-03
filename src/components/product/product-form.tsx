@@ -2,6 +2,7 @@
 
 "use client";
 import { useState, useMemo, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
@@ -312,35 +313,43 @@ export function ProductForm({ product }: ProductFormProps) {
         </Button>
       </div>
 
-      {showSticky && (
-        <div className="fixed bottom-0 left-0 w-screen h-auto pt-3 pb-9 bg-background-primary-default border-t border-border-tertiary-default z-50 flex items-center justify-between px-6 gap-6">
-          <Button
-            onClick={handleAddToCart}
-            disabled={isAddToCartDisabled}
-            className={`w-full body-01-semibold py-3 px-6 transition-colors
+      <AnimatePresence>
+        {showSticky && (
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="fixed bottom-0 left-0 w-screen h-auto pt-3 pb-9 bg-background-primary-default border-t border-border-tertiary-default z-50 flex items-center justify-between px-6 gap-6"
+          >
+            <Button
+              onClick={handleAddToCart}
+              disabled={isAddToCartDisabled}
+              className={`w-full body-01-semibold py-3 px-6 transition-colors
             ${
               isAddToCartDisabled ? "cursor-not-allowed" : "hover:bg-blue-700"
             }`}
-            variant="primary"
-            size="lg"
-          >
-            {isLoading ? "Añadiendo..." : "Añadir"}
-          </Button>
-          <div className="w-full flex flex-col items-end gap-2">
-            <p className="body-01-semibold text-text-primary-default">
-              {selectedVariant &&
-                new Intl.NumberFormat("es-AR", {
-                  style: "currency",
-                  currency: selectedVariant.price.currencyCode,
-                  maximumFractionDigits: 0,
-                }).format(parseFloat(selectedVariant.price.amount))}
-            </p>
-            <p className="body-03-regular text-text-secondary-default whitespace-nowrap">
-              Envío calculado en el checkout
-            </p>
-          </div>
-        </div>
-      )}
+              variant="primary"
+              size="lg"
+            >
+              {isLoading ? "Añadiendo..." : "Añadir"}
+            </Button>
+            <div className="w-full flex flex-col items-end gap-2">
+              <p className="body-01-semibold text-text-primary-default">
+                {selectedVariant &&
+                  new Intl.NumberFormat("es-AR", {
+                    style: "currency",
+                    currency: selectedVariant.price.currencyCode,
+                    maximumFractionDigits: 0,
+                  }).format(parseFloat(selectedVariant.price.amount))}
+              </p>
+              <p className="body-03-regular text-text-secondary-default whitespace-nowrap">
+                Envío calculado en el checkout
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
