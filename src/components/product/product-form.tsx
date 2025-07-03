@@ -52,6 +52,10 @@ export function ProductForm({ product }: ProductFormProps) {
   const { addItemToCart, isLoading } = useCartStore();
   const router = useRouter();
 
+  const [loadingButton, setLoadingButton] = useState<"add" | "buy" | null>(
+    null
+  );
+
   const buttonContainerRef = useRef<HTMLDivElement | null>(null);
   const [showSticky, setShowSticky] = useState(false);
 
@@ -106,10 +110,13 @@ export function ProductForm({ product }: ProductFormProps) {
     }
 
     try {
+      setLoadingButton("add");
       await addItemToCart(selectedVariant.id);
       toast({ title: "¡Producto añadido al carrito!" });
     } catch (error) {
       toast({ title: "Hubo un error al añadir el producto." });
+    } finally {
+      setLoadingButton(null);
     }
   };
 
@@ -125,10 +132,13 @@ export function ProductForm({ product }: ProductFormProps) {
     }
 
     try {
+      setLoadingButton("buy");
       await addItemToCart(selectedVariant.id);
       router.push("/checkout");
     } catch (error) {
       toast({ title: "Hubo un error al procesar la compra." });
+    } finally {
+      setLoadingButton(null);
     }
   };
 
@@ -293,7 +303,7 @@ export function ProductForm({ product }: ProductFormProps) {
           variant="primary"
           size="lg"
         >
-          {isLoading
+          {loadingButton === "add"
             ? "Añadiendo..."
             : selectedVariant?.availableForSale
             ? "Añadir"
@@ -309,7 +319,7 @@ export function ProductForm({ product }: ProductFormProps) {
           variant="outline"
           size="lg"
         >
-          {isLoading
+          {loadingButton === "buy"
             ? "Añadiendo..."
             : selectedVariant?.availableForSale
             ? "Comprar"
@@ -336,7 +346,7 @@ export function ProductForm({ product }: ProductFormProps) {
               variant="primary"
               size="lg"
             >
-              {isLoading ? "Añadiendo..." : "Añadir"}
+              {loadingButton === "add" ? "Añadiendo..." : "Añadir"}
             </Button>
             <div className="w-full flex flex-col items-end gap-2">
               <p className="body-01-semibold text-text-primary-default">

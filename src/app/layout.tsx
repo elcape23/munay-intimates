@@ -2,12 +2,8 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google"; // 1. Importa la fuente
 import "./globals.css";
-import { Navbar } from "@/components/common/nav-bar";
-import { SideMenu } from "@/components/common/side-menu";
-import { SearchModal } from "@/components/common/search-modal";
 import { Providers } from "@/components/providers";
-import { IntroLogo } from "@/components/intro-logo";
-import { Toaster } from "@/components/ui/toaster";
+import { LayoutClient } from "@/components/layout-client";
 
 // 2. Configura la fuente con los pesos que usas
 const manrope = Manrope({
@@ -31,12 +27,7 @@ export default function RootLayout({
     <html lang="es" className={manrope.className}>
       <body className="bg-background-primary-default">
         <Providers>
-          <IntroLogo />
-          <Navbar />
-          <SideMenu /> {/* El SideMenu se superpone y se controla solo */}
-          <SearchModal />
-          <main>{children}</main>
-          <Toaster />
+          <LayoutClient>{children}</LayoutClient>
         </Providers>
       </body>
     </html>
