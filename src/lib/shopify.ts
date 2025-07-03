@@ -1196,7 +1196,7 @@ export async function getCollectionsBySeason(
 
   // collections are tagged with the "estacion" metafield (Spanish for season)
   // so the query must use that key to match `getProductsBySeason`
-  const seasonQuery = `metafield:custom.estacion:${season}`;
+  const seasonQuery = `metafield:custom.estacion:'${season}'`;
   const response = await shopifyFetch<GetCollectionsResponse>({
     query,
     variables: { query: seasonQuery },
@@ -1294,7 +1294,7 @@ export async function getProductsBySeason(
   // collections are tagged with the "estacion" metafield (spanish for season)
   // using the wrong metafield key prevented fetching any collection products
   // for a given season. Adjust the query to use the correct metafield key.
-  const seasonQuery = `metafield:custom.estacion:${season}`;
+  const seasonQuery = `metafield:custom.estacion:'${season}'`;
   const response = await shopifyFetch<{
     products: { edges: { node: ShopifyProduct }[] };
   }>({
