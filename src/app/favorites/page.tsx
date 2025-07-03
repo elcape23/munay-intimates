@@ -31,8 +31,8 @@ export default function FavoritesPage() {
           Cargando tus productos favoritos...
         </p>
       ) : (favoriteProducts ?? []).length === 0 ? (
-        <div className="justify-between items-center text-gray-500">
-          <div className="flex flex-col items-center">
+        <>
+          <div className="flex flex-col items-center justify-center flex-grow text-gray-500">
             <Image
               src="/illustrations/fav-empty.svg"
               alt="Favoritos vacío"
@@ -51,7 +51,7 @@ export default function FavoritesPage() {
             </Link>
           </div>
           <Footer />
-        </div>
+        </>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {favoriteProducts.map((product) => (

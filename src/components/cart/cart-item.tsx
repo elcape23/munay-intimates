@@ -10,6 +10,7 @@ import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/cart-store";
 import { useFavoritesStore } from "@/store/favorites-store";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 type CartLine = ShopifyCart["lines"]["edges"][number]["node"];
 
@@ -27,9 +28,7 @@ export function CartItem({ line }: CartItemProps) {
   // ✅ Importa tu store y extrae los métodos
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
-  const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
-  // Mostrar modal de guardado
-  const [showSaved, setShowSaved] = useState(false);
+  const { toggleFavorite, favoriteHandles = [] } = useFavoritesStore();
 
   // ✅ Mide ancho de los botones al montar
   useEffect(() => {
@@ -40,9 +39,13 @@ export function CartItem({ line }: CartItemProps) {
 
   // ✅ Handlers internos usando el store
   const handleSave = () => {
+    const isAlreadyFavorite = favoriteHandles.includes(
+      line.merchandise.product.handle
+    );
     toggleFavorite(line.merchandise.product.handle);
-    setShowSaved(true);
-    setTimeout(() => setShowSaved(false), 2000);
+    if (!isAlreadyFavorite) {
+      toast({ title: "¡Producto añadido a favoritos!" });
+    }
   };
   const handleDelete = () => removeItem(line.id);
   const handleDecrease = () => {
@@ -207,11 +210,6 @@ export function CartItem({ line }: CartItemProps) {
           </div>
         </div>
       </motion.div>
-      {showSaved && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-bacground-fill-neutral-default text-text-primary-invert px-4 py-2 rounded-[2px] z-50">
-          Producto guardado con éxito
-        </div>
-      )}
     </>
   );
 }

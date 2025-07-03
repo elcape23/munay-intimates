@@ -1,7 +1,8 @@
 // src/components/home/ProductCarousel.tsx
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import {
   ProductCard,
   ProductCardProps,
@@ -14,6 +15,8 @@ interface Props {
 
 export function ProductCarousel({ title, data }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
 
   // 1️⃣ Auto‐centra al mount
   useEffect(() => {
@@ -26,8 +29,34 @@ export function ProductCarousel({ title, data }: Props) {
     });
   }, [data]); // vuelve a centrar si cambian los datos
 
+  // 2️⃣ Detecta cuando el carrusel entra en la vista
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const current = sectionRef.current;
+    if (current) observer.observe(current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <section className="mt-6">
+    <motion.section
+      ref={sectionRef}
+      className="mt-6"
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
       <h2 className="heading-06-medium text-left ml-6 mb-3">{title}</h2>
       <div className="relative">
         <div
@@ -44,6 +73,6 @@ export function ProductCarousel({ title, data }: Props) {
           ))}
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
