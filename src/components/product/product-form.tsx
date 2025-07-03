@@ -173,6 +173,10 @@ export function ProductForm({ product }: ProductFormProps) {
                     {option.values.map((value) => {
                       const hex = COLOR_MAP[value] ?? value;
                       const isActive = selectedValue === value;
+                      const isBlack = value.toLowerCase() === "negro";
+                      const activeBorderClass = isBlack
+                        ? "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default"
+                        : "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default";
                       return (
                         <Button
                           key={value}
@@ -180,7 +184,7 @@ export function ProductForm({ product }: ProductFormProps) {
                           onClick={() => handleOptionChange(option.name, value)}
                           className={`w-6 h-6 rounded-full border-[1.5px] ${
                             isActive
-                              ? "p-2 border-border-primary-default"
+                              ? `p-2 ${activeBorderClass}`
                               : "p-2 border-transparent"
                           }`}
                           style={{ backgroundColor: hex }}
