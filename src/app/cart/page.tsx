@@ -8,21 +8,40 @@ import { CartItem } from "@/components/cart/cart-item";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 export default function CartPage() {
   // Obtenemos todo el estado directamente desde nuestro store de Zustand.
   // ¡Ya no necesitamos useState ni useEffect para buscar el carrito aquí!
   const { cart, isLoading } = useCartStore();
+  const [showEmpty, setShowEmpty] = useState(false);
+  const prevCount = useRef<number>(0);
+
+  const lineCount = cart?.lines?.edges?.length || 0;
+
+  useEffect(() => {
+    if (lineCount === 0) {
+      if (prevCount.current > 0) {
+        const timeout = setTimeout(() => setShowEmpty(true), 500);
+        return () => clearTimeout(timeout);
+      } else {
+        setShowEmpty(true);
+      }
+    } else {
+      setShowEmpty(false);
+    }
+    prevCount.current = lineCount;
+  }, [lineCount]);
 
   if (isLoading && !cart) {
     // Mostramos 'Cargando' solo la primera vez.
     return <div className="text-center p-12">Cargando carrito...</div>;
   }
 
-  if (!cart || cart.lines?.edges?.length === 0) {
+  if (!cart || showEmpty) {
     return (
-      <section className="flex flex-col h-screen items-center justify-center text-center mx-auto text-center p-12">
-        <div className="">
+      <section className="flex flex-col h-screen items-center justify-center text-center mx-auto p-12">
+        <div>
           <h1 className="heading-06-regular text-text-primary-default my-4">
             Tu carrito está vacío
           </h1>
