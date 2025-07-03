@@ -7,6 +7,7 @@ import Link from "next/link";
 import { CartItem } from "@/components/cart/cart-item";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
+import { AnimatePresence } from "framer-motion";
 
 export default function CartPage() {
   // Obtenemos todo el estado directamente desde nuestro store de Zustand.
@@ -68,9 +69,11 @@ export default function CartPage() {
         <div className="grid grid-cols-1 gap-8 items-start mt-6">
           {/* — Lista de productos (cada tarjeta según PDF página 1) */}
           <div className="lg:col-span-2 space-y-6">
-            {cart.lines?.edges?.map(({ node: line }) => (
-              <CartItem key={line.id} line={line} />
-            ))}
+            <AnimatePresence initial={false}>
+              {cart.lines?.edges?.map(({ node: line }) => (
+                <CartItem key={line.id} line={line} />
+              ))}
+            </AnimatePresence>
           </div>
           {/* — Resumen del pedido (PDF página 2) */}
           <div className="flex flex-row">

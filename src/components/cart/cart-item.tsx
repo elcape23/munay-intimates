@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useSwipeable } from "react-swipeable";
+import { motion } from "framer-motion";
 import type { ShopifyCart } from "@/lib/shopify";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/cart-store";
@@ -89,7 +90,14 @@ export function CartItem({ line }: CartItemProps) {
 
   return (
     <>
-      <div className="relative overflow-hidden my-3" {...handlers}>
+      <motion.div
+        className="relative overflow-hidden my-3"
+        {...handlers}
+        initial={{ opacity: 1, x: 0 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: "-100%" }}
+        transition={{ duration: 0.5 }}
+      >
         {/* Botones ocultos a la derecha */}
         <div ref={buttonsRef} className="absolute inset-y-0 right-0 flex">
           <Button
@@ -197,7 +205,7 @@ export function CartItem({ line }: CartItemProps) {
             </Button>
           </div>
         </div>
-      </div>
+      </motion.div>
       {showSaved && (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-bacground-fill-neutral-default text-text-primary-invert px-4 py-2 rounded-[2px] z-50">
           Producto guardado con éxito
