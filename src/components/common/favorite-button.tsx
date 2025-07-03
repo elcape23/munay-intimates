@@ -6,6 +6,7 @@ import { useFavoritesStore } from "@/store/favorites-store";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 type FavoriteButtonProps = {
   productHandle: string;
@@ -31,9 +32,13 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const isAlreadyFavorite = favoriteHandles.includes(productHandle);
     // Nos aseguramos de que la función exista antes de llamarla.
     if (toggleFavorite) {
       toggleFavorite(productHandle);
+      if (!isAlreadyFavorite) {
+        toast({ title: "¡Producto añadido a favoritos!" });
+      }
     }
   };
 
