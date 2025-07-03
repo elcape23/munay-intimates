@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Footer } from "@/components/common/footer";
+import Image from "next/image";
 
 export default function CartPage() {
   // Obtenemos todo el estado directamente desde nuestro store de Zustand.
@@ -52,8 +53,15 @@ export default function CartPage() {
           </Button>
           <h1 className="body-01-medium">CARRITO</h1>
         </div>
-        <div className="">
-          <h1 className="heading-06-regular text-text-primary-default my-4 text-center">
+        <div className="flex flex-col items-center">
+          <Image
+            src="/illustrations/cart-empty.svg"
+            alt="Carrito vacío"
+            width={240}
+            height={240}
+            className="mb-4"
+          />
+          <h1 className="heading-06-regular text-text-primary-default mb-6 text-center">
             Tu carrito está vacío
           </h1>
           <Link
