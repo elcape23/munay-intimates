@@ -3,9 +3,10 @@
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
-
 import { FavoriteButton } from "@/components/common/favorite-button";
 import { ShareButton } from "@/components/common/share-button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 type Props = {
   images: { node: { url: string; altText?: string | null } }[];
@@ -15,6 +16,9 @@ type Props = {
 export default function ProductGallery({ images, productHandle }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selected, setSelected] = useState(0);
+  const [loaded, setLoaded] = useState<boolean[]>(() =>
+    new Array(images.length).fill(false)
+  );
 
   /* ───────── Eventos ───────── */
   const onSelect = useCallback(() => {
@@ -28,6 +32,10 @@ export default function ProductGallery({ images, productHandle }: Props) {
     emblaApi.on("reInit", onSelect);
   }, [emblaApi, onSelect]);
 
+  useEffect(() => {
+    setLoaded(new Array(images.length).fill(false));
+  }, [images.length]);
+
   /* ───────── Render ───────── */
   return (
     <div className="-mx-6 relative overflow-hidden">
@@ -40,14 +48,27 @@ export default function ProductGallery({ images, productHandle }: Props) {
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex">
           {images.map(({ node }, i) => (
-            <div key={i} className="min-w-0 flex-[0_0_100%]">
+            <div key={i} className="relative min-w-0 flex-[0_0_100%]">
+              {!loaded[i] && (
+                <Skeleton className="absolute inset-0 h-full w-full" />
+              )}
               <Image
                 src={node.url}
                 alt={node.altText ?? ""}
                 width={880}
                 height={1120}
-                className="w-full object-cover"
+                className={cn(
+                  "w-full object-cover transition-opacity",
+                  loaded[i] ? "opacity-100" : "opacity-0"
+                )}
                 priority={i === 0}
+                onLoadingComplete={() =>
+                  setLoaded((prev) => {
+                    const next = [...prev];
+                    next[i] = true;
+                    return next;
+                  })
+                }
               />
             </div>
           ))}
