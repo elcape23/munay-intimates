@@ -93,10 +93,11 @@ export function CartItem({ line }: CartItemProps) {
       <motion.div
         className="relative overflow-hidden my-3"
         {...handlers}
-        initial={{ opacity: 1, x: 0 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: "-100%" }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        exit={{ opacity: 0, height: 0 }}
+        layout
+        transition={{ duration: 0.5, ease: "easeInOut" }}
       >
         {/* Botones ocultos a la derecha */}
         <div ref={buttonsRef} className="absolute inset-y-0 right-0 flex">

@@ -49,7 +49,7 @@ export function ProductForm({ product }: ProductFormProps) {
   });
 
   // Obtenemos el estado y las acciones directamente desde nuestro store de Zustand.
-  const { addItemToCart, isLoading } = useCartStore();
+  const addItemToCart = useCartStore((s) => s.addItemToCart);
   const router = useRouter();
 
   const [loadingButton, setLoadingButton] = useState<"add" | "buy" | null>(
@@ -142,8 +142,14 @@ export function ProductForm({ product }: ProductFormProps) {
     }
   };
 
-  const isAddToCartDisabled =
-    !selectedVariant || !selectedVariant.availableForSale || isLoading;
+  const isAddButtonDisabled =
+    !selectedVariant ||
+    !selectedVariant.availableForSale ||
+    loadingButton === "add";
+  const isBuyButtonDisabled =
+    !selectedVariant ||
+    !selectedVariant.availableForSale ||
+    loadingButton === "buy";
 
   if (!product.variants || product.variants.edges.length === 0) {
     return (
@@ -295,10 +301,12 @@ export function ProductForm({ product }: ProductFormProps) {
       <div ref={buttonContainerRef} className="flex flex-row gap-4">
         <Button
           onClick={handleAddToCart}
-          disabled={isAddToCartDisabled}
+          disabled={isAddButtonDisabled}
           className={`w-full body-01-semibold py-3 px-6 transition-colors
               ${
-                isAddToCartDisabled ? "cursor-not-allowed" : "hover:bg-blue-700"
+                isAddButtonDisabled
+                  ? "cursor-not-allowed"
+                  : "hover:bg-background-fill-neutral-default"
               }`}
           variant="primary"
           size="lg"
@@ -311,10 +319,12 @@ export function ProductForm({ product }: ProductFormProps) {
         </Button>
         <Button
           onClick={handleBuyNow}
-          disabled={isAddToCartDisabled}
+          disabled={isBuyButtonDisabled}
           className={`w-full body-01-semibold py-3 px-6 transition-colors
               ${
-                isAddToCartDisabled ? "cursor-not-allowed" : "hover:bg-blue-700"
+                isBuyButtonDisabled
+                  ? "cursor-not-allowed"
+                  : "hover:bg-background-fill-neutral-default"
               }`}
           variant="outline"
           size="lg"
@@ -338,10 +348,12 @@ export function ProductForm({ product }: ProductFormProps) {
           >
             <Button
               onClick={handleAddToCart}
-              disabled={isAddToCartDisabled}
+              disabled={isAddButtonDisabled}
               className={`w-full body-01-semibold py-3 px-6 transition-colors
             ${
-              isAddToCartDisabled ? "cursor-not-allowed" : "hover:bg-blue-700"
+              isAddButtonDisabled
+                ? "cursor-not-allowed"
+                : "hover:bg-background-fill-neutral-default"
             }`}
               variant="primary"
               size="lg"
