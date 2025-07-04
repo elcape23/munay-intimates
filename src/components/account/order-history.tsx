@@ -72,7 +72,7 @@ export function OrderHistory({
           <div className="flex justify-between items-start mb-4 border-b pb-3">
             <div className="flex flex-col w-full justify-between">
               <div className="flex flex-row justify-between">
-                <h3 className="body-02-semibold text-text-primary-default">
+                <h3 className="body-01-semibold text-text-primary-default">
                   Pedido #{order.orderNumber}
                 </h3>
                 <span
@@ -147,11 +147,11 @@ export function OrderHistory({
                       style={{ objectFit: "cover" }}
                     />
                   </div>
-                  <div className="self-stretch items-start pt-4 pb-6 space-y-6">
+                  <div className="self-stretch items-start justify-between pt-4 pb-6 space-y-6">
                     <p className="body-01-regular text-text-primary-default">
                       {item.title}
                     </p>
-                    <div className="body-02-regular text-text-primary-default flex gap-1">
+                    <div className="body-01-regular text-text-primary-default flex gap-1">
                       {talla && <span>{talla}</span>} |{" "}
                       {color && <span>{color}</span>}
                     </div>
