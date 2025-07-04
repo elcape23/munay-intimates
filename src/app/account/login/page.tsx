@@ -5,14 +5,14 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LoginForm from "@/components/account/login-form";
-import { useAuthStore } from "@/store/auth-store";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { isLoggedIn } = useAuthStore();
+  const { data: session } = useSession();
 
   const handleGoogle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -26,10 +26,10 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (session) {
       router.push("/account");
     }
-  }, [isLoggedIn, router]);
+  }, [session, router]);
 
   return (
     <div className="flex justify-center items-center py-12 px-4">

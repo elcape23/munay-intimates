@@ -3,17 +3,17 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import RegisterForm from "@/components/account/register-form";
-import { useAuthStore } from "@/store/auth-store";
+import { useSession } from "next-auth/react";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { isLoggedIn } = useAuthStore();
+  const { data: session } = useSession();
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (session) {
       router.push("/account");
     }
-  }, [isLoggedIn, router]);
+  }, [session, router]);
 
   return (
     <div className="flex justify-center items-center py-12 px-4">
