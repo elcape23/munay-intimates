@@ -145,7 +145,7 @@ export default function AccountPage() {
                 size="lg"
                 className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
               >
-                <Link href="/account/compras">
+                <Link href="/account/orders">
                   <ShoppingBagIcon className="h-6 w-6" />
                   Compras
                 </Link>

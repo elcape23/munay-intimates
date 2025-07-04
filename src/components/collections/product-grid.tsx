@@ -3,6 +3,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
 import { ShopifyProduct } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
@@ -318,7 +319,11 @@ export function ProductGrid({ title, products }: ProductGridProps) {
   const activeFilterCount = activeFilters.length;
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
       {/* Título renderizado aquí */}
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center gap-2">
@@ -594,6 +599,6 @@ export function ProductGrid({ title, products }: ProductGridProps) {
           </div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }

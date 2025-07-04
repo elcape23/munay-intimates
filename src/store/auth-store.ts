@@ -19,7 +19,13 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   login: (input: any) => Promise<boolean>;
-  signUp: (input: any) => Promise<boolean>;
+  signUp: (input: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    subscribeToEmails?: boolean;
+  }) => Promise<boolean>;
   logout: () => Promise<void>;
   checkAuthStatus: () => Promise<void>;
 }
@@ -76,7 +82,11 @@ export const useAuthStore = create(
       signUp: async (input) => {
         set({ isLoading: true, error: null });
         try {
-          const createResponse = await customerCreate(input);
+          const { subscribeToEmails, ...customerInput } = input;
+          const createResponse = await customerCreate({
+            ...customerInput,
+            acceptsMarketing: subscribeToEmails,
+          });
           console.log("customerCreate response:", createResponse);
 
           if (createResponse.customer) {

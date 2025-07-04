@@ -15,11 +15,18 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [subscribeToEmails, setSubscribeToEmails] = useState(true);
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    const success = await signUp({ firstName, lastName, email, password });
+    const success = await signUp({
+      firstName,
+      lastName,
+      email,
+      password,
+      subscribeToEmails,
+    });
     if (!success) {
       setError(authError || "No se pudo crear la cuenta.");
       return;
@@ -99,6 +106,19 @@ export default function RegisterForm() {
             )}
           </button>
         </div>
+        <div className="flex items-start gap-2">
+          <input
+            id="subscribeToEmails"
+            name="subscribeToEmails"
+            type="checkbox"
+            checked={subscribeToEmails}
+            onChange={(e) => setSubscribeToEmails(e.target.checked)}
+            className="h-4 w-4 accent-background-fill-neutral-default"
+          />
+          <label htmlFor="subscribeToEmails" className="body-02-regular">
+            Quiero recibir novedades e información de Munay vía email
+          </label>
+        </div>
         {error && <p className="text-red-600 text-sm text-center">{error}</p>}
       </div>
       <Button
@@ -106,7 +126,7 @@ export default function RegisterForm() {
         disabled={isLoading}
         className="w-full py-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
         variant="primary"
-        size="md"
+        size="lg"
       >
         {isLoading ? "Registrando..." : "Registrarse"}
       </Button>
