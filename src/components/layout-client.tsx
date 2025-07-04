@@ -12,7 +12,9 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
   const [introShown, setIntroShown] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const shown = localStorage.getItem("introShown") === "true";
+    const shown =
+      typeof sessionStorage !== "undefined" &&
+      sessionStorage.getItem("introShown") === "true";
     setIntroShown(shown);
     if (shown) {
       setIntroLoaded(true);
@@ -20,7 +22,9 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
   }, []);
 
   const handleIntroComplete = () => {
-    localStorage.setItem("introShown", "true");
+    if (typeof sessionStorage !== "undefined") {
+      sessionStorage.setItem("introShown", "true");
+    }
     setIntroLoaded(true);
   };
 

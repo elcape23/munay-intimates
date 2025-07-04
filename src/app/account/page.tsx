@@ -7,6 +7,7 @@ import { getCustomer } from "@/lib/shopify";
 import { OrderHistory } from "@/components/account/order-history";
 import LoginForm from "@/components/account/login-form";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/common/loading-spinner";
 import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -26,6 +27,7 @@ export default function AccountPage() {
   const session = rawSession as any;
   const router = useRouter();
   const [customer, setCustomer] = useState<any>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   useEffect(() => {
     if (session?.user?.shopifyToken) {
@@ -42,6 +44,16 @@ export default function AccountPage() {
       "_blank",
       "noopener"
     );
+  };
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await signOut({ callbackUrl: "/" });
+    } catch (e) {
+      console.error("Error signing out:", e);
+      setIsSigningOut(false);
+    }
   };
 
   // 2) Si no hay session, mostramos botones de login
@@ -73,6 +85,15 @@ export default function AccountPage() {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="text-center p-12">Cargando datos del cliente…</div>
+      </div>
+    );
+  }
+
+  if (isSigningOut) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen space-y-4">
+        <LoadingSpinner />
+        <p className="body-02-regular text-text-primary-default">Saliendo...</p>
       </div>
     );
   }
@@ -192,12 +213,13 @@ export default function AccountPage() {
             <div className="body-02-regular">no sos vos?</div>
           </div>
           <Button
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={handleSignOut}
             className="body-01-semibold"
             variant="link"
             size="text"
+            disabled={isSigningOut}
           >
-            Salir
+            {isSigningOut ? "Saliendo..." : "Salir"}
           </Button>
         </div>
         <Footer />

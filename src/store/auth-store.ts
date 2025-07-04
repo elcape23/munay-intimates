@@ -5,6 +5,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import {
   customerAccessTokenCreate,
   customerAccessTokenDelete,
+  customerCreate,
   getCustomer,
   Customer,
   CustomerAccessToken,
@@ -18,6 +19,7 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   login: (input: any) => Promise<boolean>;
+  signUp: (input: any) => Promise<boolean>;
   logout: () => Promise<void>;
   checkAuthStatus: () => Promise<void>;
 }
@@ -58,6 +60,52 @@ export const useAuthStore = create(
           const errorMessage =
             response.customerUserErrors?.[0]?.message ||
             "El email o la contraseña son incorrectos.";
+          set({ error: errorMessage });
+          return false;
+        } catch (e: any) {
+          const errorMessage =
+            e instanceof Error ? e.message : "Ocurrió un error desconocido.";
+          set({ error: errorMessage });
+          return false;
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      // Acción para registrar una nueva cuenta
+      signUp: async (input) => {
+        set({ isLoading: true, error: null });
+        try {
+          const createResponse = await customerCreate(input);
+          console.log("customerCreate response:", createResponse);
+
+          if (createResponse.customer) {
+            const tokenResponse = await customerAccessTokenCreate({
+              email: input.email,
+              password: input.password,
+            });
+
+            if (tokenResponse.customerAccessToken) {
+              set({
+                customerAccessToken: tokenResponse.customerAccessToken,
+                customer: createResponse.customer,
+                isLoggedIn: true,
+                error: null,
+              });
+              get().checkAuthStatus();
+              return true;
+            }
+
+            const tokenError =
+              tokenResponse.customerUserErrors?.[0]?.message ||
+              "El email o la contraseña son incorrectos.";
+            set({ error: tokenError });
+            return false;
+          }
+
+          const errorMessage =
+            createResponse.customerUserErrors?.[0]?.message ||
+            "No se pudo crear la cuenta.";
           set({ error: errorMessage });
           return false;
         } catch (e: any) {
