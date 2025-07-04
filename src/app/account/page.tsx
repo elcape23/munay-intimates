@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { getCustomer } from "@/lib/shopify";
-import { OrderHistory } from "@/components/account/order-history";
 import LoginForm from "@/components/account/login-form";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/common/loading-spinner";
@@ -20,6 +19,7 @@ import {
   EllipsisHorizontalIcon,
 } from "@heroicons/react/24/outline";
 import { Footer } from "@/components/common/footer";
+import Image from "next/image";
 
 export default function AccountPage() {
   // rawSession lo casteamos a any para saltarnos el TS
@@ -66,6 +66,7 @@ export default function AccountPage() {
           variant="outline"
           size="md"
         >
+          <Image src="/icons/google.svg" alt="google" width={24} height={24} />
           Continuar con Google
         </Button>
         <div className="flex w-full items-center gap-3">

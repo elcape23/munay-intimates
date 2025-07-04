@@ -408,7 +408,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                             aria-label={value}
                             className={`h-6 w-6 items-start rounded-full border ${
                               active
-                                ? "border-border-primary-default "
+                                ? "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default"
                                 : "border-border-secondary-default"
                             }`}
                             style={{ backgroundColor: bgColor }}

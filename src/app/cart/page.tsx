@@ -114,8 +114,8 @@ export default function CartPage() {
               ))}
             </AnimatePresence>
           </div>
-          {/* — Resumen del pedido (PDF página 2) */}
-          <div className="flex flex-row">
+          {/* — Resumen del pedido */}
+          <div className="flex flex-row pb-20">
             <div className="flex-1 bg-white rounded-lg shadow sticky bottom-1 hidden">
               <div className="space-y-3">
                 <div className="flex justify-between">

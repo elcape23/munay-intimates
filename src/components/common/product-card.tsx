@@ -40,7 +40,10 @@ export function ProductCard({
 }: ProductCardProps) {
   // calcula % de descuento redondeado
   const discountPercent = compareAtPrice
-    ? Math.round((1 - parsePrice(price) / parsePrice(compareAtPrice)) * 100)
+    ? Math.min(
+        99,
+        Math.round((1 - parsePrice(price) / parsePrice(compareAtPrice)) * 100)
+      )
     : 0;
 
   return (

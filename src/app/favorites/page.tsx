@@ -24,7 +24,7 @@ export default function FavoritesPage() {
 
   if (!favoriteProducts || favoriteProducts.length === 0) {
     return (
-      <main className="container mx-auto px-6 mt-[55px] min-h-screen flex flex-col justify-between">
+      <main className="container mx-auto px-6 pt-[55px] min-h-screen flex flex-col justify-between">
         <div className="flex flex-col items-center justify-center flex-grow text-gray-500">
           <Image
             src="/illustrations/fav-empty.svg"
