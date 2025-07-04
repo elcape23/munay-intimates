@@ -70,7 +70,7 @@ export function OrderHistory({
       {filteredOrders.map((order) => (
         <div key={order.id} className="">
           <div className="flex justify-between items-start mb-4 border-b pb-3">
-            <div>
+            <div className="flex flex-col">
               <div className="flex flex-row justify-between">
                 <h3 className="body-02-semibold text-text-primary-default">
                   Pedido #{order.orderNumber}
@@ -85,35 +85,40 @@ export function OrderHistory({
                   {order.financialStatus}
                 </span>
               </div>
-              <p className="body-02-regular text-text-primary-default">
-                Realizado el:{" "}
-                {new Date(order.processedAt).toLocaleDateString("es-AR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-              <p className="body-02-regular text-text-primary-default">
-                Llegada estimada:{" "}
-                {new Date(
-                  new Date(order.processedAt).setDate(
-                    new Date(order.processedAt).getDate() + 5
-                  )
-                ).toLocaleDateString("es-AR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold">
-                {new Intl.NumberFormat("es-AR", {
-                  style: "currency",
-                  currency: order.totalPrice.currencyCode,
-                  maximumFractionDigits: 0,
-                }).format(parseFloat(order.totalPrice.amount))}
-              </p>
+              <div className="flex flex-row justify-between">
+                <p className="body-02-regular text-text-primary-default">
+                  Realizado el:{" "}
+                  {new Date(order.processedAt).toLocaleDateString("es-AR", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+                <p className="body-02-semibold">
+                  {new Intl.NumberFormat("es-AR", {
+                    style: "currency",
+                    currency: order.totalPrice.currencyCode,
+                    maximumFractionDigits: 0,
+                  }).format(parseFloat(order.totalPrice.amount))}
+                </p>
+              </div>
+              <div className="flex flex-row justify-between">
+                <p className="body-02-regular text-text-primary-default">
+                  Llegada estimada:{" "}
+                  {new Date(
+                    new Date(order.processedAt).setDate(
+                      new Date(order.processedAt).getDate() + 5
+                    )
+                  ).toLocaleDateString("es-AR", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+                <p className="body-02-regular text-text-secondary-default">
+                  $6.000
+                </p>
+              </div>
             </div>
           </div>
 
