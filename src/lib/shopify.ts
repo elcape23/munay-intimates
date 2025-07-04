@@ -54,6 +54,7 @@ export type ShopifyProduct = {
   handle: string;
   tags: string[];
   createdAt?: string;
+  updatedAt?: string;
   descriptionHtml?: string;
   priceRange: {
     minVariantPrice: ShopifyPrice;
@@ -516,6 +517,7 @@ interface SaleResponse {
         options: Array<{ name: string; values: string[] }>;
         color: ShopifyMetafield | null;
         createdAt: string;
+        updatedAt: string;
       };
     }>;
   };
@@ -575,6 +577,7 @@ export async function getSaleProducts(
               }
             }
             createdAt
+            updatedAt
           }
         }
       }
@@ -640,9 +643,9 @@ export async function getSaleProducts(
       }
     }
 
-    const createdMs = new Date(node.createdAt).getTime();
+    const saleMs = new Date(node.updatedAt || node.createdAt).getTime();
     const TWO_WEEKS_MS = 1000 * 60 * 60 * 24 * 14; // milisegundos en dos semanas
-    const isNew = Date.now() - createdMs < TWO_WEEKS_MS;
+    const isNew = Date.now() - saleMs < TWO_WEEKS_MS;
 
     return {
       id: node.id,
@@ -690,6 +693,7 @@ export async function getSaleProductsFull(
             handle
             tags
             createdAt
+            updatedAt
             priceRange {
               minVariantPrice {
                 amount
@@ -776,8 +780,10 @@ export async function getSaleProductsFull(
     })
     .slice(0, num)
     .map((p) => {
-      const createdMs = p.createdAt ? Date.parse(p.createdAt) : 0;
-      const isNewByDate = createdMs && Date.now() - createdMs < TWO_WEEKS_MS;
+      const saleMs = p.updatedAt
+        ? Date.parse(p.updatedAt)
+        : Date.parse(p.createdAt ?? "");
+      const isNewByDate = saleMs && Date.now() - saleMs < TWO_WEEKS_MS;
       const hasNewTag = p.tags?.some((t) => t.toLowerCase() === "new");
       return { ...p, isNew: Boolean(isNewByDate || hasNewTag) };
     });
