@@ -58,7 +58,11 @@ export function OrderHistory({
   });
 
   if (filteredOrders.length === 0) {
-    return <p className="text-gray-500">Aún no has realizado ningún pedido.</p>;
+    return (
+      <p className="body-01-regular text-text-secondary-default">
+        Aún no has realizado ningún pedido.
+      </p>
+    );
   }
 
   return (
@@ -67,12 +71,35 @@ export function OrderHistory({
         <div key={order.id} className="">
           <div className="flex justify-between items-start mb-4 border-b pb-3">
             <div>
-              <h3 className="body-02-semibold text-text-primary-default">
-                Pedido #{order.orderNumber}
-              </h3>
+              <div className="flex flex-row justify-between">
+                <h3 className="body-02-semibold text-text-primary-default">
+                  Pedido #{order.orderNumber}
+                </h3>
+                <span
+                  className={`body-02-semibold px-2 py-1 rounded-full ${
+                    order.financialStatus === "PAID"
+                      ? "bg-background-fill-success-default text-success-default"
+                      : "bg-background-fill-warning-default text-warning-default"
+                  }`}
+                >
+                  {order.financialStatus}
+                </span>
+              </div>
               <p className="body-02-regular text-text-primary-default">
                 Realizado el:{" "}
                 {new Date(order.processedAt).toLocaleDateString("es-AR", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+              <p className="body-02-regular text-text-primary-default">
+                Llegada estimada:{" "}
+                {new Date(
+                  new Date(order.processedAt).setDate(
+                    new Date(order.processedAt).getDate() + 5
+                  )
+                ).toLocaleDateString("es-AR", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -87,15 +114,6 @@ export function OrderHistory({
                   maximumFractionDigits: 0,
                 }).format(parseFloat(order.totalPrice.amount))}
               </p>
-              <span
-                className={`body-02-semibold px-2 py-1 rounded-full ${
-                  order.financialStatus === "PAID"
-                    ? "bg-background-fill-success-default text-success-default"
-                    : "bg-background-fill-warning-default text-warning-default"
-                }`}
-              >
-                {order.financialStatus}
-              </span>
             </div>
           </div>
 
@@ -104,12 +122,19 @@ export function OrderHistory({
               const item = edge.node;
               if (!item.variant?.image) return null;
 
+              const talla = item.variant.selectedOptions?.find((o) =>
+                ["talle", "size", "talla"].includes(o.name.toLowerCase())
+              )?.value;
+              const color = item.variant.selectedOptions?.find(
+                (o) => o.name.toLowerCase() === "color"
+              )?.value;
+
               return (
                 <div
                   key={item.variant.image.url + item.title}
                   className="flex items-center gap-4"
                 >
-                  <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
+                  <div className="relative w-40 h-40 rounded-md overflow-hidden flex-shrink-0">
                     <Image
                       src={item.variant.image.url}
                       alt={item.variant.image.altText || item.title}
@@ -118,8 +143,14 @@ export function OrderHistory({
                     />
                   </div>
                   <div>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-sm text-gray-600">{item.quantity}</p>
+                    <p className="body-02-regular text-text-primary-default">
+                      {item.title}
+                    </p>
+                    <div className="body-02-regular text-text-primary-default flex gap-1">
+                      {talla && <span>{talla}</span>} |{" "}
+                      {color && <span>{color}</span>} |{" "}
+                      <span>{item.quantity}</span>
+                    </div>
                   </div>
                 </div>
               );

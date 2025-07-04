@@ -125,6 +125,7 @@ export type OrderLineItem = {
   variant: {
     title: string;
     image: { url: string; altText: string | null };
+    selectedOptions: { name: string; value: string }[];
   } | null;
 };
 export type ShopifyOrder = {
@@ -1946,6 +1947,10 @@ export async function getCustomerOrders(
                       image {
                         url
                         altText
+                      }
+                      selectedOptions {
+                        name
+                        value
                       }
                     }
                   }
