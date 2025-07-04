@@ -9,6 +9,7 @@ import {
   BuildingLibraryIcon,
   CreditCardIcon,
 } from "@heroicons/react/24/outline";
+import { Footer } from "@/components/common/footer";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
@@ -36,13 +37,13 @@ export default function CheckoutOptionsPage() {
         </Button>
         <h1 className="body-01-medium">MÉTODO DE PAGO</h1>
       </div>
-      <p className="body-02-regular">Seleccionar método de pago</p>
+      <p className="body-01-regular">Seleccionar método de pago</p>
       <div className="grid grid-cols-2 flex-rows-2 gap-4">
         <Button
           onClick={() => handleOther("Efectivo")}
           variant="outline"
           size="lg"
-          className="flex flex-col items-center"
+          className="body-02-semibold flex flex-col items-start text-left space-y-1"
         >
           <CurrencyDollarIcon className="h-6 w-6" />
           Efectivo
@@ -51,15 +52,24 @@ export default function CheckoutOptionsPage() {
           onClick={() => handleOther("Transferencia")}
           variant="outline"
           size="lg"
+          className="body-02-semibold flex flex-col items-start text-left space-y-1"
         >
           <BuildingLibraryIcon className="h-6 w-6" />
           Transferencia
         </Button>
-        <Button asChild size="lg" variant="outline">
-          <CreditCardIcon className="h-6 w-6" />
-          <a href={cart.checkoutUrl}>Tarjeta de crédito</a>
+        <Button
+          asChild
+          size="lg"
+          variant="outline"
+          className="body-02-semibold flex flex-col items-start text-left space-y-1"
+        >
+          <a href={cart.checkoutUrl}>
+            <CreditCardIcon className="h-6 w-6" />
+            Tarjeta de crédito
+          </a>
         </Button>
       </div>
+      <Footer />
     </section>
   );
 }
