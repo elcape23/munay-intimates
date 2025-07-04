@@ -42,7 +42,7 @@ export default function CartPage() {
 
   if (!cart || showEmpty) {
     return (
-      <section className="container mx-auto mt-[55px] px-6 justify-between min-h-screen flex flex-col">
+      <section className="container mx-auto px-6 pt-[55px] justify-between min-h-screen flex flex-col">
         <div className="flex items-center justify-between">
           <Button
             onClick={() => window.history.back()}
@@ -53,7 +53,7 @@ export default function CartPage() {
           </Button>
           <h1 className="body-01-medium">CARRITO</h1>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center justify-center flex-grow">
           <Image
             src="/illustrations/cart-empty.svg"
             alt="Carrito vacío"

@@ -24,7 +24,7 @@ export default function RelatedProductsCarousel({
       </h2>
       <div
         className={`-m-6 flex space-x-2 overflow-x-auto snap-x snap-mandatory no-scrollbar ${
-          size === "small" ? "" : "[&>div>a>div:nth-child(2)]:pl-6"
+          size === "small" ? "" : "[&>div>div>a>div:nth-child(2)]:pl-6"
         }`}
       >
         {products.map((product) => {

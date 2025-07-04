@@ -25,6 +25,9 @@ export function CartItem({ line }: CartItemProps) {
   const buttonsRef = useRef<HTMLDivElement>(null);
   // ✔️ Nuevo: estado que guardará ese ancho
   const [slideAmt, setSlideAmt] = useState(0);
+  // Nuevo: ref y estado para medir ancho completo del item
+  const itemRef = useRef<HTMLDivElement>(null);
+  const [itemWidth, setItemWidth] = useState(0);
   // ✅ Importa tu store y extrae los métodos
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
@@ -34,6 +37,9 @@ export function CartItem({ line }: CartItemProps) {
   useEffect(() => {
     if (buttonsRef.current) {
       setSlideAmt(buttonsRef.current.offsetWidth);
+    }
+    if (itemRef.current) {
+      setItemWidth(itemRef.current.offsetWidth);
     }
   }, []);
 
@@ -60,7 +66,14 @@ export function CartItem({ line }: CartItemProps) {
     }
   };
   const handlers = useSwipeable({
-    onSwipedLeft: () => setOpen(true),
+    onSwipedLeft: (e) => {
+      const traveled = Math.abs(e.deltaX) + (open ? slideAmt : 0);
+      if (itemWidth && traveled >= itemWidth) {
+        handleDelete();
+      } else {
+        setOpen(true);
+      }
+    },
     onSwipedRight: () => setOpen(false),
     trackMouse: true,
     preventScrollOnSwipe: true,
@@ -96,6 +109,7 @@ export function CartItem({ line }: CartItemProps) {
       <motion.div
         className="relative overflow-hidden my-3"
         {...handlers}
+        ref={itemRef}
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "auto" }}
         exit={{ opacity: 0, height: 0 }}
