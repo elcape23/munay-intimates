@@ -22,7 +22,7 @@ export default function PurchasesPage() {
       onClick={() => setTab(value)}
       variant="ghost"
       size="text"
-      className={`pb-[0px] tracking-wide transition-colors ${
+      className={`pb-[0px] tracking-wide transition-colors uppercase ${
         tab === value
           ? "body-02-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
           : "body-02-regular text-text-secondary-default hover:text-brand-primary"

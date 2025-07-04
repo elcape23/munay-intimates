@@ -64,11 +64,13 @@ export function OrderHistory({
   return (
     <div className="space-y-6">
       {filteredOrders.map((order) => (
-        <div key={order.id} className="border rounded-lg p-4 bg-white">
+        <div key={order.id} className="">
           <div className="flex justify-between items-start mb-4 border-b pb-3">
             <div>
-              <h3 className="font-semibold">Pedido #{order.orderNumber}</h3>
-              <p className="text-sm text-gray-500">
+              <h3 className="body-02-semibold text-text-primary-default">
+                Pedido #{order.orderNumber}
+              </h3>
+              <p className="body-02-regular text-text-primary-default">
                 Realizado el:{" "}
                 {new Date(order.processedAt).toLocaleDateString("es-AR", {
                   year: "numeric",
@@ -86,10 +88,10 @@ export function OrderHistory({
                 }).format(parseFloat(order.totalPrice.amount))}
               </p>
               <span
-                className={`text-xs font-medium px-2 py-1 rounded-full ${
+                className={`body-02-semibold px-2 py-1 rounded-full ${
                   order.financialStatus === "PAID"
-                    ? "bg-green-100 text-green-800"
-                    : "bg-yellow-100 text-yellow-800"
+                    ? "bg-background-fill-success-default text-success-default"
+                    : "bg-background-fill-warning-default text-warning-default"
                 }`}
               >
                 {order.financialStatus}
@@ -117,9 +119,7 @@ export function OrderHistory({
                   </div>
                   <div>
                     <p className="font-medium">{item.title}</p>
-                    <p className="text-sm text-gray-600">
-                      Cantidad: {item.quantity}
-                    </p>
+                    <p className="text-sm text-gray-600">{item.quantity}</p>
                   </div>
                 </div>
               );
