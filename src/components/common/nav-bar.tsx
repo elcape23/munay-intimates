@@ -19,12 +19,14 @@ interface NavbarProps {
   alwaysDark?: boolean;
   alwaysLight?: boolean;
   onNavigate?: () => void;
+  searchMode?: boolean;
 }
 
 export function Navbar({
   alwaysDark = false,
   alwaysLight = false,
   onNavigate,
+  searchMode = false,
 }: NavbarProps) {
   const path = usePathname();
   const router = useRouter();
@@ -48,6 +50,7 @@ export function Navbar({
   // Handler: abre menú o vuelve atrás
   const handleMenuOrBack = () => {
     onNavigate?.();
+    if (searchMode) return;
     if (isProduct) {
       router.back();
     } else {
@@ -75,14 +78,14 @@ export function Navbar({
       <div className="max-w-7xl h-[55px] mx-auto flex items-center justify-between px-6 py-3">
         {/* Menú hamburguesa */}
         <Button
-          aria-label={isProduct ? "Volver atrás" : "Abrir menú"}
+          aria-label={isProduct || searchMode ? "Cerrar" : "Abrir menú"}
           onClick={handleMenuOrBack}
           className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring-primary"
           variant="ghost"
           size="icon"
         >
           {" "}
-          {isProduct ? (
+          {isProduct || searchMode ? (
             <XMarkIcon className="w-6 h-6" />
           ) : (
             <Bars3Icon

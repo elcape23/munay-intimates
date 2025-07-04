@@ -54,13 +54,19 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    );
+
+    // Generate the classes for the current variant and size
+    let classes = buttonVariants({ variant, size });
+
+    // When using icon size we don't want to apply hover styles
+    if (size === "icon") {
+      classes = classes
+        .split(" ")
+        .filter((c) => !c.startsWith("hover:"))
+        .join(" ");
+    }
+
+    return <Comp className={cn(classes, className)} ref={ref} {...props} />;
   }
 );
 Button.displayName = "Button";

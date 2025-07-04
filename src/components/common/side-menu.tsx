@@ -177,7 +177,13 @@ export function SideMenu() {
                         >
                           <span className="body-01-regular">{item.title}</span>
                           {item.isNew && (
-                            <span className="body-03-regular ml-[2px] text-text-secondary-default">
+                            <span
+                              className={`body-03-regular ml-[2px] ${
+                                item.id === "special-prices"
+                                  ? "text-text-danger-default"
+                                  : "text-text-secondary-default"
+                              }`}
+                            >
                               NEW
                             </span>
                           )}
