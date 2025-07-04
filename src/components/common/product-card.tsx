@@ -19,6 +19,14 @@ export interface ProductCardProps {
   size?: "default" | "small";
 }
 
+function parsePrice(value: string): number {
+  if (!value) return 0;
+  const cleaned = value.replace(/[^0-9,.-]/g, "");
+  const normalized = cleaned.replace(/\./g, "").replace(/,/g, ".");
+  const num = parseFloat(normalized);
+  return isNaN(num) ? 0 : num;
+}
+
 export function ProductCard({
   title,
   handle,
@@ -32,7 +40,7 @@ export function ProductCard({
 }: ProductCardProps) {
   // calcula % de descuento redondeado
   const discountPercent = compareAtPrice
-    ? Math.round((1 - parseFloat(price) / parseFloat(compareAtPrice)) * 100)
+    ? Math.round((1 - parsePrice(price) / parsePrice(compareAtPrice)) * 100)
     : 0;
 
   return (
