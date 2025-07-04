@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Dialog, Transition } from "@headlessui/react";
 import { Navbar } from "@/components/common/nav-bar";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import RelatedProductsCarousel from "@/components/product/related-products-carousel";
 import { useUiStore } from "@/store/ui-store";
 import type { ShopifyProduct, FeaturedProduct } from "@/lib/shopify";
@@ -49,17 +48,11 @@ export function SearchModal() {
 
   useEffect(() => {
     if (isSearchOpen) {
+      setShowInput(true);
+    } else {
       setShowInput(false);
     }
   }, [isSearchOpen]);
-
-  useEffect(() => {
-    if (!isSearchOpen) return;
-    if (suggestions.length > 0) {
-      const timer = setTimeout(() => setShowInput(true), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isSearchOpen, suggestions]);
 
   useEffect(() => {
     if (isSearchOpen) {
@@ -90,6 +83,20 @@ export function SearchModal() {
     if (data.suggestions) {
       setSuggestions(data.suggestions);
     }
+  };
+
+  const listVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
@@ -133,7 +140,7 @@ export function SearchModal() {
                     initial={{ opacity: 0, filter: "blur(8px)" }}
                     animate={{ opacity: 1, filter: "blur(0px)" }}
                     exit={{ opacity: 0, filter: "blur(8px)" }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 1.0 }}
                   >
                     <form onSubmit={handleSubmit} className="flex gap-2">
                       <Input
@@ -144,28 +151,34 @@ export function SearchModal() {
                         onChange={(e) => setQuery(e.target.value)}
                       />
                     </form>
-                    <div className="w-full space-y-2 text-center mt-2">
+                    <motion.div
+                      className="w-full space-y-2 text-center mt-2"
+                      variants={listVariants}
+                      initial="hidden"
+                      animate="visible"
+                    >
                       {results.map((p) => (
-                        <a
+                        <motion.a
+                          variants={itemVariants}
                           key={p.id}
                           href={`/products/${p.handle}`}
                           onClick={closeSearch}
                           className="block py-1"
                         >
                           {p.title}
-                        </a>
+                        </motion.a>
                       ))}
-                    </div>
+                    </motion.div>
                   </motion.div>
                 )}
               </AnimatePresence>
               <AnimatePresence>
                 {suggestions.length > 0 && (
                   <motion.div
-                    initial={{ opacity: 0, y: 80 }}
+                    initial={{ opacity: 0, y: 300 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 80 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
                     className="mx-6 items-start pb-12"
                   >
                     <RelatedProductsCarousel

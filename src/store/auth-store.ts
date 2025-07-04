@@ -31,7 +31,7 @@ export const useAuthStore = create(
       customer: null,
       customerAccessToken: null,
       isLoggedIn: false,
-      isLoading: true,
+      isLoading: false,
       error: null,
 
       // Acción para iniciar sesión (¡LÓGICA CORREGIDA Y FINAL!)
