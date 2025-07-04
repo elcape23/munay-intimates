@@ -70,7 +70,7 @@ export function OrderHistory({
       {filteredOrders.map((order) => (
         <div key={order.id} className="">
           <div className="flex justify-between items-start mb-4 border-b pb-3">
-            <div className="flex flex-col">
+            <div className="flex flex-col w-auto">
               <div className="flex flex-row justify-between">
                 <h3 className="body-02-semibold text-text-primary-default">
                   Pedido #{order.orderNumber}
@@ -78,8 +78,8 @@ export function OrderHistory({
                 <span
                   className={`body-02-semibold px-2 py-1 rounded-full ${
                     order.financialStatus === "PAID"
-                      ? "bg-background-fill-success-default text-success-default"
-                      : "bg-background-fill-warning-default text-warning-default"
+                      ? "bg-background-surface-success-default text-success-default"
+                      : "bg-background-surface-warning-default text-warning-default"
                   }`}
                 >
                   {order.financialStatus}
@@ -147,15 +147,15 @@ export function OrderHistory({
                       style={{ objectFit: "cover" }}
                     />
                   </div>
-                  <div>
+                  <div className="items-start pt-4 pb-6 space-y-6">
                     <p className="body-02-regular text-text-primary-default">
                       {item.title}
                     </p>
                     <div className="body-02-regular text-text-primary-default flex gap-1">
                       {talla && <span>{talla}</span>} |{" "}
-                      {color && <span>{color}</span>} |{" "}
-                      <span>{item.quantity}</span>
+                      {color && <span>{color}</span>}
                     </div>
+                    <span>Cantidad: {item.quantity}</span>
                   </div>
                 </div>
               );
