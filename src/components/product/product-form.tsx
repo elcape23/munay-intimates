@@ -238,15 +238,26 @@ export function ProductForm({ product }: ProductFormProps) {
                         <Button
                           key={value}
                           onClick={() => handleOptionChange(option.name, value)}
-                          className={`transition-colors ${
+                          className={`relative p-1 transition-colors ${
                             isActive
-                              ? "p-1 body-01-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
-                              : "p-1 text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
+                              ? "body-01-semibold text-text-primary-default"
+                              : "text-text-secondary-default hover:bg-gray-100"
                           }`}
                           variant="ghost"
                           size="icon"
                         >
                           {value}
+                          <AnimatePresence>
+                            {isActive && (
+                              <motion.span
+                                className="absolute left-0 bottom-0 h-[2px] bg-border-primary-default"
+                                initial={{ width: 0 }}
+                                animate={{ width: "100%" }}
+                                exit={{ width: 0 }}
+                                transition={{ duration: 0.3 }}
+                              />
+                            )}
+                          </AnimatePresence>
                         </Button>
                       );
                     })}
