@@ -16,6 +16,8 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [subscribeToEmails, setSubscribeToEmails] = useState(true);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,16 +74,30 @@ export default function RegisterForm() {
           onChange={(e) => handleInputChange(setLastName, e.target.value)}
           placeholder="Apellido"
         />
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          value={email}
-          onChange={(e) => handleInputChange(setEmail, e.target.value)}
-          placeholder="Email"
-        />
+        <div className="space-y-2">
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => handleInputChange(setEmail, e.target.value)}
+            onBlur={() => setEmailTouched(true)}
+            placeholder="Email"
+          />
+          {emailTouched && (
+            <p
+              className={`px-3 body-03-regular ${
+                isEmailValid
+                  ? "text-text-success-default"
+                  : "text-text-danger-default"
+              }`}
+            >
+              {isEmailValid ? "Correcto" : "Incorrecto"}
+            </p>
+          )}
+        </div>
         <div className="relative">
           <Input
             id="password"

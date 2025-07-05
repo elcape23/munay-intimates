@@ -76,95 +76,97 @@ export function OrderHistory({
       {filteredOrders.map((order) => (
         <div key={order.id} className="">
           <div className="flex justify-between items-start mb-4 border-b pb-3">
-            <div className="flex flex-col w-full justify-between">
-              <div className="flex flex-row justify-between">
-                <Accordion type="single" collapsible>
-                  <AccordionItem value="item-1">
-                    <AccordionTrigger>
-                      Pedido #{order.orderNumber}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="flex flex-row justify-between">
-                        <p className="body-02-regular text-text-primary-default">
-                          Realizado el:{" "}
-                          {new Date(order.processedAt).toLocaleDateString(
-                            "es-AR",
-                            {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            }
-                          )}
-                        </p>
-                        <p className="body-02-semibold">
-                          {new Intl.NumberFormat("es-AR", {
-                            style: "currency",
-                            currency: order.totalPrice.currencyCode,
-                            maximumFractionDigits: 0,
-                          }).format(parseFloat(order.totalPrice.amount))}
-                        </p>
-                      </div>
-                      <div className="flex flex-row justify-between">
-                        <p className="body-02-regular text-text-primary-default">
-                          Llegada estimada:{" "}
-                          {new Date(
-                            new Date(order.processedAt).setDate(
-                              new Date(order.processedAt).getDate() + 5
-                            )
-                          ).toLocaleDateString("es-AR", {
+            <div className="flex flex-row justify-between">
+              <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>
+                    Pedido #{order.orderNumber}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="flex flex-row justify-between">
+                      <p className="body-02-regular text-text-primary-default">
+                        Realizado el:{" "}
+                        {new Date(order.processedAt).toLocaleDateString(
+                          "es-AR",
+                          {
                             year: "numeric",
                             month: "long",
                             day: "numeric",
-                          })}
-                        </p>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            {order.lineItems.edges.map((edge: { node: OrderLineItem }) => {
-              const item = edge.node;
-              if (!item.variant?.image) return null;
-
-              const talla = item.variant.selectedOptions?.find((o) =>
-                ["talle", "size", "talla"].includes(o.name.toLowerCase())
-              )?.value;
-              const color = item.variant.selectedOptions?.find(
-                (o) => o.name.toLowerCase() === "color"
-              )?.value;
-
-              return (
-                <div
-                  key={item.variant.image.url + item.title}
-                  className="flex items-center gap-4"
-                >
-                  <div className="relative w-40 h-40 rounded-md overflow-hidden flex-shrink-0">
-                    <Image
-                      src={item.variant.image.url}
-                      alt={item.variant.image.altText || item.title}
-                      fill
-                      style={{ objectFit: "cover" }}
-                    />
-                  </div>
-                  <div className="self-stretch items-start justify-between pt-4 pb-6 space-y-6">
-                    <p className="body-01-regular text-text-primary-default">
-                      {item.title}
-                    </p>
-                    <div className="body-01-regular text-text-primary-default flex gap-1">
-                      {talla && <span>{talla}</span>} |{" "}
-                      {color && <span>{color}</span>}
+                          }
+                        )}
+                      </p>
+                      <p className="body-02-semibold">
+                        {new Intl.NumberFormat("es-AR", {
+                          style: "currency",
+                          currency: order.totalPrice.currencyCode,
+                          maximumFractionDigits: 0,
+                        }).format(parseFloat(order.totalPrice.amount))}
+                      </p>
                     </div>
-                    <span className="body-02-regular text-text-primary-default">
-                      Cantidad: {item.quantity}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+                    <div className="flex flex-row justify-between">
+                      <p className="body-02-regular text-text-primary-default">
+                        Llegada estimada:{" "}
+                        {new Date(
+                          new Date(order.processedAt).setDate(
+                            new Date(order.processedAt).getDate() + 5
+                          )
+                        ).toLocaleDateString("es-AR", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </div>
+                    <div className="space-y-4">
+                      {order.lineItems.edges.map(
+                        (edge: { node: OrderLineItem }) => {
+                          const item = edge.node;
+                          if (!item.variant?.image) return null;
+
+                          const talla = item.variant.selectedOptions?.find(
+                            (o) =>
+                              ["talle", "size", "talla"].includes(
+                                o.name.toLowerCase()
+                              )
+                          )?.value;
+                          const color = item.variant.selectedOptions?.find(
+                            (o) => o.name.toLowerCase() === "color"
+                          )?.value;
+
+                          return (
+                            <div
+                              key={item.variant.image.url + item.title}
+                              className="flex items-center gap-4"
+                            >
+                              <div className="relative w-40 h-40 rounded-md overflow-hidden flex-shrink-0">
+                                <Image
+                                  src={item.variant.image.url}
+                                  alt={item.variant.image.altText || item.title}
+                                  fill
+                                  style={{ objectFit: "cover" }}
+                                />
+                              </div>
+                              <div className="self-stretch items-start justify-between pt-4 pb-6 space-y-6">
+                                <p className="body-01-regular text-text-primary-default">
+                                  {item.title}
+                                </p>
+                                <div className="body-01-regular text-text-primary-default flex gap-1">
+                                  {talla && <span>{talla}</span>} |{" "}
+                                  {color && <span>{color}</span>}
+                                </div>
+                                <span className="body-02-regular text-text-primary-default">
+                                  Cantidad: {item.quantity}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
           </div>
         </div>
       ))}

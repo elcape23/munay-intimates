@@ -12,6 +12,8 @@ export default function EditEmailPage() {
   const { data: rawSession } = useSession();
   const session = rawSession as any;
   const [email, setEmail] = useState("");
+  const [emailTouched, setEmailTouched] = useState(false);
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   useEffect(() => {
     if (session) {
@@ -38,7 +40,19 @@ export default function EditEmailPage() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onBlur={() => setEmailTouched(true)}
         />
+        {emailTouched && (
+          <p
+            className={`text-sm ${
+              isEmailValid
+                ? "text-text-success-default"
+                : "text-text-danger-default"
+            }`}
+          >
+            {isEmailValid ? "Correcto" : "Incorrecto"}
+          </p>
+        )}
         <Button type="submit" className="w-full">
           Guardar
         </Button>
