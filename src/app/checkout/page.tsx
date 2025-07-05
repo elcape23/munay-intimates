@@ -3,6 +3,8 @@
 import { useCartStore } from "@/store/cart-store";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 import {
   ChevronLeftIcon,
   CurrencyDollarIcon,
@@ -14,6 +16,7 @@ import { Footer } from "@/components/common/footer";
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
   const router = useRouter();
+  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
 
   if (isLoading && !cart) {
     return <div className="text-center p-12">Cargando...</div>;
@@ -24,9 +27,14 @@ export default function CheckoutOptionsPage() {
   }
 
   const handleOther = (method: string) => {
+    setSelectedMethod(method);
     alert(
       `Seleccionaste ${method}. Nos pondremos en contacto para finalizar tu compra.`
     );
+  };
+
+  const handleCard = () => {
+    setSelectedMethod("Tarjeta de crédito");
   };
 
   return (
@@ -44,7 +52,10 @@ export default function CheckoutOptionsPage() {
             onClick={() => handleOther("Efectivo")}
             variant="outline"
             size="lg"
-            className="body-02-semibold flex flex-col items-start text-left space-y-1"
+            className={cn(
+              "body-02-semibold flex flex-col items-start text-left space-y-1",
+              selectedMethod === "Efectivo" && "!border-2"
+            )}
           >
             <CurrencyDollarIcon className="h-6 w-6" />
             Efectivo
@@ -53,7 +64,10 @@ export default function CheckoutOptionsPage() {
             onClick={() => handleOther("Transferencia")}
             variant="outline"
             size="lg"
-            className="body-02-semibold flex flex-col items-start text-left space-y-1"
+            className={cn(
+              "body-02-semibold flex flex-col items-start text-left space-y-1",
+              selectedMethod === "Transferencia" && "!border-2"
+            )}
           >
             <BuildingLibraryIcon className="h-6 w-6" />
             Transferencia
@@ -62,7 +76,11 @@ export default function CheckoutOptionsPage() {
             asChild
             size="lg"
             variant="outline"
-            className="body-02-semibold flex flex-col items-start text-left space-y-1"
+            onClick={handleCard}
+            className={cn(
+              "body-02-semibold flex flex-col items-start text-left space-y-1",
+              selectedMethod === "Tarjeta de crédito" && "!border-2"
+            )}
           >
             <a href={cart.checkoutUrl}>
               <CreditCardIcon className="h-6 w-6" />
