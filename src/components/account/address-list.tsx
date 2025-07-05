@@ -19,7 +19,10 @@ export function AddressList() {
         const fetched = await getCustomerAddresses(
           customerAccessToken.accessToken
         );
-        setAddresses(fetched);
+        const unique = Array.from(
+          new Map(fetched.map((addr) => [addr.id, addr])).values()
+        );
+        setAddresses(unique);
       } catch (e) {
         console.error("Error al obtener direcciones:", e);
       } finally {

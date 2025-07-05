@@ -6,6 +6,12 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/auth-store";
 import { getCustomerOrders, OrderLineItem, ShopifyOrder } from "@/lib/shopify";
 import Image from "next/image";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 export function OrderHistory({
   statusFilter,
@@ -72,52 +78,49 @@ export function OrderHistory({
           <div className="flex justify-between items-start mb-4 border-b pb-3">
             <div className="flex flex-col w-full justify-between">
               <div className="flex flex-row justify-between">
-                <h3 className="body-01-semibold text-text-primary-default">
-                  Pedido #{order.orderNumber}
-                </h3>
-                <span
-                  className={`body-02-semibold px-2 py-1 rounded-full ${
-                    order.financialStatus === "PAID"
-                      ? "bg-background-surface-success-default text-success-default"
-                      : "bg-background-surface-warning-default text-warning-default"
-                  }`}
-                >
-                  {order.financialStatus}
-                </span>
-              </div>
-              <div className="flex flex-row justify-between">
-                <p className="body-02-regular text-text-primary-default">
-                  Realizado el:{" "}
-                  {new Date(order.processedAt).toLocaleDateString("es-AR", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-                <p className="body-02-semibold">
-                  {new Intl.NumberFormat("es-AR", {
-                    style: "currency",
-                    currency: order.totalPrice.currencyCode,
-                    maximumFractionDigits: 0,
-                  }).format(parseFloat(order.totalPrice.amount))}
-                </p>
-              </div>
-              <div className="flex flex-row justify-between">
-                <p className="body-02-regular text-text-primary-default">
-                  Llegada estimada:{" "}
-                  {new Date(
-                    new Date(order.processedAt).setDate(
-                      new Date(order.processedAt).getDate() + 5
-                    )
-                  ).toLocaleDateString("es-AR", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-                <p className="body-02-regular text-text-secondary-default">
-                  $6.000
-                </p>
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>
+                      Pedido #{order.orderNumber}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="flex flex-row justify-between">
+                        <p className="body-02-regular text-text-primary-default">
+                          Realizado el:{" "}
+                          {new Date(order.processedAt).toLocaleDateString(
+                            "es-AR",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            }
+                          )}
+                        </p>
+                        <p className="body-02-semibold">
+                          {new Intl.NumberFormat("es-AR", {
+                            style: "currency",
+                            currency: order.totalPrice.currencyCode,
+                            maximumFractionDigits: 0,
+                          }).format(parseFloat(order.totalPrice.amount))}
+                        </p>
+                      </div>
+                      <div className="flex flex-row justify-between">
+                        <p className="body-02-regular text-text-primary-default">
+                          Llegada estimada:{" "}
+                          {new Date(
+                            new Date(order.processedAt).setDate(
+                              new Date(order.processedAt).getDate() + 5
+                            )
+                          ).toLocaleDateString("es-AR", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </div>
             </div>
           </div>
