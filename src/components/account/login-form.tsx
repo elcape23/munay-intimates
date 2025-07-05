@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function LoginForm() {
@@ -93,7 +94,14 @@ export default function LoginForm() {
             )}
           </button>
         </div>
-        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+        <p
+          className={cn(
+            "text-red-600 text-sm text-center min-h-5",
+            !error && "invisible"
+          )}
+        >
+          {error || ""}
+        </p>{" "}
       </div>
       <div className="flex flex-row sm:flex-row gap-4">
         <Button asChild variant="outline" size="md" className="w-full py-3">

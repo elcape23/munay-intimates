@@ -22,13 +22,43 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [subscribeToEmails, setSubscribeToEmails] = useState(true);
+  const [firstNameTouched, setFirstNameTouched] = useState(false);
+  const [lastNameTouched, setLastNameTouched] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
-  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const [passwordTouched, setPasswordTouched] = useState(false);
+  const isFirstNameValid = firstName.trim().length >= 3;
+  const firstNameStatus = !firstNameTouched
+    ? null
+    : firstName.length === 0
+    ? "empty"
+    : isFirstNameValid
+    ? "valid"
+    : "invalid";
+
+  const isLastNameValid = lastName.trim().length >= 3;
+  const lastNameStatus = !lastNameTouched
+    ? null
+    : lastName.length === 0
+    ? "empty"
+    : isLastNameValid
+    ? "valid"
+    : "invalid";
+
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.com$/.test(email);
   const emailStatus = !emailTouched
     ? null
     : email.length === 0
     ? "empty"
     : isEmailValid
+    ? "valid"
+    : "invalid";
+
+  const isPasswordValid = password.length >= 8;
+  const passwordStatus = !passwordTouched
+    ? null
+    : password.length === 0
+    ? "empty"
+    : isPasswordValid
     ? "valid"
     : "invalid";
 
@@ -68,25 +98,91 @@ export default function RegisterForm() {
 
   return (
     <form className="space-y-10" onSubmit={handleRegister}>
-      <div className="space-y-8">
-        <Input
-          id="firstName"
-          name="firstName"
-          type="text"
-          required
-          value={firstName}
-          onChange={(e) => handleInputChange(setFirstName, e.target.value)}
-          placeholder="Nombre"
-        />
-        <Input
-          id="lastName"
-          name="lastName"
-          type="text"
-          required
-          value={lastName}
-          onChange={(e) => handleInputChange(setLastName, e.target.value)}
-          placeholder="Apellido"
-        />
+      <div className="space-y-4">
+        <div className="space-y-2 relative">
+          <Input
+            id="firstName"
+            name="firstName"
+            type="text"
+            required
+            value={firstName}
+            onChange={(e) => handleInputChange(setFirstName, e.target.value)}
+            onBlur={() => setFirstNameTouched(true)}
+            placeholder="Nombre"
+            className={cn(
+              "px-3 body-03-regular min-h-4",
+              !emailTouched && "invisible",
+              emailTouched &&
+                (emailStatus === "valid"
+                ? "text-text-success-default"
+                : firstNameStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
+          />
+          {firstNameStatus === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {firstNameStatus === "invalid" && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
+          {firstNameTouched && (
+            <p
+              className={`px-3 body-03-regular ${
+                firstNameStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default"
+              }`}
+            >
+              {firstNameStatus === "empty"
+                ? "Requerido"
+                : firstNameStatus === "valid"
+                ? "Correcto"
+                : "Incorrecto"}
+            </p>
+          )}
+        </div>
+        <div className="space-y-2 relative">
+          <Input
+            id="lastName"
+            name="lastName"
+            type="text"
+            required
+            value={lastName}
+            onChange={(e) => handleInputChange(setLastName, e.target.value)}
+            onBlur={() => setLastNameTouched(true)}
+            placeholder="Apellido"
+            className={cn(
+              "pr-10",
+              lastNameStatus === "valid"
+                ? "text-text-success-default"
+                : lastNameStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
+          />
+          {lastNameStatus === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {lastNameStatus === "invalid" && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
+          {lastNameTouched && (
+            <p
+              className={`px-3 body-03-regular ${
+                lastNameStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default"
+              }`}
+            >
+              {lastNameStatus === "empty"
+                ? "Requerido"
+                : lastNameStatus === "valid"
+                ? "Correcto"
+                : "Incorrecto"}
+            </p>
+          )}
+        </div>
         <div className="space-y-2 relative">
           <Input
             id="email"
@@ -129,7 +225,7 @@ export default function RegisterForm() {
             </p>
           )}
         </div>
-        <div className="relative">
+        <div className="space-y-2 relative">
           <Input
             id="password"
             name="password"
@@ -138,7 +234,15 @@ export default function RegisterForm() {
             required
             value={password}
             onChange={(e) => handleInputChange(setPassword, e.target.value)}
-            className="pr-10"
+            onFocus={() => setPasswordTouched(true)}
+            className={cn(
+              "pr-10",
+              passwordStatus === "valid"
+                ? "text-text-success-default"
+                : passwordStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
             placeholder="Contraseña"
           />
           <button
@@ -152,6 +256,23 @@ export default function RegisterForm() {
               <EyeIcon className="h-5 w-5" />
             )}
           </button>
+          {passwordStatus === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {passwordStatus === "invalid" && passwordTouched && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
+          {passwordTouched && (
+            <p
+              className={`px-3 body-03-regular ${
+                passwordStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default"
+              }`}
+            >
+              {passwordStatus === "valid" ? "Correcto" : "Mínimo 8 caracteres"}
+            </p>
+          )}
         </div>
         <div className="flex items-start gap-2">
           <input
