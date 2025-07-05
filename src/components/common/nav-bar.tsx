@@ -1,9 +1,9 @@
 // src/components/common/Navbar.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import Link from "next/link";
 import {
   XMarkIcon,
@@ -36,6 +36,15 @@ export function Navbar({
   const [scrolled, setScrolled] = useState(false);
   const { cart } = useCartStore();
   const totalQuantity = cart?.totalQuantity ?? 0;
+  const controls = useAnimation();
+  const prevQuantity = useRef(totalQuantity);
+
+  useEffect(() => {
+    if (totalQuantity > prevQuantity.current) {
+      controls.start({ scale: [1, 1.3, 1], transition: { duration: 0.3 } });
+    }
+    prevQuantity.current = totalQuantity;
+  }, [totalQuantity, controls]);
 
   useEffect(() => {
     if (alwaysDark || alwaysLight) return;
@@ -139,9 +148,12 @@ export function Navbar({
             })}
           />
           {totalQuantity > 0 && (
-            <span className="absolute -right-1 -top-1 flex items-center justify-center rounded-full body-03-medium bg-background-fill-neutral-default text-text-primary-invert w-4 h-4">
+            <motion.span
+              animate={controls}
+              className="absolute -right-1 -top-1 flex items-center justify-center rounded-full body-03-medium bg-background-fill-neutral-default text-text-primary-invert w-4 h-4"
+            >
               {totalQuantity}
-            </span>
+            </motion.span>
           )}
         </Link>
       </div>
