@@ -110,10 +110,8 @@ export default function RegisterForm() {
             onBlur={() => setFirstNameTouched(true)}
             placeholder="Nombre"
             className={cn(
-              "px-3 body-03-regular min-h-4",
-              !emailTouched && "invisible",
-              emailTouched &&
-                (emailStatus === "valid"
+              "pr-10",
+              firstNameStatus === "valid"
                 ? "text-text-success-default"
                 : firstNameStatus === "invalid"
                 ? "text-text-danger-default"
@@ -126,21 +124,23 @@ export default function RegisterForm() {
           {firstNameStatus === "invalid" && (
             <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
           )}
-          {firstNameTouched && (
-            <p
-              className={`px-3 body-03-regular ${
-                firstNameStatus === "valid"
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !firstNameTouched && "invisible",
+              firstNameTouched &&
+                (firstNameStatus === "valid"
                   ? "text-text-success-default"
-                  : "text-text-danger-default"
-              }`}
-            >
-              {firstNameStatus === "empty"
+                  : "text-text-danger-default")
+            )}
+          >
+            {firstNameTouched &&
+              (firstNameStatus === "empty"
                 ? "Requerido"
                 : firstNameStatus === "valid"
                 ? "Correcto"
-                : "Incorrecto"}
-            </p>
-          )}
+                : "Incorrecto")}
+          </p>
         </div>
         <div className="space-y-2 relative">
           <Input
@@ -169,17 +169,21 @@ export default function RegisterForm() {
           )}
           {lastNameTouched && (
             <p
-              className={`px-3 body-03-regular ${
-                lastNameStatus === "valid"
-                  ? "text-text-success-default"
-                  : "text-text-danger-default"
-              }`}
+              className={cn(
+                "px-3 body-03-regular min-h-5",
+                !lastNameTouched && "invisible",
+                lastNameTouched &&
+                  (lastNameStatus === "valid"
+                    ? "text-text-success-default"
+                    : "text-text-danger-default")
+              )}
             >
-              {lastNameStatus === "empty"
-                ? "Requerido"
-                : lastNameStatus === "valid"
-                ? "Correcto"
-                : "Incorrecto"}
+              {lastNameTouched &&
+                (lastNameStatus === "empty"
+                  ? "Requerido"
+                  : lastNameStatus === "valid"
+                  ? "Correcto"
+                  : "Incorrecto")}
             </p>
           )}
         </div>

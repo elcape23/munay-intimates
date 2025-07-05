@@ -69,21 +69,23 @@ export default function EditEmailPage() {
           {emailStatus === "invalid" && (
             <XMarkIcon className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-icon-danger-default" />
           )}
-          {emailTouched && (
-            <p
-              className={`text-sm ${
-                emailStatus === "valid"
+          <p
+            className={cn(
+              "text-sm min-h-5",
+              !emailTouched && "invisible",
+              emailTouched &&
+                (emailStatus === "valid"
                   ? "text-text-success-default"
-                  : "text-text-danger-default"
-              }`}
-            >
-              {emailStatus === "empty"
+                  : "text-text-danger-default")
+            )}
+          >
+            {emailTouched &&
+              (emailStatus === "empty"
                 ? "Requerido"
                 : emailStatus === "valid"
                 ? "Correcto"
-                : "Incorrecto"}
-            </p>
-          )}
+                : "Incorrecto")}
+          </p>
         </div>
         <Button type="submit" className="w-full">
           Guardar
