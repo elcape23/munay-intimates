@@ -730,7 +730,7 @@ export async function getSaleProductsFull(
               key
               value
             }
-            estacion: metafield(namespace: "shopify--season", key: "season") {
+            estacion: metafield(namespace: "custom", key: "season") {
               key
               value
             }
@@ -827,7 +827,7 @@ export async function getProductByHandle(
           key
           value
         }
-        estacion: metafield(namespace: "shopify--season", key: "season") {
+        estacion: metafield(namespace: "custom", key: "season") {
           key
           value
         }
@@ -961,7 +961,7 @@ export async function getNewestProducts(
               key
               value
             }
-            estacion: metafield(namespace: "shopify--season", key: "season") {
+            estacion: metafield(namespace: "custom", key: "season") {
               key
               value
             }
@@ -1202,9 +1202,9 @@ export async function getCollectionsBySeason(
   `;
 
   // collections are tagged with the "season" metafield under the
-  // `shopify--season` namespace so the query must match that key
+  // `custom` namespace so the query must match that key
   const normalizedSeason = season.toLowerCase();
-  const seasonQuery = `metafield:shopify--season.season:'${normalizedSeason}'`;
+  const seasonQuery = `metafield:custom.season:'${normalizedSeason}'`;
   const response = await shopifyFetch<GetCollectionsResponse>({
     query,
     variables: { query: seasonQuery },
@@ -1266,7 +1266,7 @@ export async function getProductsBySeason(
               key
               value
             }
-            estacion: metafield(namespace: "shopify--season", key: "season") {
+            estacion: metafield(namespace: "custom", key: "season") {
               key
               value
             }
@@ -1300,9 +1300,9 @@ export async function getProductsBySeason(
   `;
 
   // collections are tagged with the "season" metafield under the
-  // `shopify--season` namespace. Build the query accordingly.
+  // `custom` namespace. Build the query accordingly.
   const normalizedSeason = season.toLowerCase();
-  const seasonQuery = `metafield:shopify--season.season:'${normalizedSeason}'`;
+  const seasonQuery = `metafield:custom.season:'${normalizedSeason}'`;
   const response = await shopifyFetch<{
     products: { edges: { node: ShopifyProduct }[] };
   }>({
@@ -1361,7 +1361,7 @@ export async function getNewestProductsFull(
               key
               value
             }
-            estacion: metafield(namespace: "shopify--season", key: "season") {
+            estacion: metafield(namespace: "custom", key: "season") {
               key
               value
             }
@@ -1453,7 +1453,7 @@ export async function getCollectionByHandle(
                 key
                 value
               }
-              estacion: metafield(namespace: "shopify--season", key: "season") {
+              estacion: metafield(namespace: "custom", key: "season") {
                 key
                 value
               }

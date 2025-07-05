@@ -13,6 +13,8 @@ import { extractColorVariants } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
 import { useRouter } from "next/navigation";
 
+const SEASONS = ["invierno", "verano", "otoño", "primavera"];
+
 type ProductGridProps = {
   title: string;
   products: ShopifyProduct[];
@@ -43,7 +45,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       const primary: Record<string, Set<string>> = {};
       const modal: Record<string, Set<string>> = {};
       const prices: number[] = [];
-      const seasonSet: Set<string> = new Set();
+      const seasonSet: Set<string> = new Set(SEASONS);
 
       products.forEach((product) => {
         // 1. Procesa las etiquetas (tags) para los filtros principales

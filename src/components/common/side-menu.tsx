@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 const SEASONS = [
   { label: "INVIERNO", slug: "invierno" },
   { label: "VERANO", slug: "verano" },
+  { label: "OTOÑO", slug: "otoño" },
   {
     label: "PRIMAVERA",
     slug: "primavera",
@@ -198,7 +199,7 @@ export function SideMenu() {
                     {SEASONS.map((s) => (
                       <li key={s.slug}>
                         <Link
-                          href={`/season/${s.slug}`}
+                          href={`/collections/season/${s.slug}`}
                           onClick={closeMenu}
                           className="flex items-center justify-between uppercase text-secondary-default tracking-wide hover:text-brand-primary"
                         >
