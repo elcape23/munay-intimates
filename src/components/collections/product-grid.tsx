@@ -319,42 +319,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
   const activeFilterCount = activeFilters.length;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      {/* Título renderizado aquí */}
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-row items-center gap-2">
-          <Button
-            onClick={() => router.back()}
-            aria-label="Volver atrás"
-            variant="ghost"
-            size="icon"
-          >
-            <ChevronLeftIcon className="h-6 w-6 text-icon-primary-default" />
-          </Button>
-          <h1 className="body-01-medium uppercase tracking-tight text-text-primary-default">
-            {title}
-          </h1>
-        </div>
-        <div className="items-center flex ">
-          <Button
-            onClick={() => setIsFilterModalOpen(true)}
-            className="flex items-center gap-1 body-02-regular uppercase text-text-primary-default hover:bg-gray-50"
-            variant="ghost"
-            size="text"
-          >
-            {activeFilterCount > 0 && (
-              <span className="ml-1 bg-background-fill-neutral-default body-03-semibold text-text-primary-invert rounded-full h-4 w-4 flex items-center justify-center">
-                {activeFilterCount}
-              </span>
-            )}
-            <span>Filtrar</span>
-          </Button>
-        </div>
-      </div>
+    <div className="relative">
       <div
         className={`fixed inset-0 z-50 flex justify-center items-end ${
           isFilterModalOpen ? "" : "pointer-events-none"
@@ -533,72 +498,111 @@ export function ProductGrid({ title, products }: ProductGridProps) {
           </div>
         </div>
       </div>
-
-      {/* --- Barra de Filtros y Ordenamiento --- */}
-      <div className="space-y-4">
-        {Object.entries(primaryFilterGroup).map(([groupName, tags]) => (
-          <div key={groupName}>
-            <div className="flex flex-wrap gap-2 mt-5">
-              {tags.map((tag) => (
-                <Button
-                  key={tag}
-                  onClick={() => handleFilterToggle(tag)}
-                  className={`px-3 py-1 border rounded-full text-sm font-medium transition-colors ${
-                    activeFilters.includes(tag)
-                      ? "text-text-primary-default border-border-primary-default"
-                      : "text-text-secondary-default border-border-secondary-default hover:"
-                  }`}
-                  variant="outline"
-                  size="lg"
-                >
-                  {tag.split(":")[1].trim()}
-                </Button>
-              ))}
-            </div>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        {/* Título renderizado aquí */}
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-row items-center gap-2">
+            <Button
+              onClick={() => router.back()}
+              aria-label="Volver atrás"
+              variant="ghost"
+              size="icon"
+            >
+              <ChevronLeftIcon className="h-6 w-6 text-icon-primary-default" />
+            </Button>
+            <h1 className="body-01-medium uppercase tracking-tight text-text-primary-default">
+              {title}
+            </h1>
           </div>
-        ))}
-      </div>
+          <div className="items-center flex ">
+            <Button
+              onClick={() => setIsFilterModalOpen(true)}
+              className="flex items-center gap-1 body-02-regular uppercase text-text-primary-default hover:bg-gray-50"
+              variant="ghost"
+              size="text"
+            >
+              {activeFilterCount > 0 && (
+                <span className="ml-1 bg-background-fill-neutral-default body-03-semibold text-text-primary-invert rounded-full h-4 w-4 flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+              <span>Filtrar</span>
+            </Button>
+          </div>
+        </div>
 
-      {/* --- Grilla de Productos --- */}
-      <div className="-mx-6 my-6 h-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5 ">
-        {filteredAndSortedProducts.map((product) => (
-          <div key={product.handle} className="h-full [&>div>a>div]:px-4">
-            <ProductCard
-              key={product.handle}
-              id={product.id}
-              title={product.title}
-              handle={product.handle}
-              imageSrc={product.images.edges[0]?.node.url || "/placeholder.png"}
-              altText={product.images.edges[0]?.node.altText || product.title}
-              price={parseFloat(
-                product.priceRange.minVariantPrice.amount
-              ).toLocaleString("es-AR", {
-                useGrouping: true,
-                maximumFractionDigits: 0,
-              })}
-              compareAtPrice={(() => {
-                const cmp =
-                  product.variants?.edges[0]?.node.compareAtPrice?.amount ??
-                  null;
-                if (!cmp) return undefined;
-                return parseFloat(cmp).toLocaleString("es-AR", {
+        {/* --- Barra de Filtros y Ordenamiento --- */}
+        <div className="space-y-4">
+          {Object.entries(primaryFilterGroup).map(([groupName, tags]) => (
+            <div key={groupName}>
+              <div className="flex flex-wrap gap-2 mt-5">
+                {tags.map((tag) => (
+                  <Button
+                    key={tag}
+                    onClick={() => handleFilterToggle(tag)}
+                    className={`px-3 py-1 border rounded-full text-sm font-medium transition-colors ${
+                      activeFilters.includes(tag)
+                        ? "text-text-primary-default border-border-primary-default"
+                        : "text-text-secondary-default border-border-secondary-default hover:"
+                    }`}
+                    variant="outline"
+                    size="lg"
+                  >
+                    {tag.split(":")[1].trim()}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* --- Grilla de Productos --- */}
+        <div className="-mx-6 my-6 h-full grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 gap-y-5 ">
+          {filteredAndSortedProducts.map((product) => (
+            <div key={product.handle} className="h-full [&>div>a>div]:px-4">
+              <ProductCard
+                key={product.handle}
+                id={product.id}
+                title={product.title}
+                handle={product.handle}
+                imageSrc={
+                  product.images.edges[0]?.node.url || "/placeholder.png"
+                }
+                altText={product.images.edges[0]?.node.altText || product.title}
+                price={parseFloat(
+                  product.priceRange.minVariantPrice.amount
+                ).toLocaleString("es-AR", {
                   useGrouping: true,
                   maximumFractionDigits: 0,
-                });
-              })()}
-              colorVariants={extractColorVariants(product)}
-              isNew={(() => {
-                const thirtyDays = 1000 * 60 * 60 * 24 * 30;
-                const byDate = product.createdAt
-                  ? Date.now() - Date.parse(product.createdAt) < thirtyDays
-                  : false;
-                const byTag = product.tags?.includes("new");
-                return Boolean(byDate || byTag);
-              })()}
-            />
-          </div>
-        ))}
-      </div>
-    </motion.div>
+                })}
+                compareAtPrice={(() => {
+                  const cmp =
+                    product.variants?.edges[0]?.node.compareAtPrice?.amount ??
+                    null;
+                  if (!cmp) return undefined;
+                  return parseFloat(cmp).toLocaleString("es-AR", {
+                    useGrouping: true,
+                    maximumFractionDigits: 0,
+                  });
+                })()}
+                colorVariants={extractColorVariants(product)}
+                isNew={(() => {
+                  const thirtyDays = 1000 * 60 * 60 * 24 * 30;
+                  const byDate = product.createdAt
+                    ? Date.now() - Date.parse(product.createdAt) < thirtyDays
+                    : false;
+                  const byTag = product.tags?.includes("new");
+                  return Boolean(byDate || byTag);
+                })()}
+              />
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </div>
   );
 }
