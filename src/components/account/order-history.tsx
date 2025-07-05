@@ -76,8 +76,8 @@ export function OrderHistory({
       {filteredOrders.map((order) => (
         <div key={order.id} className="">
           <div className="flex justify-between items-start mb-4 border-b pb-3">
-            <div className="flex flex-row justify-between">
-              <Accordion type="single" collapsible>
+            <div className="flex flex-row justify-between w-full">
+              <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
                   <AccordionTrigger>
                     Pedido #{order.orderNumber}

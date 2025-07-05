@@ -5,7 +5,13 @@ import { signIn } from "next-auth/react";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { cn } from "@/lib/utils";
+import {
+  EyeIcon,
+  EyeSlashIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/outline";
 
 export default function RegisterForm() {
   const { signUp, error: authError, isLoading } = useAuthStore();
@@ -18,6 +24,13 @@ export default function RegisterForm() {
   const [subscribeToEmails, setSubscribeToEmails] = useState(true);
   const [emailTouched, setEmailTouched] = useState(false);
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const emailStatus = !emailTouched
+    ? null
+    : email.length === 0
+    ? "empty"
+    : isEmailValid
+    ? "valid"
+    : "invalid";
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,7 +87,7 @@ export default function RegisterForm() {
           onChange={(e) => handleInputChange(setLastName, e.target.value)}
           placeholder="Apellido"
         />
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
           <Input
             id="email"
             name="email"
@@ -85,16 +98,34 @@ export default function RegisterForm() {
             onChange={(e) => handleInputChange(setEmail, e.target.value)}
             onBlur={() => setEmailTouched(true)}
             placeholder="Email"
-          />
+            className={cn(
+              "pr-10",
+              emailStatus === "valid"
+                ? "text-text-success-default"
+                : emailStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
+          />{" "}
+          {emailStatus === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {emailStatus === "invalid" && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
           {emailTouched && (
             <p
               className={`px-3 body-03-regular ${
-                isEmailValid
+                emailStatus === "valid"
                   ? "text-text-success-default"
                   : "text-text-danger-default"
               }`}
             >
-              {isEmailValid ? "Correcto" : "Incorrecto"}
+              {emailStatus === "empty"
+                ? "Requerido"
+                : emailStatus === "valid"
+                ? "Correcto"
+                : "Incorrecto"}
             </p>
           )}
         </div>
