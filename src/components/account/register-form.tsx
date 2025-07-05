@@ -98,7 +98,7 @@ export default function RegisterForm() {
 
   return (
     <form className="space-y-10" onSubmit={handleRegister}>
-      <div className="space-y-4">
+      <div className="space-y-1">
         <div className="space-y-2 relative">
           <Input
             id="firstName"
@@ -167,25 +167,23 @@ export default function RegisterForm() {
           {lastNameStatus === "invalid" && (
             <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
           )}
-          {lastNameTouched && (
-            <p
-              className={cn(
-                "px-3 body-03-regular min-h-5",
-                !lastNameTouched && "invisible",
-                lastNameTouched &&
-                  (lastNameStatus === "valid"
-                    ? "text-text-success-default"
-                    : "text-text-danger-default")
-              )}
-            >
-              {lastNameTouched &&
-                (lastNameStatus === "empty"
-                  ? "Requerido"
-                  : lastNameStatus === "valid"
-                  ? "Correcto"
-                  : "Incorrecto")}
-            </p>
-          )}
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !lastNameTouched && "invisible",
+              lastNameTouched &&
+                (lastNameStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default")
+            )}
+          >
+            {lastNameTouched &&
+              (lastNameStatus === "empty"
+                ? "Requerido"
+                : lastNameStatus === "valid"
+                ? "Correcto"
+                : "Incorrecto")}
+          </p>
         </div>
         <div className="space-y-2 relative">
           <Input
@@ -213,21 +211,23 @@ export default function RegisterForm() {
           {emailStatus === "invalid" && (
             <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
           )}
-          {emailTouched && (
-            <p
-              className={`px-3 body-03-regular ${
-                emailStatus === "valid"
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !emailTouched && "invisible",
+              emailTouched &&
+                (emailStatus === "valid"
                   ? "text-text-success-default"
-                  : "text-text-danger-default"
-              }`}
-            >
-              {emailStatus === "empty"
+                  : "text-text-danger-default")
+            )}
+          >
+            {emailTouched &&
+              (emailStatus === "empty"
                 ? "Requerido"
                 : emailStatus === "valid"
                 ? "Correcto"
-                : "Incorrecto"}
-            </p>
-          )}
+                : "Incorrecto")}
+          </p>
         </div>
         <div className="space-y-2 relative">
           <Input
@@ -252,7 +252,7 @@ export default function RegisterForm() {
           <button
             type="button"
             onClick={() => setShowPassword((p) => !p)}
-            className="absolute inset-y-0 right-0 flex items-center px-3 text-icon-primary-default"
+            className="absolute inset-y-0 right-0 -top-9 flex items-center px-3 text-icon-primary-default"
           >
             {showPassword ? (
               <EyeSlashIcon className="h-5 w-5" />
@@ -266,19 +266,21 @@ export default function RegisterForm() {
           {passwordStatus === "invalid" && passwordTouched && (
             <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
           )}
-          {passwordTouched && (
-            <p
-              className={`px-3 body-03-regular ${
-                passwordStatus === "valid"
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !passwordTouched && "invisible",
+              passwordTouched &&
+                (passwordStatus === "valid"
                   ? "text-text-success-default"
-                  : "text-text-danger-default"
-              }`}
-            >
-              {passwordStatus === "valid" ? "Correcto" : "Mínimo 8 caracteres"}
-            </p>
-          )}
+                  : "text-text-danger-default")
+            )}
+          >
+            {passwordTouched &&
+              (passwordStatus === "valid" ? "Correcto" : "Mínimo 8 caracteres")}
+          </p>
         </div>
-        <div className="flex items-start gap-2">
+        <div className="flex items-start gap-2 py-2">
           <input
             id="subscribeToEmails"
             name="subscribeToEmails"
