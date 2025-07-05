@@ -9,7 +9,9 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Footer } from "@/components/common/footer";
+import { LoadingSpinner } from "@/components/common/loading-spinner";
 import Image from "next/image";
 
 export default function CartPage() {
@@ -17,7 +19,14 @@ export default function CartPage() {
   // ¡Ya no necesitamos useState ni useEffect para buscar el carrito aquí!
   const { cart, isLoading } = useCartStore();
   const [showEmpty, setShowEmpty] = useState(false);
+  const [loadingCheckout, setLoadingCheckout] = useState(false);
   const prevCount = useRef<number>(0);
+  const router = useRouter();
+
+  const handleContinue = () => {
+    setLoadingCheckout(true);
+    router.push("/checkout");
+  };
 
   const lineCount = cart?.lines?.edges?.length || 0;
 
@@ -92,6 +101,11 @@ export default function CartPage() {
 
   return (
     <>
+      {loadingCheckout && (
+        <div className="fixed inset-0 flex items-center justify-center bg-background-primary-default z-[9999]">
+          <LoadingSpinner />
+        </div>
+      )}
       <section className="mt-[55px] mx-6">
         {/* — HEADER: flecha  título */}
         <div className="flex items-center justify-between">
@@ -131,19 +145,22 @@ export default function CartPage() {
                 <span>Envío</span>
                 <span>{formatPrice(shipping)}</span>
               </div>
-              {/* Botón fijo “Continuar” según diseño */}
-              <Button asChild value="primary" size="lg">
-                <Link href="/checkout">
-                  Continuar - {formatPrice(grandTotal)}
-                </Link>
+              {/* Botón fijo "Continuar" según diseño */}
+              <Button onClick={handleContinue} value="primary" size="lg">
+                Continuar - {formatPrice(grandTotal)}
               </Button>
             </div>
           </div>
         </div>
       </section>
       <div className="fixed bottom-0 left-0 w-screen h-auto bg-background-primary-default border-t border-border-secondary-default z-50 flex items-center justify-between px-6 pt-3 pb-9 sm:hidden">
-        <Button asChild value="primary" size="lg" className="w-1/2">
-          <Link href="/checkout">Continuar</Link>
+        <Button
+          onClick={handleContinue}
+          value="primary"
+          size="lg"
+          className="w-1/2"
+        >
+          Continuar
         </Button>
         <div className="flex flex-col items-end gap-1">
           <p className="body-01-medium text-text-primary-default">
