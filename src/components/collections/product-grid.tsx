@@ -8,6 +8,13 @@ import { ShopifyProduct } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { ProductCard } from "@/components/common/product-card";
 import { extractColorVariants } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
@@ -189,9 +196,10 @@ export function ProductGrid({ title, products }: ProductGridProps) {
 
   const handleSeasonChange = (value: string) => {
     const prefix = "Estación:";
+    const season = value === "all" ? "" : value;
     setActiveFilters((prev) => {
       const other = prev.filter((f) => !f.startsWith(prefix));
-      return value ? [...other, `${prefix}${value}`] : other;
+      return season ? [...other, `${prefix}${season}`] : other;
     });
   };
 
@@ -366,7 +374,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                     {groupName}
                   </h3>
                   {groupName === "Color" ? (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 pr-[2px]">
                       {values.map((filterString) => {
                         const value = filterString.split(":")[1].trim();
                         const active = activeFilters.includes(filterString);
@@ -414,21 +422,27 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                       })}
                     </div>
                   ) : groupName === "Estación" ? (
-                    <select
-                      className="w-full border rounded p-2"
-                      value={activeSeason}
-                      onChange={(e) => handleSeasonChange(e.target.value)}
+                    <Select
+                      value={activeSeason || "all"}
+                      onValueChange={(val) =>
+                        handleSeasonChange(val === "all" ? "" : val)
+                      }
                     >
-                      <option value="">Todas</option>
-                      {values.map((filterString) => {
-                        const value = filterString.split(":")[1].trim();
-                        return (
-                          <option key={filterString} value={value}>
-                            {value}
-                          </option>
-                        );
-                      })}
-                    </select>
+                      <SelectTrigger className="w-full items-start">
+                        <SelectValue placeholder="Todas" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todas</SelectItem>
+                        {values.map((filterString) => {
+                          const value = filterString.split(":")[1].trim();
+                          return (
+                            <SelectItem key={filterString} value={value}>
+                              {value}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <div className="flex flex-wrap gap-2 ">
                       {values.map((filterString) => (
