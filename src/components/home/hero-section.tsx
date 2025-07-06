@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -121,20 +122,36 @@ export function HeroSection({
             />
             <div className="absolute inset-0 bg-black/10" />
             <div className="relative z-10 flex h-full flex-col px-6 justify-end text-left text-text-primary-invert">
-              <h2 className="text-[70px] heading-02-semibold leading-none mb-4">
-                {slide.title}
-              </h2>
-              <Button
-                asChild
-                variant="link"
-                size="lg"
-                className="flex justify-start px-0 mb-20 text-text-primary-invert body-01-medium underline-offset-[4px]"
-              >
-                <Link href={slide.href ?? "#"} className="flex items-center">
-                  <ArrowLongRightIcon className="ml-1 h-6 w-6 inline" />
-                  {slide.ButtonText}
-                </Link>
-              </Button>
+              <AnimatePresence mode="wait">
+                {current === idx && (
+                  <motion.div
+                    key={slide.id}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -40 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="mb-20"
+                  >
+                    <h2 className="text-[70px] heading-02-semibold leading-none mb-4">
+                      {slide.title}
+                    </h2>
+                    <Button
+                      asChild
+                      variant="link"
+                      size="lg"
+                      className="flex justify-start px-0 text-text-primary-invert body-01-medium underline-offset-[4px]"
+                    >
+                      <Link
+                        href={slide.href ?? "#"}
+                        className="flex items-center"
+                      >
+                        <ArrowLongRightIcon className="ml-1 h-6 w-6 inline" />
+                        {slide.ButtonText}
+                      </Link>
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         ))}
