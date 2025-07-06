@@ -2,6 +2,7 @@
 // src/components/common/FavoriteButton.tsx
 
 import { useEffect } from "react";
+import { motion, useAnimation } from "framer-motion";
 import { useFavoritesStore } from "@/store/favorites-store";
 import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
@@ -22,6 +23,8 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
     setHasHydrated,
   } = useFavoritesStore();
 
+  const controls = useAnimation();
+
   // Asegura que la bandera de hidratación se active incluso si no había datos guardados
   useEffect(() => {
     if (!_hasHydrated) {
@@ -32,6 +35,7 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    controls.start({ scale: [1, 1.3, 1], transition: { duration: 0.3 } });
     const isAlreadyFavorite = favoriteHandles.includes(productHandle);
     // Nos aseguramos de que la función exista antes de llamarla.
     if (toggleFavorite) {
@@ -54,19 +58,22 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
 
   return (
     <Button
+      asChild
       onClick={handleToggle}
       aria-label={
         isProductFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
       }
-      className="text-icon-primary-default hover:bg-gray-200 transition-colors"
+      className="text-icon-primary-default hover:transition-colors"
       variant="ghost"
       size="icon"
     >
-      {isProductFavorite ? (
-        <HeartIconSolid className="h-6 w-6 text-icon-primary-default" />
-      ) : (
-        <HeartIconOutline className="h-6 w-6 text-icon-primary-default" />
-      )}
+      <motion.button animate={controls}>
+        {isProductFavorite ? (
+          <HeartIconSolid className="h-6 w-6 text-icon-primary-default" />
+        ) : (
+          <HeartIconOutline className="h-6 w-6 text-icon-primary-default" />
+        )}
+      </motion.button>
     </Button>
   );
 }
