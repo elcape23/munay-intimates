@@ -233,7 +233,7 @@ export default function AccountPage() {
           open={showLogoutConfirm}
           onCancel={closeLogoutConfirm}
           onConfirm={handleSignOut}
-          message="¿Éstas seguro que quiere salir de tu sesión?"
+          message="¿Estas seguro que quiere salir de tu sesión?"
         />
       </div>
     </div>

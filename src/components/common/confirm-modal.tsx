@@ -40,11 +40,11 @@ export function ConfirmModal({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="bg-background-primary-default rounded-lg p-6 space-y-4">
-              <Dialog.Title className="body-01-semibold text-text-primary-default">
+            <Dialog.Panel className="bg-background-primary-default p-6 space-y-4">
+              <Dialog.Title className="body-01-regular text-text-primary-default text-center">
                 {message}
               </Dialog.Title>
-              <div className="flex justify-end gap-2">
+              <div className="flex justify-center gap-2">
                 <Button variant="outline" size="md" onClick={onCancel}>
                   Cancelar
                 </Button>

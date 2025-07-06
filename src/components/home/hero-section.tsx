@@ -6,7 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
+import { cn } from "@/lib/utils";
 
 interface HeroSlide {
   id: string;
@@ -58,6 +60,13 @@ export function HeroSection({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [inView, setInView] = useState(false);
+  const [loaded, setLoaded] = useState<boolean[]>(() =>
+    new Array(SLIDES.length).fill(false)
+  );
+
+  useEffect(() => {
+    setLoaded(new Array(SLIDES.length).fill(false));
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -113,12 +122,25 @@ export function HeroSection({
             key={slide.id}
             className="relative w-full h-screen max-h-[640px] flex-shrink-0"
           >
+            {!loaded[idx] && (
+              <Skeleton className="absolute inset-0 h-full w-full" />
+            )}
             <Image
               src={slide.image}
               alt={slide.title}
               fill
-              className="object-cover"
+              className={cn(
+                "object-cover transition-opacity",
+                loaded[idx] ? "opacity-100" : "opacity-0"
+              )}
               priority={idx === 0}
+              onLoadingComplete={() =>
+                setLoaded((prev) => {
+                  const next = [...prev];
+                  next[idx] = true;
+                  return next;
+                })
+              }
             />
             <div className="absolute inset-0 bg-black/10" />
             <div className="relative z-10 flex h-full flex-col px-6 justify-end text-left text-text-primary-invert">
