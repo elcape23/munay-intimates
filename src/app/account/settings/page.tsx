@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export default function AccountSettingsPage() {
   const router = useRouter();
@@ -15,10 +16,15 @@ export default function AccountSettingsPage() {
         <h1 className="body-01-medium uppercase">Ajustes</h1>
       </div>
       <div className="flex flex-col">
-        <span className="body-02-medium px-1 py-2">Newsletter</span>
-        <span className="body-02-medium px-1 py-2">
-          Configuración de Cookies
-        </span>
+        {" "}
+        <Link href="#" className="flex items-center justify-between px-1 py-2">
+          <span className="body-02-medium">Newsletter</span>
+          <ChevronRightIcon className="w-5 h-5" />
+        </Link>
+        <Link href="#" className="flex items-center justify-between px-1 py-2">
+          <span className="body-02-medium">Configuración de Cookies</span>
+          <ChevronRightIcon className="w-5 h-5" />
+        </Link>
       </div>
     </div>
   );

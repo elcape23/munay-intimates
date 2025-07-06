@@ -45,10 +45,17 @@ export function ConfirmModal({
                 {message}
               </Dialog.Title>
               <div className="flex justify-center gap-2">
-                <Button variant="outline" size="md" onClick={onCancel}>
+                <Button
+                  className="flex-1"
+                  variant="outline"
+                  size="md"
+                  onClick={onCancel}
+                >
+                  {" "}
                   Cancelar
                 </Button>
-                <Button size="md" onClick={onConfirm}>
+                <Button className="flex-1" size="md" onClick={onConfirm}>
+                  {" "}
                   Salir
                 </Button>
               </div>
