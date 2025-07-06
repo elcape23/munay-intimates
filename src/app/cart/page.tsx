@@ -20,12 +20,18 @@ export default function CartPage() {
   const { cart, isLoading } = useCartStore();
   const [showEmpty, setShowEmpty] = useState(false);
   const [loadingCheckout, setLoadingCheckout] = useState(false);
+  const [loadingHome, setLoadingHome] = useState(false);
   const prevCount = useRef<number>(0);
   const router = useRouter();
 
   const handleContinue = () => {
     setLoadingCheckout(true);
     router.push("/checkout");
+  };
+
+  const handleContinueShopping = () => {
+    setLoadingHome(true);
+    router.push("/");
   };
 
   const lineCount = cart?.lines?.edges?.length || 0;
@@ -51,37 +57,48 @@ export default function CartPage() {
 
   if (!cart || showEmpty) {
     return (
-      <section className="container mx-auto px-6 pt-[55px] justify-between min-h-screen flex flex-col">
-        <div className="flex items-center justify-between">
-          <Button
-            onClick={() => window.history.back()}
-            variant="ghost"
-            size="icon"
-          >
-            <ChevronLeftIcon className="w-6 h-6 text-black" />
-          </Button>
-          <h1 className="body-01-medium">CARRITO</h1>
-        </div>
-        <div className="flex flex-col items-center justify-center flex-grow">
-          <Image
-            src="/illustrations/cart-empty.svg"
-            alt="Carrito vacío"
-            width={240}
-            height={240}
-            className="mb-4"
-          />
-          <h1 className="heading-06-regular text-text-primary-default mb-6 text-center">
-            Tu carrito está vacío
-          </h1>
-          <Link
-            href="/"
-            className="body-01-medium underline text-text-primary-default hover:underline text-text-secondary-default body-01-semibold"
-          >
-            Seguir comprando
-          </Link>
-        </div>
-        <Footer />
-      </section>
+      <>
+        {loadingHome && (
+          <div className="fixed inset-0 flex items-center justify-center bg-background-primary-default z-[9999]">
+            <LoadingSpinner />
+          </div>
+        )}
+        <section className="container mx-auto px-6 pt-[55px] justify-between min-h-screen flex flex-col">
+          {" "}
+          <div className="flex items-center justify-between">
+            <Button
+              onClick={() => window.history.back()}
+              variant="ghost"
+              size="icon"
+            >
+              <ChevronLeftIcon className="w-6 h-6 text-black" />
+            </Button>
+            <h1 className="body-01-medium">CARRITO</h1>
+          </div>
+          <div className="flex flex-col items-center justify-center flex-grow">
+            <Image
+              src="/illustrations/cart-empty.svg"
+              alt="Carrito vacío"
+              width={240}
+              height={240}
+              className="mb-4"
+            />
+            <h1 className="heading-06-regular text-text-primary-default mb-6 text-center">
+              Tu carrito está vacío
+            </h1>
+            <Button asChild variant="link" size="text">
+              <Link
+                href="/"
+                onClick={handleContinueShopping}
+                className="body-01-medium text-text-primary-default hover:underline text-text-secondary-default body-01-semibold"
+              >
+                Seguir comprando
+              </Link>
+            </Button>
+          </div>
+          <Footer />
+        </section>{" "}
+      </>
     );
   }
 
