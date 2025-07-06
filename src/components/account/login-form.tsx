@@ -128,7 +128,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 text-text-primary-default"
+          className="w-full py-3 text-text-primary-invert"
           variant="primary"
           size="md"
         >

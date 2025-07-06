@@ -22,11 +22,11 @@ export type CartItemProps = {
 export function CartItem({ line }: CartItemProps) {
   const [open, setOpen] = useState(false);
   // ✔️ Nuevo: ref para medir ancho de los botones
-  const buttonsRef = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<HTMLDivElement | null>(null);
   // ✔️ Nuevo: estado que guardará ese ancho
   const [slideAmt, setSlideAmt] = useState(0);
   // Nuevo: ref y estado para medir ancho completo del item
-  const itemRef = useRef<HTMLDivElement>(null);
+  const itemRef = useRef<HTMLDivElement | null>(null);
   const [itemWidth, setItemWidth] = useState(0);
   // ✅ Importa tu store y extrae los métodos
   const removeItem = useCartStore((s) => s.removeItem);
@@ -94,6 +94,12 @@ export function CartItem({ line }: CartItemProps) {
     preventScrollOnSwipe: true,
   });
 
+  // merge the hook's ref with our own ref
+  const swipeRef = (el: HTMLDivElement | null) => {
+    handlers.ref(el);
+    itemRef.current = el;
+  };
+
   const precio = new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: line.merchandise.price.currencyCode,
@@ -124,7 +130,7 @@ export function CartItem({ line }: CartItemProps) {
       <motion.div
         className="relative overflow-hidden my-3"
         {...handlers}
-        ref={itemRef}
+        ref={swipeRef}
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "auto" }}
         exit={{ opacity: 0, height: 0 }}

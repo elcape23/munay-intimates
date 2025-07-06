@@ -259,6 +259,8 @@ export default function RegisterForm() {
               "absolute inset-y-0 right-0 -top-9 flex items-center px-3",
               passwordStatus === "valid"
                 ? "text-icon-success-default"
+                : passwordStatus === "invalid"
+                ? "text-icon-danger-default"
                 : "text-icon-primary-default"
             )}
           >

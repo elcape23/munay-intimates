@@ -58,6 +58,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // Generate the classes for the current variant and size
     let classes = buttonVariants({ variant, size });
 
+    // Add a subtle scale animation on click for primary and outline variants
+    if (variant === "primary" || variant === "outline") {
+      classes += " transition-transform active:scale-95";
+    }
+
     // When using icon size we don't want to apply hover styles
     if (size === "icon") {
       classes = classes

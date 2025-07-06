@@ -856,6 +856,10 @@ export async function getProductByHandle(
                 amount
                 currencyCode
               }
+              compareAtPrice {
+                amount
+                currencyCode
+              }
             }
           }
         }

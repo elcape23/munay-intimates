@@ -89,7 +89,7 @@ export function Navbar({
         <Button
           aria-label={isProduct || searchMode ? "Cerrar" : "Abrir menú"}
           onClick={handleMenuOrBack}
-          className="rounded-md focus:outline-none focus:ring-2 focus:ring-ring-primary"
+          className="rounded-md focus-visible:outline-none focus-visible:ring-0"
           variant="ghost"
           size="icon"
         >
@@ -136,7 +136,7 @@ export function Navbar({
         <Link
           href="/cart"
           aria-label={`Carrito de compras con ${totalQuantity} productos`}
-          className="relative rounded-md focus:outline-none focus:ring-2 focus:ring-ring-primary"
+          className="relative rounded-md focus-visible:outline-none focus-visible:ring-0"
           onClick={onNavigate}
         >
           <ShoppingBagIcon

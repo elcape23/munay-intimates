@@ -7,7 +7,7 @@ import Link from "next/link";
 import { CartItem } from "@/components/cart/cart-item";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Footer } from "@/components/common/footer";
@@ -21,6 +21,7 @@ export default function CartPage() {
   const [showEmpty, setShowEmpty] = useState(false);
   const [loadingCheckout, setLoadingCheckout] = useState(false);
   const [loadingHome, setLoadingHome] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const prevCount = useRef<number>(0);
   const router = useRouter();
 
@@ -75,13 +76,23 @@ export default function CartPage() {
             </Button>
             <h1 className="body-01-medium">CARRITO</h1>
           </div>
-          <div className="flex flex-col items-center justify-center flex-grow">
+          <motion.div
+            className="flex flex-col items-center justify-center flex-grow"
+            initial={{ opacity: 0, filter: "blur(8px)" }}
+            animate={{
+              opacity: imageLoaded ? 1 : 0,
+              filter: imageLoaded ? "blur(0px)" : "blur(8px)",
+            }}
+            transition={{ duration: 0.5 }}
+          >
+            {" "}
             <Image
               src="/illustrations/cart-empty.svg"
               alt="Carrito vacío"
               width={240}
               height={240}
               className="mb-4"
+              onLoad={() => setImageLoaded(true)}
             />
             <h1 className="heading-06-regular text-text-primary-default mb-6 text-center">
               Tu carrito está vacío
@@ -95,7 +106,7 @@ export default function CartPage() {
                 Seguir comprando
               </Link>
             </Button>
-          </div>
+          </motion.div>
           <Footer />
         </section>{" "}
       </>
