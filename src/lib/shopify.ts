@@ -1,6 +1,7 @@
 // src/lib/shopify.ts
 
 import { GraphQLClient, gql } from "graphql-request";
+import { slugify } from "./utils";
 
 // --- Configuración ---
 const storeDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
@@ -1203,7 +1204,7 @@ export async function getCollectionsBySeason(
 
   // collections are tagged with the "season" metafield under the
   // `custom` namespace so the query must match that key
-  const normalizedSeason = season.toLowerCase();
+  const normalizedSeason = slugify(season);
   const seasonQuery = `metafield:custom.season:'${normalizedSeason}'`;
   const response = await shopifyFetch<GetCollectionsResponse>({
     query,
@@ -1301,7 +1302,7 @@ export async function getProductsBySeason(
 
   // collections are tagged with the "season" metafield under the
   // `custom` namespace. Build the query accordingly.
-  const normalizedSeason = season.toLowerCase();
+  const normalizedSeason = slugify(season);
   const seasonQuery = `metafield:custom.season:'${normalizedSeason}'`;
   const response = await shopifyFetch<{
     products: { edges: { node: ShopifyProduct }[] };

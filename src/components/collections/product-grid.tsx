@@ -18,9 +18,10 @@ import {
 import { ProductCard } from "@/components/common/product-card";
 import { extractColorVariants } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
+import { slugify } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
-const SEASONS = ["invierno", "verano", "otoño", "primavera"];
+const SEASONS = ["invierno", "verano", "otono", "primavera"];
 
 type ProductGridProps = {
   title: string;
@@ -100,7 +101,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
 
         const seasonValue = product.estacion?.value?.toLowerCase();
         if (seasonValue) {
-          seasonSet.add(seasonValue);
+          seasonSet.add(slugify(seasonValue));
         }
 
         // 3. Procesa metacampos personalizados

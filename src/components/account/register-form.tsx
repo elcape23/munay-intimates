@@ -62,6 +62,9 @@ export default function RegisterForm() {
     ? "valid"
     : "invalid";
 
+  const isFormValid =
+    isFirstNameValid && isLastNameValid && isEmailValid && isPasswordValid;
+
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
@@ -252,7 +255,12 @@ export default function RegisterForm() {
           <button
             type="button"
             onClick={() => setShowPassword((p) => !p)}
-            className="absolute inset-y-0 right-0 -top-9 flex items-center px-3 text-icon-primary-default"
+            className={cn(
+              "absolute inset-y-0 right-0 -top-9 flex items-center px-3",
+              passwordStatus === "valid"
+                ? "text-icon-success-default"
+                : "text-icon-primary-default"
+            )}
           >
             {showPassword ? (
               <EyeSlashIcon className="h-5 w-5" />
@@ -260,12 +268,6 @@ export default function RegisterForm() {
               <EyeIcon className="h-5 w-5" />
             )}
           </button>
-          {passwordStatus === "valid" && (
-            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
-          )}
-          {passwordStatus === "invalid" && passwordTouched && (
-            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
-          )}
           <p
             className={cn(
               "px-3 body-03-regular min-h-5",
@@ -297,7 +299,7 @@ export default function RegisterForm() {
       </div>
       <Button
         type="submit"
-        disabled={isLoading}
+        disabled={isLoading || !isFormValid}
         className="w-full py-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
         variant="primary"
         size="lg"

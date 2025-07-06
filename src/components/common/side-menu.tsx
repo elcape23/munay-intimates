@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 const SEASONS = [
   { label: "INVIERNO", slug: "invierno" },
   { label: "VERANO", slug: "verano" },
-  { label: "OTOÑO", slug: "otoño" },
+  { label: "OTOÑO", slug: "otono" },
   {
     label: "PRIMAVERA",
     slug: "primavera",

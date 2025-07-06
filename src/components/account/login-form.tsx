@@ -2,12 +2,13 @@
 
 import { useState, FormEvent, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import Link from "next/link";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
 
 export default function LoginForm() {
   const { login, isLoggedIn, error: authError, isLoading } = useAuthStore();
@@ -15,6 +16,8 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const router = useRouter();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,6 +50,11 @@ export default function LoginForm() {
   ) => {
     setter(value);
     if (error) setError(null);
+  };
+
+  const handleRegisterRedirect = () => {
+    setIsRedirecting(true);
+    router.push("/account/register");
   };
 
   useEffect(() => {
@@ -103,9 +111,15 @@ export default function LoginForm() {
           {error || ""}
         </p>{" "}
       </div>
+      {isRedirecting && <Loading />}
       <div className="flex flex-row sm:flex-row gap-4">
-        <Button asChild variant="outline" size="md" className="w-full py-3">
-          <Link href="/account/register">Registrarse</Link>
+        <Button
+          onClick={handleRegisterRedirect}
+          variant="outline"
+          size="md"
+          className="w-full py-3"
+        >
+          Registrarse
         </Button>
         <Button
           type="submit"
