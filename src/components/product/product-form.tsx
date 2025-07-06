@@ -166,7 +166,15 @@ export function ProductForm({ product }: ProductFormProps) {
       {/* Selectores de variantes */}
       <div className="space-y-4">
         {productOptions
-          .filter((option) => option.name.toLowerCase() !== "tejido")
+          .filter((option) => {
+            const name = option.name.toLowerCase();
+            return (
+              name !== "tejido" &&
+              name !== "estacion" &&
+              name !== "estación" &&
+              name !== "season"
+            );
+          })
           .map((option) => {
             const selectedValue = selectedOptions[option.name];
 

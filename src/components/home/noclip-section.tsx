@@ -18,6 +18,13 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
   const sectionRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
+  // Alinea el carrusel a la izquierda al montar
+  useEffect(() => {
+    const c = containerRef.current;
+    if (!c) return;
+    c.scrollTo({ left: 0, behavior: "auto" });
+  }, []);
+
   // Detectar cuando la sección entra en la vista
   useEffect(() => {
     const observer = new IntersectionObserver(
