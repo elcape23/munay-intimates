@@ -19,6 +19,7 @@ import {
   EllipsisHorizontalIcon,
 } from "@heroicons/react/24/outline";
 import { Footer } from "@/components/common/footer";
+import { ConfirmModal } from "@/components/common/confirm-modal";
 import Image from "next/image";
 
 export default function AccountPage() {
@@ -28,6 +29,7 @@ export default function AccountPage() {
   const router = useRouter();
   const [customer, setCustomer] = useState<any>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
     if (session?.user?.shopifyToken) {
@@ -55,6 +57,9 @@ export default function AccountPage() {
       setIsSigningOut(false);
     }
   };
+
+  const openLogoutConfirm = () => setShowLogoutConfirm(true);
+  const closeLogoutConfirm = () => setShowLogoutConfirm(false);
 
   // 2) Si no hay session, mostramos botones de login
   if (!session) {
@@ -214,7 +219,7 @@ export default function AccountPage() {
             <div className="body-02-regular">no sos vos?</div>
           </div>
           <Button
-            onClick={handleSignOut}
+            onClick={openLogoutConfirm}
             className="body-01-semibold"
             variant="link"
             size="text"
@@ -224,6 +229,12 @@ export default function AccountPage() {
           </Button>
         </div>
         <Footer />
+        <ConfirmModal
+          open={showLogoutConfirm}
+          onCancel={closeLogoutConfirm}
+          onConfirm={handleSignOut}
+          message="¿Éstas seguro que quiere salir de tu sesión?"
+        />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import {
   EyeIcon,
@@ -141,7 +142,7 @@ export default function RegisterForm() {
               (firstNameStatus === "empty"
                 ? "Requerido"
                 : firstNameStatus === "valid"
-                ? "Correcto"
+                ? "Bien hecho!"
                 : "Incorrecto")}
           </p>
         </div>
@@ -184,7 +185,7 @@ export default function RegisterForm() {
               (lastNameStatus === "empty"
                 ? "Requerido"
                 : lastNameStatus === "valid"
-                ? "Correcto"
+                ? "Bien hecho!"
                 : "Incorrecto")}
           </p>
         </div>
@@ -228,7 +229,7 @@ export default function RegisterForm() {
               (emailStatus === "empty"
                 ? "Requerido"
                 : emailStatus === "valid"
-                ? "Correcto"
+                ? "Bien hecho!"
                 : "Incorrecto")}
           </p>
         </div>
@@ -281,17 +282,19 @@ export default function RegisterForm() {
             )}
           >
             {passwordTouched &&
-              (passwordStatus === "valid" ? "Correcto" : "Mínimo 8 caracteres")}
+              (passwordStatus === "valid"
+                ? "Bien hecho!"
+                : "Mínimo 8 caracteres")}
           </p>
         </div>
         <div className="flex items-start gap-2 py-2">
-          <input
+          <Checkbox
             id="subscribeToEmails"
             name="subscribeToEmails"
-            type="checkbox"
             checked={subscribeToEmails}
-            onChange={(e) => setSubscribeToEmails(e.target.checked)}
-            className="h-4 w-4 accent-background-fill-neutral-default"
+            onCheckedChange={(checked: boolean) =>
+              setSubscribeToEmails(checked)
+            }
           />
           <label htmlFor="subscribeToEmails" className="body-02-regular">
             Quiero recibir novedades e información de Munay vía email

@@ -56,9 +56,8 @@ export function ProductCard({
       >
         {/* Imagen */}
         <div
-          className={`relative ${
-            size === "small" ? "h-[246px]" : "h-[328px]"
-          } w-[100%] overflow-hidden`}
+          className="relative w-full overflow-hidden"
+          style={{ aspectRatio: "2 / 3" }}
         >
           <Image
             src={imageSrc}

@@ -5,12 +5,15 @@
 import { useFavoritesStore } from "@/store/favorites-store";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
+import { motion } from "framer-motion";
 
 import { Footer } from "@/components/common/footer";
 import { ProductGrid } from "@/components/collections/product-grid";
 
 export default function FavoritesPage() {
   const { favoriteProducts, isLoading } = useFavoritesStore();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   if (isLoading) {
     return (
@@ -25,13 +28,23 @@ export default function FavoritesPage() {
   if (!favoriteProducts || favoriteProducts.length === 0) {
     return (
       <main className="container mx-auto px-6 pt-[55px] min-h-screen flex flex-col justify-between">
-        <div className="flex flex-col items-center justify-center flex-grow text-gray-500">
+        <motion.div
+          className="flex flex-col items-center justify-center flex-grow text-gray-500"
+          initial={{ opacity: 0, filter: "blur(8px)" }}
+          animate={{
+            opacity: imageLoaded ? 1 : 0,
+            filter: imageLoaded ? "blur(0px)" : "blur(8px)",
+          }}
+          transition={{ duration: 0.5 }}
+        >
+          {" "}
           <Image
             src="/illustrations/fav-empty.svg"
             alt="Favoritos vacío"
             width={240}
             height={240}
             className="mb-4"
+            onLoad={() => setImageLoaded(true)}
           />
           <h1 className="heading-06-regular text-text-primary-default mb-6 text-center">
             Aún no has guardado ningún producto como favorito.
@@ -42,7 +55,7 @@ export default function FavoritesPage() {
           >
             Explorar productos
           </Link>
-        </div>
+        </motion.div>{" "}
         <Footer />
       </main>
     );
