@@ -190,7 +190,7 @@ export default function AccountPage() {
         </div>
         <div className="flex flex-col">
           <Link
-            href="#"
+            href="/account/settings"
             className="flex items-center justify-between px-1 py-2"
           >
             <span className="body-02-medium">Ajustes</span>

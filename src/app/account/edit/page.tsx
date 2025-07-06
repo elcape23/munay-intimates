@@ -1,15 +1,37 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useSession, signOut } from "next-auth/react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ArrowLeftStartOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
+import { ConfirmModal } from "@/components/common/confirm-modal";
 
 export default function AccountEditPage() {
   const router = useRouter();
   const { data: rawSession } = useSession();
   const session = rawSession as any;
+
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await signOut({ callbackUrl: "/" });
+    } catch (e) {
+      console.error("Error signing out:", e);
+      setIsSigningOut(false);
+    }
+  };
+
+  const openLogoutConfirm = () => setShowLogoutConfirm(true);
+  const closeLogoutConfirm = () => setShowLogoutConfirm(false);
 
   const displayName = session?.user
     ? session.user.firstName || session.user.lastName
@@ -77,6 +99,22 @@ export default function AccountEditPage() {
         la protección de tu información personal. Saber mas sobre cuánto nos
         interesa y cómo usamos tu información en Política & Privacidad.
       </p>
+      <Button
+        onClick={openLogoutConfirm}
+        variant="outline"
+        size="md"
+        className="w-full"
+        disabled={isSigningOut}
+      >
+        <ArrowLeftStartOnRectangleIcon className="w-6 h-6 mr-2" />
+        {isSigningOut ? "Saliendo..." : "Salir"}
+      </Button>
+      <ConfirmModal
+        open={showLogoutConfirm}
+        onCancel={closeLogoutConfirm}
+        onConfirm={handleSignOut}
+        message="¿Éstas seguro que quiere salir de tu sesión?"
+      />
     </div>
   );
 }
