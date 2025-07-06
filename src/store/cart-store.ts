@@ -132,11 +132,20 @@ export const useCartStore = create<CartState>((set, get) => ({
       if (edgeIndex !== -1) {
         const edge = cart.lines.edges[edgeIndex];
         const diff = quantity - edge.node.quantity;
-        const unitPrice =
-          parseFloat(edge.node.cost.totalAmount.amount) / edge.node.quantity;
+        const unitPrice = parseFloat(edge.node.merchandise.price.amount);
         cart.lines.edges[edgeIndex] = {
           ...edge,
-          node: { ...edge.node, quantity },
+          node: {
+            ...edge.node,
+            quantity,
+            cost: {
+              ...edge.node.cost,
+              totalAmount: {
+                ...edge.node.cost.totalAmount,
+                amount: (unitPrice * quantity).toString(),
+              },
+            },
+          },
         };
         cart.totalQuantity += diff;
         cart.cost = {

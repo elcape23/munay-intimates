@@ -35,12 +35,27 @@ export function CartItem({ line }: CartItemProps) {
 
   // ✅ Mide ancho de los botones al montar
   useEffect(() => {
-    if (buttonsRef.current) {
-      setSlideAmt(buttonsRef.current.offsetWidth);
-    }
-    if (itemRef.current) {
-      setItemWidth(itemRef.current.offsetWidth);
-    }
+    const updateWidths = () => {
+      if (buttonsRef.current) {
+        setSlideAmt(buttonsRef.current.offsetWidth);
+      }
+      if (itemRef.current) {
+        setItemWidth(itemRef.current.offsetWidth);
+      }
+    };
+
+    updateWidths();
+
+    const observer = new ResizeObserver(updateWidths);
+    if (buttonsRef.current) observer.observe(buttonsRef.current);
+    if (itemRef.current) observer.observe(itemRef.current);
+
+    window.addEventListener("resize", updateWidths);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateWidths);
+    };
   }, []);
 
   // ✅ Handlers internos usando el store
