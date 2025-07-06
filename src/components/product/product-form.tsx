@@ -334,7 +334,7 @@ export function ProductForm({ product }: ProductFormProps) {
             ? "Añadiendo..."
             : selectedVariant?.availableForSale
             ? "Añadir"
-            : "No Disponible"}
+            : "Añadir"}
         </Button>
         <Button
           onClick={handleBuyNow}
@@ -352,7 +352,7 @@ export function ProductForm({ product }: ProductFormProps) {
             ? "Añadiendo..."
             : selectedVariant?.availableForSale
             ? "Comprar"
-            : "No Disponible"}
+            : "Comprar"}
         </Button>
       </div>
 
@@ -377,16 +377,39 @@ export function ProductForm({ product }: ProductFormProps) {
               variant="primary"
               size="lg"
             >
-              {loadingButton === "add" ? "Añadiendo..." : "Añadir"}
+              {loadingButton === "add"
+                ? "Añadiendo..."
+                : selectedVariant?.availableForSale
+                ? "Añadir"
+                : "Añadir"}
             </Button>
             <div className="w-full flex flex-col items-end gap-2">
               <p className="body-01-semibold text-text-primary-default">
-                {selectedVariant &&
+                {selectedVariant && selectedVariant.compareAtPrice ? (
+                  <>
+                    <span className="mr-2 line-through text-text-secondary-default">
+                      {new Intl.NumberFormat("es-AR", {
+                        style: "currency",
+                        currency: selectedVariant.compareAtPrice.currencyCode,
+                        maximumFractionDigits: 0,
+                      }).format(
+                        parseFloat(selectedVariant.compareAtPrice.amount)
+                      )}
+                    </span>
+                    {new Intl.NumberFormat("es-AR", {
+                      style: "currency",
+                      currency: selectedVariant.price.currencyCode,
+                      maximumFractionDigits: 0,
+                    }).format(parseFloat(selectedVariant.price.amount))}
+                  </>
+                ) : (
+                  selectedVariant &&
                   new Intl.NumberFormat("es-AR", {
                     style: "currency",
                     currency: selectedVariant.price.currencyCode,
                     maximumFractionDigits: 0,
-                  }).format(parseFloat(selectedVariant.price.amount))}
+                  }).format(parseFloat(selectedVariant.price.amount))
+                )}
               </p>
               <p className="body-03-regular text-text-secondary-default whitespace-nowrap">
                 Envío calculado en el checkout
