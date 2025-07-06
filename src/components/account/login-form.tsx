@@ -10,7 +10,11 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/loading";
 
-export default function LoginForm() {
+interface LoginFormProps {
+  onLoginSuccess?: () => void;
+}
+
+export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const { login, isLoggedIn, error: authError, isLoading } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -124,7 +128,7 @@ export default function LoginForm() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
+          className="w-full py-3 text-text-primary-default"
           variant="primary"
           size="md"
         >
