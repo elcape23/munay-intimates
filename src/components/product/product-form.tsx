@@ -21,6 +21,18 @@ const formatSizeLabel = (value: string) => {
   return normalized === "talla unica" ? "TU" : value;
 };
 
+const isOneSizeValue = (value: string) => {
+  const normalized = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  return (
+    normalized === "talla unica" ||
+    normalized === "talle unico" ||
+    normalized === "tu"
+  );
+};
+
 export function ProductForm({ product }: ProductFormProps) {
   const productOptions = useMemo(() => {
     const opts = [...product.options];
@@ -42,6 +54,13 @@ export function ProductForm({ product }: ProductFormProps) {
     }
     return opts;
   }, [product]);
+
+  const isOneSizeProduct = useMemo(() => {
+    const opt = productOptions.find((o) =>
+      ["talle", "talla", "size"].includes(o.name.toLowerCase())
+    );
+    return !!opt && opt.values.length === 1 && isOneSizeValue(opt.values[0]);
+  }, [productOptions]);
 
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
@@ -205,6 +224,7 @@ export function ProductForm({ product }: ProductFormProps) {
                       const hex = COLOR_MAP[value] ?? value;
                       const isActive = selectedValue === value;
                       const isBlack = value.toLowerCase() === "negro";
+                      const isWhite = value.toLowerCase() === "blanco";
                       const activeBorderClass = isBlack
                         ? "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default"
                         : "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default";
@@ -214,9 +234,11 @@ export function ProductForm({ product }: ProductFormProps) {
                           aria-label={value}
                           onClick={() => handleOptionChange(option.name, value)}
                           className={`w-6 h-6 rounded-full border-[1.5px] ${
-                            isActive
-                              ? `p-2 ${activeBorderClass}`
-                              : "p-2 border-transparent"
+                            isActive ? `p-2 ${activeBorderClass}` : "p-2"
+                          } ${
+                            isWhite
+                              ? "border-border-tertiary-default"
+                              : "border-transparent"
                           }`}
                           style={{ backgroundColor: hex }}
                           variant="ghost"
@@ -243,7 +265,9 @@ export function ProductForm({ product }: ProductFormProps) {
                       {option.name}
                     </label>
                     <span className="body-01-regular text-text-secondary-default">
-                      {formatSizeLabel(selectedValue)}
+                      {isOneSizeProduct
+                        ? "Talle único"
+                        : formatSizeLabel(selectedValue)}{" "}
                     </span>
                   </div>
                   <div className="flex flex-row gap-2 items-center">
