@@ -66,20 +66,6 @@ export default function AccountEditPage() {
           <ChevronRightIcon className="w-5 h-5" />
         </Link>
         <Link
-          href="/account/edit/email"
-          className="flex items-center justify-between px-1 py-2"
-        >
-          <div className="flex flex-col">
-            <span className="body-02-regular">Email</span>
-            {displayEmail && (
-              <span className="body-03-regular text-text-secondary-default">
-                {displayEmail}
-              </span>
-            )}
-          </div>
-          <ChevronRightIcon className="w-5 h-5" />
-        </Link>
-        <Link
           href="/account/edit/password"
           className="flex items-center justify-between px-1 py-2"
         >
@@ -94,11 +80,6 @@ export default function AccountEditPage() {
           <ChevronRightIcon className="w-5 h-5" />
         </Link>
       </div>
-      <p className="body-03-regular text-text-secondary-default">
-        En MUNAY nos tomamos muy serio tu privacidad y estamos comprometidos con
-        la protección de tu información personal. Saber mas sobre cuánto nos
-        interesa y cómo usamos tu información en Política & Privacidad.
-      </p>
       <Button
         onClick={openLogoutConfirm}
         variant="outline"
@@ -109,6 +90,11 @@ export default function AccountEditPage() {
         <ArrowLeftStartOnRectangleIcon className="w-6 h-6 mr-2" />
         {isSigningOut ? "Saliendo..." : "Salir"}
       </Button>
+      <p className="body-03-regular text-text-secondary-default">
+        En MUNAY nos tomamos muy serio tu privacidad y estamos comprometidos con
+        la protección de tu información personal. Saber mas sobre cuánto nos
+        interesa y cómo usamos tu información en Política & Privacidad.
+      </p>
       <ConfirmModal
         open={showLogoutConfirm}
         onCancel={closeLogoutConfirm}

@@ -20,13 +20,16 @@ export default function RegisterForm() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [subscribeToEmails, setSubscribeToEmails] = useState(true);
   const [firstNameTouched, setFirstNameTouched] = useState(false);
   const [lastNameTouched, setLastNameTouched] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
   const isFirstNameValid = firstName.trim().length >= 3;
   const firstNameStatus = !firstNameTouched
     ? null
@@ -63,12 +66,29 @@ export default function RegisterForm() {
     ? "valid"
     : "invalid";
 
-  const isFormValid =
-    isFirstNameValid && isLastNameValid && isEmailValid && isPasswordValid;
+  const isConfirmPasswordValid =
+    confirmPassword === password && confirmPassword.length >= 8;
+  const confirmPasswordStatus = !confirmPasswordTouched
+    ? null
+    : confirmPassword.length === 0
+    ? "empty"
+    : isConfirmPasswordValid
+    ? "valid"
+    : "invalid";
 
+  const isFormValid =
+    isFirstNameValid &&
+    isLastNameValid &&
+    isEmailValid &&
+    isPasswordValid &&
+    isConfirmPasswordValid;
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden.");
+      return;
+    }
     const success = await signUp({
       firstName,
       lastName,
@@ -285,6 +305,64 @@ export default function RegisterForm() {
               (passwordStatus === "valid"
                 ? "Bien hecho!"
                 : "Mínimo 8 caracteres")}
+          </p>
+        </div>
+        <div className="space-y-2 relative">
+          <Input
+            id="confirmPassword"
+            name="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            autoComplete="new-password"
+            required
+            value={confirmPassword}
+            onChange={(e) =>
+              handleInputChange(setConfirmPassword, e.target.value)
+            }
+            onFocus={() => setConfirmPasswordTouched(true)}
+            className={cn(
+              "pr-10",
+              confirmPasswordStatus === "valid"
+                ? "text-text-success-default"
+                : confirmPasswordStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
+            placeholder="Repetir contraseña"
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword((p) => !p)}
+            className={cn(
+              "absolute inset-y-0 right-0 -top-9 flex items-center px-3",
+              confirmPasswordStatus === "valid"
+                ? "text-icon-success-default"
+                : confirmPasswordStatus === "invalid"
+                ? "text-icon-danger-default"
+                : "text-icon-primary-default"
+            )}
+          >
+            {showConfirmPassword ? (
+              <EyeSlashIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </button>
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !confirmPasswordTouched && "invisible",
+              confirmPasswordTouched &&
+                (confirmPasswordStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default")
+            )}
+          >
+            {confirmPasswordTouched &&
+              (confirmPasswordStatus === "valid"
+                ? "Bien hecho!"
+                : confirmPasswordStatus === "empty"
+                ? "Requerido"
+                : "No coincide")}
           </p>
         </div>
         <div className="flex items-start gap-2 py-2">
