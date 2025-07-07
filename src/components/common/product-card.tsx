@@ -17,6 +17,8 @@ export interface ProductCardProps {
   isNew?: boolean; // marca NEW
   colorVariants?: string[]; // lista de colores (hex o clases Tailwind)
   size?: "default" | "small";
+  /** If true, image adapts to parent width */
+  fill?: boolean;
 }
 
 function parsePrice(value: string): number {
@@ -37,6 +39,7 @@ export function ProductCard({
   isNew = false,
   colorVariants = [],
   size = "default",
+  fill = false,
 }: ProductCardProps) {
   // calcula % de descuento redondeado
   const discountPercent = compareAtPrice
@@ -55,15 +58,29 @@ export function ProductCard({
         } overflow-hidden hover:transition-shadow duration-300`}
       >
         {/* Imagen */}
-        <div className="relative w-full overflow-hidden">
-          <Image
-            src={imageSrc}
-            alt={altText ?? title}
-            width={220}
-            height={328}
-            className="object-cover w-full h-auto rounded-[2px] group-hover:scale-105 transition-transform duration-300"
-            priority
-          />
+        <div
+          className={`relative w-full overflow-hidden ${
+            fill ? "aspect-[220/328]" : ""
+          }`}
+        >
+          {fill ? (
+            <Image
+              src={imageSrc}
+              alt={altText ?? title}
+              fill
+              className="object-cover w-full h-full rounded-[2px] group-hover:scale-105 transition-transform duration-300"
+              priority
+            />
+          ) : (
+            <Image
+              src={imageSrc}
+              alt={altText ?? title}
+              width={220}
+              height={328}
+              className="object-cover w-full h-auto rounded-[2px] group-hover:scale-105 transition-transform duration-300"
+              priority
+            />
+          )}
           {/* Badge Oferta o NEW */}
           {compareAtPrice ? (
             <div className="absolute bottom-3 left-3 z-10 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert">

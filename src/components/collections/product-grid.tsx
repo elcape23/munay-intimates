@@ -615,6 +615,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                   const byTag = product.tags?.includes("new");
                   return Boolean(byDate || byTag);
                 })()}
+                fill
               />
             </div>
           ))}
