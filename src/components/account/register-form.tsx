@@ -305,7 +305,7 @@ export default function RegisterForm() {
       <Button
         type="submit"
         disabled={isLoading || !isFormValid}
-        className="w-full py-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
+        className="w-full py-3"
         variant="primary"
         size="lg"
       >
