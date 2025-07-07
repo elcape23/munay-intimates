@@ -99,7 +99,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
 
         prices.push(parseFloat(product.priceRange.minVariantPrice.amount));
 
-        const seasonValue = product.estacion?.value?.toLowerCase();
+        const seasonValue = product.estacion?.value;
         if (seasonValue) {
           seasonSet.add(slugify(seasonValue));
         }
