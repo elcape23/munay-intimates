@@ -47,6 +47,10 @@ const SLIDES: HeroSlide[] = [
   },
 ];
 
+// Duration of the slide transition in seconds. Keep this value in sync
+// with the `duration-700` class on the slider container.
+const SLIDE_TRANSITION_SEC = 0.7;
+
 interface HeroSectionProps {
   autoPlay?: boolean;
   intervalMs?: number;
@@ -151,7 +155,11 @@ export function HeroSection({
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -40 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    transition={{
+                      duration: 0.6,
+                      ease: "easeOut",
+                      delay: SLIDE_TRANSITION_SEC,
+                    }}
                     className="mb-20"
                   >
                     <h2 className="text-[70px] heading-02-semibold leading-none mb-4">
