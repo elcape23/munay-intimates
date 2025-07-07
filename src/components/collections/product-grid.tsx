@@ -35,6 +35,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
   const [minPriceFilter, setMinPriceFilter] = useState(0);
   const [maxPriceFilter, setMaxPriceFilter] = useState(0);
   const router = useRouter();
+  const showSeasonFilters = title.trim().toLowerCase() === "pijamas";
 
   useEffect(() => {
     if (isFilterModalOpen) {
@@ -53,8 +54,9 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       const primary: Record<string, Set<string>> = {};
       const modal: Record<string, Set<string>> = {};
       const prices: number[] = [];
-      const seasonSet: Set<string> = new Set(SEASONS);
-
+      const seasonSet: Set<string> = showSeasonFilters
+        ? new Set(SEASONS)
+        : new Set();
       products.forEach((product) => {
         // 1. Procesa las etiquetas (tags) para los filtros principales
         product.tags?.forEach((tag) => {
@@ -99,9 +101,11 @@ export function ProductGrid({ title, products }: ProductGridProps) {
 
         prices.push(parseFloat(product.priceRange.minVariantPrice.amount));
 
-        const seasonValue = product.estacion?.value;
-        if (seasonValue) {
-          seasonSet.add(slugify(seasonValue));
+        if (showSeasonFilters) {
+          const seasonValue = product.estacion?.value?.toLowerCase();
+          if (seasonValue) {
+            seasonSet.add(slugify(seasonValue));
+          }
         }
 
         // 3. Procesa metacampos personalizados
@@ -152,7 +156,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       });
 
       const collectionGroup = "Estación";
-      if (seasonSet.size > 0) {
+      if (showSeasonFilters && seasonSet.size > 0) {
         if (!modal[collectionGroup]) modal[collectionGroup] = new Set();
         seasonSet.forEach((season) => {
           modal[collectionGroup].add(`${collectionGroup}:${season}`);
@@ -177,8 +181,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
         minPrice,
         maxPrice,
       };
-    }, [products]);
-
+    }, [products, showSeasonFilters]);
   useEffect(() => {
     setMinPriceFilter(minPrice);
     setMaxPriceFilter(maxPrice);
@@ -191,11 +194,13 @@ export function ProductGrid({ title, products }: ProductGridProps) {
   };
 
   const activeSeason = useMemo(() => {
+    if (!showSeasonFilters) return "";
     const col = activeFilters.find((f) => f.startsWith("Estación:"));
     return col ? col.split(":")[1].trim() : "";
-  }, [activeFilters]);
+  }, [activeFilters, showSeasonFilters]);
 
   const handleSeasonChange = (value: string) => {
+    if (!showSeasonFilters) return;
     const prefix = "Estación:";
     const season = value === "all" ? "" : value;
     setActiveFilters((prev) => {
@@ -422,7 +427,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                         );
                       })}
                     </div>
-                  ) : groupName === "Estación" ? (
+                  ) : groupName === "Estación" && showSeasonFilters ? (
                     <Select
                       value={activeSeason || "all"}
                       onValueChange={(val) =>
