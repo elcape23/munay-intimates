@@ -88,7 +88,7 @@ export default async function ProductDetailPage({
           </span>
         )}
         {/* ► Descripción corta (opcional) */}
-        <div className="body-02-regular text-text-secondary-default">
+        <div className="body-02-regular text-text-secondary-default pr-14">
           <div
             dangerouslySetInnerHTML={{
               __html: product.descriptionHtml || "",

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
+import { useIntroStore } from "@/store/intro-store";
 
 interface HeroSlide {
   id: string;
@@ -50,6 +51,7 @@ const SLIDES: HeroSlide[] = [
 // Duration of the slide transition in seconds. Keep this value in sync
 // with the `duration-700` class on the slider container.
 const SLIDE_TRANSITION_SEC = 0.7;
+const INTRO_DELAY_MS = 4300;
 
 interface HeroSectionProps {
   autoPlay?: boolean;
@@ -61,6 +63,7 @@ export function HeroSection({
   intervalMs = 5000,
 }: HeroSectionProps) {
   const [current, setCurrent] = useState(0);
+  const introDone = useIntroStore((state) => state.done);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [inView, setInView] = useState(false);
@@ -149,7 +152,7 @@ export function HeroSection({
             <div className="absolute inset-0 bg-black/10" />
             <div className="relative z-10 flex h-full flex-col px-6 justify-end text-left text-text-primary-invert">
               <AnimatePresence mode="wait">
-                {current === idx && (
+                {current === idx && introDone && (
                   <motion.div
                     key={slide.id}
                     initial={{ opacity: 0, y: 40 }}

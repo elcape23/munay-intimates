@@ -20,7 +20,7 @@ export default function RelatedProductsCarousel({
   return (
     <section className="space-y-5">
       <h2 className="heading-06-medium text-text-primary-default">
-        Te puede interesar
+        Completa tu look
       </h2>
       <div
         className={`-m-6 flex space-x-2 overflow-x-auto snap-x snap-mandatory no-scrollbar ${
