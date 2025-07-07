@@ -13,6 +13,13 @@ import { Button } from "@/components/ui/button";
 type ProductFormProps = {
   product: ShopifyProduct;
 };
+const formatSizeLabel = (value: string) => {
+  const normalized = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  return normalized === "talla unica" ? "TU" : value;
+};
 
 export function ProductForm({ product }: ProductFormProps) {
   const productOptions = useMemo(() => {
@@ -236,7 +243,7 @@ export function ProductForm({ product }: ProductFormProps) {
                       {option.name}
                     </label>
                     <span className="body-01-regular text-text-secondary-default">
-                      {selectedValue}
+                      {formatSizeLabel(selectedValue)}
                     </span>
                   </div>
                   <div className="flex flex-row gap-2 items-center">
@@ -254,7 +261,7 @@ export function ProductForm({ product }: ProductFormProps) {
                           variant="ghost"
                           size="icon"
                         >
-                          {value}
+                          {formatSizeLabel(value)}
                           <AnimatePresence>
                             {isActive && (
                               <motion.span

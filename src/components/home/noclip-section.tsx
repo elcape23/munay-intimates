@@ -20,6 +20,14 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
 
   // Alinea el carrusel a la izquierda al montar
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("noclip-section-scroll");
+      } catch {
+        // ignoramos cualquier error (por ejemplo, modo privado)
+      }
+    }
+
     const c = containerRef.current;
     if (!c) return;
     c.scrollTo({ left: 0, behavior: "auto" });
