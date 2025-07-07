@@ -14,8 +14,8 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Munay",
-  description: "App de Munay",
+  title: "Munay Intimates",
+  description: "Tienda de lencería Munay Intimates",
 };
 
 export default function RootLayout({
