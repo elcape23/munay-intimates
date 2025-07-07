@@ -36,8 +36,12 @@ export function SideMenu() {
   );
 
   /* separar ítems según section */
-  const categories = menuItems;
-  const newProducts = menuItems.filter((i) => i.section === "new");
+  const categories = menuItems.filter(
+    (i) => !(i.section === "new" && i.id.startsWith("subcat-"))
+  );
+  const newProducts = menuItems.filter(
+    (i) => i.section === "new" && i.id.startsWith("subcat-")
+  );
   const collections = menuItems.filter((i) => i.section === "collections");
 
   /* helper para renderizar la lista */
@@ -165,7 +169,7 @@ export function SideMenu() {
               <div className="flex-1 overflow-y-auto px-2 no-scrollbar">
                 {tab === "categories" && (
                   <ul className="space-y-3 mt-6">
-                    {menuItems.map((item) => (
+                    {categories.map((item) => (
                       <li key={item.id}>
                         <Link
                           href={item.url}

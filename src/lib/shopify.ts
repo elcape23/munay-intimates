@@ -1922,43 +1922,6 @@ export async function getCustomer(
     return null;
   }
 }
-
-export async function customerUpdate(
-  customerAccessToken: string,
-  customer: Partial<Customer>
-): Promise<{ customer?: Customer; customerUserErrors: CustomerUserError[] }> {
-  const query = gql`
-    mutation customerUpdate(
-      $customerAccessToken: String!
-      $customer: CustomerUpdateInput!
-    ) {
-      customerUpdate(
-        customerAccessToken: $customerAccessToken
-        customer: $customer
-      ) {
-        customer {
-          id
-          firstName
-          lastName
-          email
-          phone
-        }
-        customerUserErrors {
-          code
-          field
-          message
-        }
-      }
-    }
-  `;
-
-  const response = await shopifyFetch<{ customerUpdate: any }>({
-    query,
-    variables: { customerAccessToken, customer },
-  });
-
-  return response.customerUpdate;
-}
 export async function getCustomerOrders(
   customerAccessToken: string
 ): Promise<ShopifyOrder[]> {

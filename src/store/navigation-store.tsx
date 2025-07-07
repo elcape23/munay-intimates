@@ -3,7 +3,9 @@ import {
   getCollectionsForMenu,
   NavItem,
   hasNewSaleProducts,
+  getNewestProductsFull,
 } from "@/lib/shopify";
+import { slugify } from "@/lib/utils";
 
 interface NavigationState {
   menuItems: NavItem[];
@@ -21,6 +23,37 @@ export const useNavigationStore = create<NavigationState>()((set) => ({
     try {
       const items = await getCollectionsForMenu();
       const newSale = await hasNewSaleProducts();
+
+      // --- Subcategorías con productos nuevos ---
+      try {
+        const newest = await getNewestProductsFull(250);
+        const subSet = new Set<string>();
+        newest.forEach((p) => {
+          p.tags?.forEach((tag) => {
+            const parts = tag.split(":");
+            if (
+              parts.length === 2 &&
+              ["subcategoría", "subcategoria"].includes(
+                parts[0].trim().toLowerCase()
+              )
+            ) {
+              subSet.add(parts[1].trim());
+            }
+          });
+        });
+
+        const subItems: NavItem[] = Array.from(subSet).map((name) => ({
+          id: `subcat-${slugify(name)}`,
+          title: name.toUpperCase(),
+          url: `/collections/new?subcategory=${slugify(name)}`,
+          section: "new",
+          isNew: false,
+        }));
+
+        items.push(...subItems);
+      } catch (err) {
+        console.error("Error cargando subcategorías nuevas", err);
+      }
       items.push({
         id: "special-prices",
         title: "SPECIAL PRICES",
