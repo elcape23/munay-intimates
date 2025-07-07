@@ -225,8 +225,8 @@ export function ProductGrid({ title, products }: ProductGridProps) {
         if (price < minPriceFilter || price > maxPriceFilter) return false;
 
         if (activeSeason) {
-          const season = product.estacion?.value?.toLowerCase() || "";
-          if (season !== activeSeason.toLowerCase()) return false;
+          const season = slugify(product.estacion?.value || "");
+          if (season !== activeSeason) return false;
         }
 
         return Object.entries(activeGroups).every(

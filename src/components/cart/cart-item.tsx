@@ -10,6 +10,7 @@ import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/cart-store";
 import { useFavoritesStore } from "@/store/favorites-store";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
 type CartLine = ShopifyCart["lines"]["edges"][number]["node"];
@@ -32,6 +33,9 @@ export function CartItem({ line }: CartItemProps) {
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const { toggleFavorite, favoriteHandles = [] } = useFavoritesStore();
+  const isAlreadyFavorite = favoriteHandles.includes(
+    line.merchandise.product.handle
+  );
 
   // ✅ Mide ancho de los botones al montar
   useEffect(() => {
@@ -60,11 +64,9 @@ export function CartItem({ line }: CartItemProps) {
 
   // ✅ Handlers internos usando el store
   const handleSave = () => {
-    const isAlreadyFavorite = favoriteHandles.includes(
-      line.merchandise.product.handle
-    );
+    const isAlreadyFav = isAlreadyFavorite;
     toggleFavorite(line.merchandise.product.handle);
-    if (!isAlreadyFavorite) {
+    if (!isAlreadyFav) {
       toast({ title: "¡Producto añadido a favoritos!" });
     }
   };
@@ -141,10 +143,15 @@ export function CartItem({ line }: CartItemProps) {
         <div ref={buttonsRef} className="absolute inset-y-0 right-0 flex">
           <Button
             onClick={handleSave}
-            className="w-max px-8 body-02-semibold bg-background-fill-neutral-default text-text-primary-invert rounded-l-1"
+            className={cn(
+              "w-max px-8 body-02-semibold rounded-l-1",
+              isAlreadyFavorite
+                ? "bg-background-fill-neutral-tertiary text-text-primary-default"
+                : "bg-background-fill-neutral-default text-text-primary-invert"
+            )}
             variant="ghost"
           >
-            Guardar
+            {isAlreadyFavorite ? "Guardado" : "Guardar"}{" "}
           </Button>
           <Button
             onClick={handleDelete}
