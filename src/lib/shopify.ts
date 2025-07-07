@@ -464,7 +464,7 @@ export async function searchProducts(
 ): Promise<ShopifyProduct[]> {
   const SEARCH_QUERY = gql`
     query SearchProducts($query: String!, $first: Int!) {
-      products(first: $first, query: $query) {
+      products(first: $first, query: $query, sortKey: BEST_SELLING) {
         edges {
           node {
             id
