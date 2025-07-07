@@ -10,6 +10,7 @@ import {
   Customer,
   CustomerAccessToken,
 } from "@/lib/shopify";
+import { useFavoritesStore } from "./favorites-store";
 
 // Definimos la forma del estado de autenticación
 interface AuthState {
@@ -102,6 +103,9 @@ export const useAuthStore = create(
                 isLoggedIn: true,
                 error: null,
               });
+              // Al crear una nueva cuenta, reiniciamos los favoritos para que
+              // no se mezclen con los de un usuario previo.
+              useFavoritesStore.getState().clearFavorites();
               get().checkAuthStatus();
               return true;
             }

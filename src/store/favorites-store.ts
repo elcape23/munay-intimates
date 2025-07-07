@@ -21,6 +21,7 @@ interface FavoritesState {
   toggleFavorite: (handle: string) => void;
   fetchFavoriteProducts: () => Promise<void>;
   setHasHydrated: (state: boolean) => void;
+  clearFavorites: () => void;
 }
 
 export const useFavoritesStore = create(
@@ -48,6 +49,18 @@ export const useFavoritesStore = create(
           set({ favoriteHandles: newFavoriteHandles });
           // Después de cambiar la lista, volvemos a buscar los productos para mantener todo sincronizado.
           get().fetchFavoriteProducts();
+        },
+
+        clearFavorites: () => {
+          set({ favoriteHandles: [], favoriteProducts: [] });
+          try {
+            localStorage.removeItem("favorites-storage");
+          } catch (error) {
+            console.error(
+              "No se pudo limpiar favoritos del localStorage",
+              error
+            );
+          }
         },
 
         fetchFavoriteProducts: async () => {

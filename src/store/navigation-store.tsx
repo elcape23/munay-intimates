@@ -47,7 +47,7 @@ export const useNavigationStore = create<NavigationState>()((set) => ({
           title: name.toUpperCase(),
           url: `/collections/new?subcategory=${slugify(name)}`,
           section: "new",
-          isNew: false,
+          isNew: true,
         }));
 
         items.push(...subItems);
