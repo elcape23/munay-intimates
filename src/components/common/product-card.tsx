@@ -107,10 +107,16 @@ export function ProductCard({
                 const bgColor = color.startsWith("#")
                   ? color
                   : COLOR_MAP[color] ?? "#cccccc";
+                const isWhite =
+                  bgColor.toLowerCase() === "#ffffff" ||
+                  bgColor.toLowerCase() === "#fff" ||
+                  bgColor.toLowerCase() === "white";
                 return (
                   <span
                     key={i}
-                    className="h-4 w-4 m-[2px] rounded-full "
+                    className={`h-4 w-4 m-[2px] rounded-full ${
+                      isWhite ? "border border-border-secondary-default" : ""
+                    }`}
                     style={{ backgroundColor: bgColor }}
                     title={color}
                   />

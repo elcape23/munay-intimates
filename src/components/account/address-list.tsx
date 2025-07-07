@@ -52,11 +52,11 @@ export function AddressList() {
           <p className="body-02-regular text-text-primary-default uppercase">
             {addr.firstName} {addr.lastName}
           </p>
-          {addr.formatted?.map((line) => (
-            <p key={line} className="body-02-regular text-text-primary-default">
-              {line}{" "}
+          {addr.formatted && (
+            <p className="body-02-regular text-text-primary-default">
+              {addr.formatted.join(", ")}
             </p>
-          ))}
+          )}{" "}
           {addr.phone && (
             <p className="body-02-regular text-text-primary-default">
               {addr.phone}
