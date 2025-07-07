@@ -90,6 +90,8 @@ export default async function ProductDetailPage({
         {/* ► Descripción corta (opcional) */}
         <div className="body-02-regular text-text-secondary-default pr-14">
           <div
+            lang="es" // indica el idioma para la separación correcta
+            style={{ hyphens: "auto", overflowWrap: "break-word" }}
             dangerouslySetInnerHTML={{
               __html: product.descriptionHtml || "",
             }}
