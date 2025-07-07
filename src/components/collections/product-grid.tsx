@@ -556,7 +556,8 @@ export function ProductGrid({ title, products }: ProductGridProps) {
         <div className="space-y-4">
           {Object.entries(primaryFilterGroup).map(([groupName, tags]) => (
             <div key={groupName}>
-              <div className="flex flex-wrap gap-2 mt-5">
+              <div className="flex flex-nowrap gap-2 mt-5 overflow-x-auto no-scrollbar">
+                {" "}
                 {tags.map((tag) => (
                   <Button
                     key={tag}

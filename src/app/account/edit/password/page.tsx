@@ -8,12 +8,23 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 
 export default function EditPasswordPage() {
   const router = useRouter();
+  const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Guardar contraseña");
+    if (!currentPassword || !password || !confirm) {
+      setError("Todos los campos son obligatorios");
+      return;
+    }
+    if (password !== confirm) {
+      setError("Las contrase\u00f1as no coinciden");
+      return;
+    }
+    setError(null);
+    console.log("Guardar contraseña", { currentPassword, password });
   };
 
   return (
@@ -27,7 +38,13 @@ export default function EditPasswordPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           type="password"
-          placeholder="Nueva contraseña"
+          placeholder="Contrase\u00f1a actual"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+        />
+        <Input
+          type="password"
+          placeholder="Nueva contrase\u00f1a"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -37,6 +54,7 @@ export default function EditPasswordPage() {
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
         />
+        {error && <p className="text-sm text-text-danger-default">{error}</p>}
         <Button type="submit" className="w-full">
           Guardar
         </Button>
