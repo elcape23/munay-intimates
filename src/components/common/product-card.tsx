@@ -51,19 +51,17 @@ export function ProductCard({
       <Link
         href={`/products/${handle}`}
         className={`flex flex-col bg-transparent ${
-          size === "small" ? "h-[315px]" : "h-[420px]"
+          size === "small" ? "h-[315px]" : "h-auto"
         } overflow-hidden hover:transition-shadow duration-300`}
       >
         {/* Imagen */}
-        <div
-          className="relative w-full overflow-hidden"
-          style={{ aspectRatio: "2 / 3" }}
-        >
+        <div className="relative w-full overflow-hidden">
           <Image
             src={imageSrc}
             alt={altText ?? title}
-            fill
-            className="object-cover w-full h-full rounded-[2px] group-hover:scale-105 transition-transform duration-300"
+            width={220}
+            height={328}
+            className="object-cover w-full h-auto rounded-[2px] group-hover:scale-105 transition-transform duration-300"
             priority
           />
           {/* Badge Oferta o NEW */}
@@ -79,9 +77,7 @@ export function ProductCard({
         </div>
 
         {/* Detalle */}
-        <div
-          className={`flex-1 py-2 space-y-2 ${size === "small" ? "pl-4" : ""}`}
-        >
+        <div className={`py-2 space-y-2 ${size === "small" ? "pl-4" : ""}`}>
           {/* Título */}
           <h3 className="body-01-medium text-text-primary-default truncate whitespace-nowrap line-clamp-2">
             {title}

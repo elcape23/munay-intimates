@@ -15,7 +15,7 @@ export default function AccountSettingsPage() {
         </Button>
         <h1 className="body-01-medium uppercase">Ajustes</h1>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-5">
         {" "}
         <Link href="#" className="flex items-center justify-between px-1 py-2">
           <span className="body-02-medium">Newsletter</span>

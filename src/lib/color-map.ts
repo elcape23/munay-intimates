@@ -6,4 +6,10 @@ export const COLOR_MAP: Record<string, string> = {
   Azul: "#0000ff",
   Celeste: "#aeb3b9",
   Beige: "#e0d5ca",
+  Rosa: "#F8D9D2",
+  Nude: "#BFA9A4",
+  Avellana: "#C6A597",
+  GrisHumo: "#74818C",
+  Lila: "#B58596",
+  Marfil: "#E7D5C7",
 };
