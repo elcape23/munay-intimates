@@ -30,6 +30,7 @@ export default function AccountPage() {
   const [customer, setCustomer] = useState<any>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
 
   useEffect(() => {
     if (session?.user?.shopifyToken) {
@@ -60,6 +61,14 @@ export default function AccountPage() {
 
   const openLogoutConfirm = () => setShowLogoutConfirm(true);
   const closeLogoutConfirm = () => setShowLogoutConfirm(false);
+
+  const handleEditClick = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    setLoadingEdit(true);
+    router.push("/account/edit");
+  };
 
   // 2) Si no hay session, mostramos botones de login
   if (!session) {
@@ -104,6 +113,17 @@ export default function AccountPage() {
     );
   }
 
+  if (loadingEdit) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen space-y-4">
+        <LoadingSpinner />
+        <p className="body-02-regular text-text-primary-default">
+          Cargando perfil...
+        </p>
+      </div>
+    );
+  }
+
   // 5) Render final
   return (
     <div className="container mx-auto px-6 pt-[55px]  justify-between min-h-screen flex flex-col">
@@ -132,7 +152,8 @@ export default function AccountPage() {
               <div className="body-02-regular"> {customer.email}</div>
             </div>
           </div>
-          <Link href="/account/edit">
+          <Link href="/account/edit" onClick={handleEditClick}>
+            {" "}
             <EllipsisHorizontalIcon className="w-6 h-6" />
           </Link>
         </div>
