@@ -23,6 +23,16 @@ import { useRouter } from "next/navigation";
 
 const SEASONS = ["invierno", "verano", "otono", "primavera"];
 
+const formatSizeLabel = (value: string) => {
+  const normalized = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  return normalized === "talla unica" || normalized === "talle unico"
+    ? "TU"
+    : value;
+};
+
 type ProductGridProps = {
   title: string;
   products: ShopifyProduct[];
@@ -169,7 +179,21 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       }
       const modalResult: Record<string, string[]> = {};
       for (const groupName in modal) {
-        modalResult[groupName] = Array.from(modal[groupName]).sort();
+        const values = Array.from(modal[groupName]);
+        if (groupName === "Talle") {
+          values.sort((a, b) =>
+            a
+              .split(":")[1]
+              .trim()
+              .localeCompare(b.split(":")[1].trim(), undefined, {
+                numeric: true,
+                sensitivity: "base",
+              })
+          );
+        } else {
+          values.sort();
+        }
+        modalResult[groupName] = values;
       }
 
       const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
@@ -408,21 +432,22 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                     <div className="flex flex-wrap gap-2">
                       {values.map((filterString) => {
                         const value = filterString.split(":")[1].trim();
+                        const label = formatSizeLabel(value);
                         const active = activeFilters.includes(filterString);
                         return (
                           <Button
                             key={filterString}
                             onClick={() => handleFilterToggle(filterString)}
-                            aria-label={value}
+                            aria-label={label}
                             className={`h-6 w-6 flex items-start body-02-regular ${
                               active
                                 ? "text-text-primary-default border-b-[2px] border-border-primary-default"
-                                : "body-02-medium text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
+                                : "body-02-medium text-text-secondary-default border-b-[2px] border-transparent"
                             }`}
                             variant="ghost"
                             size="text"
                           >
-                            {value}
+                            {label}{" "}
                           </Button>
                         );
                       })}
