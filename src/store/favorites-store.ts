@@ -6,8 +6,7 @@ import {
   subscribeWithSelector,
   createJSONStorage,
 } from "zustand/middleware";
-import { getProductsByHandles, ShopifyProduct } from "@/lib/shopify";
-
+import { getProductByHandle, ShopifyProduct } from "@/lib/shopify";
 interface FavoritesState {
   favoriteHandles: string[];
   favoriteProducts: ShopifyProduct[];
@@ -76,7 +75,26 @@ export const useFavoritesStore = create(
           const requestId = get()._fetchId + 1;
           set({ isLoading: true, _fetchId: requestId });
           try {
-            const products = await getProductsByHandles(handlesSnapshot);
+            const results = await Promise.all(
+              handlesSnapshot.map(async (handle) => ({
+                handle,
+                product: await getProductByHandle(handle),
+              }))
+            );
+
+            const products = results
+              .filter((r): r is { handle: string; product: ShopifyProduct } =>
+                Boolean(r.product)
+              )
+              .map((r) => r.product);
+
+            const missingHandles = results
+              .filter((r) => !r.product)
+              .map((r) => r.handle);
+
+            if (missingHandles.length > 0) {
+              console.log("Handles sin datos:", missingHandles);
+            }
             // Solo actualizamos si esta sigue siendo la petición más reciente
             if (get()._fetchId === requestId) {
               set({ favoriteProducts: products, isLoading: false });
