@@ -22,6 +22,7 @@ import { slugify } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 const SEASONS = ["invierno", "verano", "otono", "primavera"];
+const SIZE_ORDER = ["s", "m", "l", "xl", "tu"];
 
 const formatSizeLabel = (value: string) => {
   const normalized = value
@@ -181,15 +182,21 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       for (const groupName in modal) {
         const values = Array.from(modal[groupName]);
         if (groupName === "Talle") {
-          values.sort((a, b) =>
-            a
-              .split(":")[1]
-              .trim()
-              .localeCompare(b.split(":")[1].trim(), undefined, {
-                numeric: true,
-                sensitivity: "base",
-              })
-          );
+          values.sort((a, b) => {
+            const labelA = a.split(":")[1].trim();
+            const labelB = b.split(":")[1].trim();
+            const normA = labelA.toLowerCase();
+            const normB = labelB.toLowerCase();
+            const indexA = SIZE_ORDER.indexOf(normA);
+            const indexB = SIZE_ORDER.indexOf(normB);
+            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+            return normA.localeCompare(normB, undefined, {
+              numeric: true,
+              sensitivity: "base",
+            });
+          });
         } else {
           values.sort();
         }
