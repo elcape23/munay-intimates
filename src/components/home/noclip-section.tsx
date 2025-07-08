@@ -39,7 +39,8 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
       ([entry]) => {
         if (entry.isIntersecting) {
           setInView(true);
-          observer.disconnect();
+          const c = containerRef.current;
+          if (c) c.scrollTo({ left: 0, behavior: "auto" });
         }
       },
       { threshold: 0.1 }
