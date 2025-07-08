@@ -436,29 +436,52 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                       })}
                     </div>
                   ) : groupName === "Talle" ? (
-                    <div className="flex flex-wrap gap-2">
-                      {values.map((filterString) => {
-                        const value = filterString.split(":")[1].trim();
-                        const label = formatSizeLabel(value);
-                        const active = activeFilters.includes(filterString);
-                        return (
-                          <Button
-                            key={filterString}
-                            onClick={() => handleFilterToggle(filterString)}
-                            aria-label={label}
-                            className={`h-6 w-6 flex items-start body-02-regular ${
-                              active
-                                ? "text-text-primary-default border-b-[2px] border-border-primary-default"
-                                : "body-02-medium text-text-secondary-default border-b-[2px] border-transparent"
-                            }`}
-                            variant="ghost"
-                            size="text"
-                          >
-                            {label}{" "}
-                          </Button>
-                        );
-                      })}
-                    </div>
+                    (() => {
+                      const numericValues = values.filter((f) => {
+                        const v = f.split(":")[1].trim();
+                        return /^\d+$/.test(v);
+                      });
+                      const letterValues = values.filter((f) => {
+                        const v = f.split(":")[1].trim();
+                        return !/^\d+$/.test(v);
+                      });
+                      const renderButtons = (vals: string[]) =>
+                        vals.map((filterString) => {
+                          const value = filterString.split(":")[1].trim();
+                          const label = formatSizeLabel(value);
+                          const active = activeFilters.includes(filterString);
+                          return (
+                            <Button
+                              key={filterString}
+                              onClick={() => handleFilterToggle(filterString)}
+                              aria-label={label}
+                              className={`h-6 w-6 flex items-start body-02-regular ${
+                                active
+                                  ? "text-text-primary-default border-b-[2px] border-border-primary-default"
+                                  : "body-02-medium text-text-secondary-default border-b-[2px] border-transparent"
+                              }`}
+                              variant="ghost"
+                              size="text"
+                            >
+                              {label}{" "}
+                            </Button>
+                          );
+                        });
+                      return (
+                        <div className="flex flex-col gap-2">
+                          {numericValues.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {renderButtons(numericValues)}
+                            </div>
+                          )}
+                          {letterValues.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {renderButtons(letterValues)}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()
                   ) : groupName === "Estación" && showSeasonFilters ? (
                     <Select
                       value={activeSeason || "all"}
