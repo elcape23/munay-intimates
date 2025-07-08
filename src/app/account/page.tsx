@@ -28,21 +28,25 @@ export default function AccountPage() {
   const session = rawSession as any;
   const router = useRouter();
   const [customer, setCustomer] = useState<any>(null);
-  const [loadError, setLoadError] = useState(false);
+  const [customerError, setCustomerError] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
 
   useEffect(() => {
-    if (!session?.user?.shopifyToken) {
-      setLoadError(true);
-      return;
-    }
+    if (!session?.user?.shopifyToken) return;
+
     getCustomer(session.user.shopifyToken)
-      .then(setCustomer)
+      .then((c) => {
+        if (c) {
+          setCustomer(c);
+        } else {
+          setCustomerError(true);
+        }
+      })
       .catch((err) => {
         console.error("Error fetching customer:", err);
-        setLoadError(true);
+        setCustomerError(true);
       });
   }, [session?.user?.shopifyToken]);
 
@@ -104,7 +108,7 @@ export default function AccountPage() {
   }
 
   // 4) Spinner mientras cargan los datos del customer
-  if (customer === null) {
+  if (customer === null && !customerError) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="text-center p-12">Cargando datos del cliente…</div>
@@ -112,13 +116,16 @@ export default function AccountPage() {
     );
   }
 
-  if (loadError) {
+  if (customerError) {
     return (
       <div className="flex flex-col justify-center items-center h-screen space-y-4">
-        <p className="text-center p-12">
+        <p className="body-02-regular text-text-primary-default">
           No se pudieron cargar los datos del cliente.
         </p>
-        <Button onClick={() => router.push("/login")} variant="secondary">
+        <Button
+          onClick={() => signOut({ callbackUrl: "/account/login" })}
+          variant="secondary"
+        >
           Volver a iniciar sesión
         </Button>
       </div>
