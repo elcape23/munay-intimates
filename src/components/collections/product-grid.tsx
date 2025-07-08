@@ -374,7 +374,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
               Object.entries(modalFilterGroups).map(([groupName, values]) => (
                 <div
                   key={groupName}
-                  className="space-y-2 flex flex-row justify-between items-center"
+                  className="space-y-2 flex flex-row justify-between items-center gap-20"
                 >
                   <h3 className="body-02-regular uppercase text-text-primary-default">
                     {groupName}

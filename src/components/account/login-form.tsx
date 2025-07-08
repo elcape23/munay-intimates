@@ -38,6 +38,8 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         });
         if (result?.error) {
           setError(result.error);
+        } else {
+          router.push("/account");
         }
       } else {
         setError(authError || "El email o la contraseña son incorrectos.");

@@ -24,6 +24,8 @@ interface FavoritesState {
   clearFavorites: () => void;
 }
 
+type FavoritesStorage = Pick<FavoritesState, "favoriteHandles">;
+
 export const useFavoritesStore = create(
   subscribeWithSelector(
     persist<FavoritesState>(
@@ -90,8 +92,12 @@ export const useFavoritesStore = create(
       {
         name: "favorites-storage",
         storage: createJSONStorage(() => localStorage),
-        // ¡CORRECCIÓN CLAVE! Hemos eliminado la línea 'partialize' que causaba el error de TypeScript.
-        // Ahora se guardará todo el estado, lo cual es más simple y seguro para este caso.
+        // Solo persistimos las handles para evitar errores de serialización y
+        // mantener el almacenamiento ligero.
+        partialize: (state) =>
+          ({
+            favoriteHandles: state.favoriteHandles,
+          } as unknown as FavoritesState),
         onRehydrateStorage: (store) => {
           return () => {
             store.setHasHydrated(true);
