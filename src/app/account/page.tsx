@@ -27,35 +27,23 @@ export default function AccountPage() {
   const { data: rawSession } = useSession();
   const session = rawSession as any;
   const router = useRouter();
-  const [customer, setCustomer] = useState<any | null>(null);
-  const [customerLoading, setCustomerLoading] = useState(true);
-  const [customerError, setCustomerError] = useState<string | null>(null);
+  const [customer, setCustomer] = useState<any>(null);
+  const [loadError, setLoadError] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
 
   useEffect(() => {
-    async function fetchCustomer() {
-      if (!session?.user?.shopifyToken) return;
-      setCustomerLoading(true);
-      setCustomerError(null);
-      try {
-        const data = await getCustomer(session.user.shopifyToken);
-        if (data) {
-          setCustomer(data);
-        } else {
-          setCustomer(null);
-          setCustomerError("No se pudo cargar la información del cliente.");
-        }
-      } catch (e) {
-        console.error("Error fetching customer:", e);
-        setCustomer(null);
-        setCustomerError("No se pudo cargar la información del cliente.");
-      } finally {
-        setCustomerLoading(false);
-      }
+    if (!session?.user?.shopifyToken) {
+      setLoadError(true);
+      return;
     }
-    fetchCustomer();
+    getCustomer(session.user.shopifyToken)
+      .then(setCustomer)
+      .catch((err) => {
+        console.error("Error fetching customer:", err);
+        setLoadError(true);
+      });
   }, [session?.user?.shopifyToken]);
 
   const handleGoogle = (e: React.MouseEvent) => {
@@ -116,26 +104,22 @@ export default function AccountPage() {
   }
 
   // 4) Spinner mientras cargan los datos del customer
-  if (customerLoading) {
+  if (customer === null) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-4">
-        <LoadingSpinner />
-        <p className="body-02-regular text-text-primary-default">
-          Cargando datos del cliente…
-        </p>
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-center p-12">Cargando datos del cliente…</div>
       </div>
     );
   }
 
-  // 4b) Error al cargar el customer
-  if (!customer) {
+  if (loadError) {
     return (
       <div className="flex flex-col justify-center items-center h-screen space-y-4">
-        <p className="body-02-regular text-text-primary-default">
-          {customerError || "No se pudo cargar la información del cliente."}
+        <p className="text-center p-12">
+          No se pudieron cargar los datos del cliente.
         </p>
-        <Button onClick={() => router.refresh()} variant="outline" size="md">
-          Reintentar
+        <Button onClick={() => router.push("/login")} variant="secondary">
+          Volver a iniciar sesión
         </Button>
       </div>
     );
