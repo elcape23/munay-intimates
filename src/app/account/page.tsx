@@ -123,7 +123,7 @@ export default function AccountPage() {
           No se pudieron cargar los datos del cliente.
         </p>
         <Button
-          onClick={() => signOut({ callbackUrl: "/account/login" })}
+          onClick={() => signOut({ callbackUrl: "/account" })}
           variant="secondary"
         >
           Volver a iniciar sesión

@@ -119,6 +119,9 @@ export const useFavoritesStore = create(
         onRehydrateStorage: (store) => {
           return () => {
             store.setHasHydrated(true);
+            // Fetch products immediately after the state is rehydrated so
+            // the favorites page has data on refresh.
+            store.fetchFavoriteProducts();
           };
         },
       }
