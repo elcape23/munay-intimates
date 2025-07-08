@@ -1208,7 +1208,12 @@ export async function getCollectionsBySeason(
 
   // collections are tagged with the "season" metafield under the
   // `custom` namespace so the query must match that key
-  const normalizedSeason = slugify(season);
+  let normalizedSeason = slugify(season);
+  // Shopify almacena la estación "otoño" con tilde, por lo que la consulta
+  // debe respetar ese valor exacto
+  if (normalizedSeason === "otono") {
+    normalizedSeason = "oto\u00f1o"; // "otoño"
+  }
   const seasonQuery = `metafield:custom.season:'${normalizedSeason}'`;
   const response = await shopifyFetch<GetCollectionsResponse>({
     query,
@@ -1306,7 +1311,11 @@ export async function getProductsBySeason(
 
   // collections are tagged with the "season" metafield under the
   // `custom` namespace. Build the query accordingly.
-  const normalizedSeason = slugify(season);
+  let normalizedSeason = slugify(season);
+  // "otoño" se almacena con tilde en Shopify, ajustar en la consulta
+  if (normalizedSeason === "otono") {
+    normalizedSeason = "oto\u00f1o";
+  }
   const seasonQuery = `metafield:custom.season:'${normalizedSeason}'`;
   const response = await shopifyFetch<{
     products: { edges: { node: ShopifyProduct }[] };
