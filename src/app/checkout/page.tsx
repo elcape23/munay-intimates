@@ -37,7 +37,11 @@ export default function CheckoutOptionsPage() {
   const handleContinue = () => {
     if (!selectedMethod) return;
     if (selectedMethod === "Tarjeta de crédito") {
-      router.push(cart.checkoutUrl);
+      // Al tratar de navegar con `router.push` a una URL externa, Next.js
+      // intenta resolverla como una ruta interna generando un 404. Para
+      // redirigir correctamente al checkout de Shopify debemos usar
+      // `window.location`.
+      window.location.href = cart.checkoutUrl;
     } else {
       alert(
         `Seleccionaste ${selectedMethod}. Nos pondremos en contacto para finalizar tu compra.`
@@ -46,7 +50,8 @@ export default function CheckoutOptionsPage() {
   };
 
   return (
-    <section className="mt-[55px] mx-6 min-h-screen flex flex-col justify-between">
+    <section className="pt-[55px] mx-6 min-h-[calc(100vh-55px)] flex flex-col justify-between">
+      {" "}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <Button onClick={() => router.back()} variant="ghost" size="icon">
@@ -63,7 +68,8 @@ export default function CheckoutOptionsPage() {
               size="lg"
               className={cn(
                 "body-02-semibold flex flex-col items-start text-left space-y-1",
-                selectedMethod === "Efectivo" && "!border-2"
+                selectedMethod === "Efectivo" &&
+                  "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default"
               )}
             >
               <CurrencyDollarIcon className="h-6 w-6" />
