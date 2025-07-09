@@ -7,6 +7,23 @@ import {
   createJSONStorage,
 } from "zustand/middleware";
 import { getProductByHandle, ShopifyProduct } from "@/lib/shopify";
+
+// Devuelve la clave de almacenamiento de favoritos para el usuario actual.
+function getFavoritesKey() {
+  if (typeof window === "undefined") return "favorites-storage-guest";
+  try {
+    const authRaw = localStorage.getItem("customer-auth-storage");
+    if (authRaw) {
+      const parsed = JSON.parse(authRaw);
+      const id = parsed?.state?.customer?.id;
+      if (id) return `favorites-storage-${id}`;
+    }
+  } catch {
+    // Ignoramos errores de parseo y usamos la clave por defecto
+  }
+  return "favorites-storage-guest";
+}
+
 interface FavoritesState {
   favoriteHandles: string[];
   favoriteProducts: ShopifyProduct[];
@@ -55,7 +72,9 @@ export const useFavoritesStore = create(
         clearFavorites: () => {
           set({ favoriteHandles: [], favoriteProducts: [] });
           try {
-            localStorage.removeItem("favorites-storage");
+            Object.keys(localStorage)
+              .filter((k) => k.startsWith("favorites-storage"))
+              .forEach((k) => localStorage.removeItem(k));
           } catch (error) {
             console.error(
               "No se pudo limpiar favoritos del localStorage",
@@ -109,8 +128,11 @@ export const useFavoritesStore = create(
       }),
       {
         name: "favorites-storage",
-        storage: createJSONStorage(() => localStorage),
-        // Solo persistimos las handles para evitar errores de serialización y
+        storage: createJSONStorage(() => ({
+          getItem: () => localStorage.getItem(getFavoritesKey()),
+          setItem: (_, value) => localStorage.setItem(getFavoritesKey(), value),
+          removeItem: () => localStorage.removeItem(getFavoritesKey()),
+        })), // Solo persistimos las handles para evitar errores de serialización y
         // mantener el almacenamiento ligero.
         partialize: (state) =>
           ({
