@@ -41,66 +41,71 @@ export default function AccountEditPage() {
   const displayEmail = session?.user?.email || "";
   const maskedPassword = displayEmail ? "********" : "";
   return (
-    <div className="container mx-auto px-6 pt-[55px] space-y-6">
-      <div className="flex flex-row items-center justify-between">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
-          <ChevronLeftIcon className="w-6 h-6" />
+    <div className="container mx-auto px-6 pt-[55px] space-y-6 min-h-screen flex flex-col justify-between">
+      {" "}
+      <div>
+        <div className="flex flex-row items-center justify-between">
+          <Button onClick={() => router.back()} variant="ghost" size="icon">
+            <ChevronLeftIcon className="w-6 h-6" />
+          </Button>
+          <h1 className="body-01-medium uppercase justify-between">
+            Editar Perfil
+          </h1>
+        </div>
+        <div className="flex flex-col pt-6">
+          <Link
+            href="/account/edit/name"
+            className="flex items-center justify-between px-1 py-2"
+          >
+            <div className="flex flex-col">
+              <span className="body-02-regular">Nombre</span>
+              {displayName && (
+                <span className="body-03-regular text-text-secondary-default">
+                  {displayName}
+                </span>
+              )}
+            </div>
+            <ChevronRightIcon className="w-5 h-5" />
+          </Link>
+          <Link
+            href="/account/edit/password"
+            className="flex items-center justify-between px-1 py-2"
+          >
+            <div className="flex flex-col">
+              <span className="body-02-regular">Contraseña</span>
+              {maskedPassword && (
+                <span className="body-03-regular text-text-secondary-default">
+                  {maskedPassword}
+                </span>
+              )}
+            </div>
+            <ChevronRightIcon className="w-5 h-5" />
+          </Link>
+        </div>
+      </div>
+      <div className="pb-10 space-y-6">
+        <Button
+          onClick={openLogoutConfirm}
+          variant="outline"
+          size="md"
+          className="w-full"
+          disabled={isSigningOut}
+        >
+          <ArrowLeftStartOnRectangleIcon className="w-6 h-6 mr-2" />
+          {isSigningOut ? "Saliendo..." : "Salir"}
         </Button>
-        <h1 className="body-01-medium uppercase justify-between">
-          Editar Perfil
-        </h1>
+        <p className="body-03-regular text-text-secondary-default">
+          En MUNAY nos tomamos muy serio tu privacidad y estamos comprometidos
+          con la protección de tu información personal. Saber mas sobre cuánto
+          nos interesa y cómo usamos tu información en Política & Privacidad.
+        </p>
+        <ConfirmModal
+          open={showLogoutConfirm}
+          onCancel={closeLogoutConfirm}
+          onConfirm={handleSignOut}
+          message="¿Éstas seguro que quiere salir de tu sesión?"
+        />
       </div>
-      <div className="flex flex-col">
-        <Link
-          href="/account/edit/name"
-          className="flex items-center justify-between px-1 py-2"
-        >
-          <div className="flex flex-col">
-            <span className="body-02-regular">Nombre</span>
-            {displayName && (
-              <span className="body-03-regular text-text-secondary-default">
-                {displayName}
-              </span>
-            )}
-          </div>
-          <ChevronRightIcon className="w-5 h-5" />
-        </Link>
-        <Link
-          href="/account/edit/password"
-          className="flex items-center justify-between px-1 py-2"
-        >
-          <div className="flex flex-col">
-            <span className="body-02-regular">Contraseña</span>
-            {maskedPassword && (
-              <span className="body-03-regular text-text-secondary-default">
-                {maskedPassword}
-              </span>
-            )}
-          </div>
-          <ChevronRightIcon className="w-5 h-5" />
-        </Link>
-      </div>
-      <Button
-        onClick={openLogoutConfirm}
-        variant="outline"
-        size="md"
-        className="w-full"
-        disabled={isSigningOut}
-      >
-        <ArrowLeftStartOnRectangleIcon className="w-6 h-6 mr-2" />
-        {isSigningOut ? "Saliendo..." : "Salir"}
-      </Button>
-      <p className="body-03-regular text-text-secondary-default">
-        En MUNAY nos tomamos muy serio tu privacidad y estamos comprometidos con
-        la protección de tu información personal. Saber mas sobre cuánto nos
-        interesa y cómo usamos tu información en Política & Privacidad.
-      </p>
-      <ConfirmModal
-        open={showLogoutConfirm}
-        onCancel={closeLogoutConfirm}
-        onConfirm={handleSignOut}
-        message="¿Éstas seguro que quiere salir de tu sesión?"
-      />
     </div>
   );
 }

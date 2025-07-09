@@ -24,7 +24,7 @@ import Image from "next/image";
 
 export default function AccountPage() {
   // rawSession lo casteamos a any para saltarnos el TS
-  const { data: rawSession } = useSession();
+  const { data: rawSession, status } = useSession();
   const session = rawSession as any;
   const router = useRouter();
   const [customer, setCustomer] = useState<any>(null);
@@ -79,8 +79,23 @@ export default function AccountPage() {
   ) => {
     e.preventDefault();
     setLoadingEdit(true);
-    router.push("/account/edit");
+    // Wait a moment so the loading state is visible before navigating
+    setTimeout(() => {
+      router.push("/account/edit");
+    }, 500);
   };
+
+  // 1) Mientras se valida la session
+  if (status === "loading") {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen space-y-4">
+        <LoadingSpinner />
+        <p className="body-02-regular text-text-primary-default">
+          Cargando sesión...
+        </p>
+      </div>
+    );
+  }
 
   // 2) Si no hay session, mostramos botones de login
   if (!session) {

@@ -38,7 +38,7 @@ export default function EditNamePage() {
       });
 
       if (result.customer) {
-        update?.({
+        await update?.({
           ...session,
           user: {
             ...session.user,
