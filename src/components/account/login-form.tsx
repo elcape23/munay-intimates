@@ -39,6 +39,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         if (result?.error) {
           setError(result.error);
         } else {
+          onLoginSuccess?.();
           router.push("/account");
         }
       } else {

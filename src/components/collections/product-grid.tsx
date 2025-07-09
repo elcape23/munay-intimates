@@ -68,15 +68,33 @@ export function ProductGrid({ title, products }: ProductGridProps) {
       const seasonSet: Set<string> = showSeasonFilters
         ? new Set(SEASONS)
         : new Set();
+      const isWinterSummerTag = (tag: string) => {
+        const [group, value] = tag.split(":").map((p) =>
+          p
+            .trim()
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+        );
+        if (!group || !value) return false;
+        if (group === "subcategoria" || group === "subcategory") {
+          return value === "invierno" || value === "verano";
+        }
+        return false;
+      };
       products.forEach((product) => {
         // 1. Procesa las etiquetas (tags) para los filtros principales
         product.tags?.forEach((tag) => {
           const parts = tag.split(":");
           if (
             parts.length === 2 &&
-            (parts[0].trim().toLowerCase() === "subcategoría" ||
-              parts[0].trim().toLowerCase() === "subcategoria")
+            ["subcategoría", "subcategoria", "subcategory"].includes(
+              parts[0].trim().toLowerCase()
+            )
           ) {
+            if (!showSeasonFilters && isWinterSummerTag(tag)) {
+              return;
+            }
             const groupName = parts[0].trim();
             if (!primary[groupName]) {
               primary[groupName] = new Set();
