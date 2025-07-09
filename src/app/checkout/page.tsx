@@ -37,11 +37,10 @@ export default function CheckoutOptionsPage() {
   const handleContinue = () => {
     if (!selectedMethod) return;
     if (selectedMethod === "Tarjeta de crédito") {
-      // Al tratar de navegar con `router.push` a una URL externa, Next.js
-      // intenta resolverla como una ruta interna generando un 404. Para
-      // redirigir correctamente al checkout de Shopify debemos usar
-      // `window.location`.
-      window.location.href = cart.checkoutUrl;
+      // `router.push` interpreta URLs externas como rutas internas, lo que
+      // provoca un 404. Para redirigir correctamente al checkout de Shopify
+      // debemos usar `window.location`.
+      window.location.assign(cart.checkoutUrl);
     } else {
       alert(
         `Seleccionaste ${selectedMethod}. Nos pondremos en contacto para finalizar tu compra.`
