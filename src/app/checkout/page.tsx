@@ -11,7 +11,6 @@ import {
   BuildingLibraryIcon,
   CreditCardIcon,
 } from "@heroicons/react/24/outline";
-import { Footer } from "@/components/common/footer";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
@@ -40,7 +39,13 @@ export default function CheckoutOptionsPage() {
       // `router.push` interpreta URLs externas como rutas internas, lo que
       // provoca un 404. Para redirigir correctamente al checkout de Shopify
       // debemos usar `window.location`.
-      window.location.assign(cart.checkoutUrl);
+      // En ciertos entornos `checkoutUrl` puede venir como una ruta relativa,
+      // por lo que nos aseguramos de convertirla a un enlace absoluto usando
+      // el dominio de la tienda.
+      const url = cart.checkoutUrl.startsWith("http")
+        ? cart.checkoutUrl
+        : `https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN}${cart.checkoutUrl}`;
+      window.location.href = url;
     } else {
       alert(
         `Seleccionaste ${selectedMethod}. Nos pondremos en contacto para finalizar tu compra.`

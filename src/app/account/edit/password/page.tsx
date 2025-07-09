@@ -114,7 +114,7 @@ export default function EditPasswordPage() {
         <div className="space-y-2 relative">
           <Input
             type={showCurrentPassword ? "text" : "password"}
-            placeholder="Contrase\u00f1a actual"
+            placeholder="Contraseña actual"
             value={currentPassword}
             onChange={(e) => {
               setCurrentPassword(e.target.value);
@@ -172,7 +172,7 @@ export default function EditPasswordPage() {
         <div className="space-y-2 relative">
           <Input
             type={showPassword ? "text" : "password"}
-            placeholder="Nueva contrase\u00f1a"
+            placeholder="Nueva contraseña"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -225,7 +225,7 @@ export default function EditPasswordPage() {
         <div className="space-y-2 relative">
           <Input
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirmar contrase\u00f1a"
+            placeholder="Confirmar contraseña"
             value={confirm}
             onChange={(e) => {
               setConfirm(e.target.value);
