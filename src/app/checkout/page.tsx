@@ -28,13 +28,21 @@ export default function CheckoutOptionsPage() {
 
   const handleOther = (method: string) => {
     setSelectedMethod(method);
-    alert(
-      `Seleccionaste ${method}. Nos pondremos en contacto para finalizar tu compra.`
-    );
   };
 
   const handleCard = () => {
     setSelectedMethod("Tarjeta de crédito");
+  };
+
+  const handleContinue = () => {
+    if (!selectedMethod) return;
+    if (selectedMethod === "Tarjeta de crédito") {
+      router.push(cart.checkoutUrl);
+    } else {
+      alert(
+        `Seleccionaste ${selectedMethod}. Nos pondremos en contacto para finalizar tu compra.`
+      );
+    }
   };
 
   return (
@@ -46,50 +54,58 @@ export default function CheckoutOptionsPage() {
           </Button>
           <h1 className="body-01-medium">MÉTODO DE PAGO</h1>
         </div>
-        <p className="body-01-regular">Seleccionar método de pago</p>
-        <div className="grid grid-cols-2 flex-rows-2 gap-4">
-          <Button
-            onClick={() => handleOther("Efectivo")}
-            variant="outline"
-            size="lg"
-            className={cn(
-              "body-02-semibold flex flex-col items-start text-left space-y-1",
-              selectedMethod === "Efectivo" && "!border-2"
-            )}
-          >
-            <CurrencyDollarIcon className="h-6 w-6" />
-            Efectivo
-          </Button>
-          <Button
-            onClick={() => handleOther("Transferencia")}
-            variant="outline"
-            size="lg"
-            className={cn(
-              "body-02-semibold flex flex-col items-start text-left space-y-1",
-              selectedMethod === "Transferencia" && "!border-2"
-            )}
-          >
-            <BuildingLibraryIcon className="h-6 w-6" />
-            Transferencia
-          </Button>
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            onClick={handleCard}
-            className={cn(
-              "body-02-semibold flex flex-col items-start text-left space-y-1",
-              selectedMethod === "Tarjeta de crédito" && "!border-2"
-            )}
-          >
-            <a href={cart.checkoutUrl}>
+        <div className="pt-6 space-y-4">
+          <p className="body-01-regular">Seleccionar método de pago</p>
+          <div className="grid grid-cols-2 flex-rows-2 gap-4">
+            <Button
+              onClick={() => handleOther("Efectivo")}
+              variant="outline"
+              size="lg"
+              className={cn(
+                "body-02-semibold flex flex-col items-start text-left space-y-1",
+                selectedMethod === "Efectivo" && "!border-2"
+              )}
+            >
+              <CurrencyDollarIcon className="h-6 w-6" />
+              Efectivo
+            </Button>
+            <Button
+              onClick={() => handleOther("Transferencia")}
+              variant="outline"
+              size="lg"
+              className={cn(
+                "body-02-semibold flex flex-col items-start text-left space-y-1",
+                selectedMethod === "Transferencia" && "!border-2"
+              )}
+            >
+              <BuildingLibraryIcon className="h-6 w-6" />
+              Transferencia
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleCard}
+              className={cn(
+                "body-02-semibold flex flex-col items-start text-left space-y-1",
+                selectedMethod === "Tarjeta de crédito" && "!border-2"
+              )}
+            >
               <CreditCardIcon className="h-6 w-6" />
               Tarjeta de crédito
-            </a>
-          </Button>
+            </Button>
+          </div>
         </div>
       </div>
-      <Footer />
+      <div className="mt-6">
+        <Button
+          onClick={handleContinue}
+          size="lg"
+          disabled={!selectedMethod}
+          className="w-full"
+        >
+          Continuar
+        </Button>
+      </div>
     </section>
   );
 }
