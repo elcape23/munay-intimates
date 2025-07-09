@@ -69,7 +69,7 @@ export default function CheckoutOptionsPage() {
               className={cn(
                 "body-02-semibold flex flex-col items-start text-left space-y-1",
                 selectedMethod === "Efectivo" &&
-                  "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default"
+                  "ring-[1px] ring-offset-[0px] ring-border-primary-default"
               )}
             >
               <CurrencyDollarIcon className="h-6 w-6" />
@@ -81,7 +81,8 @@ export default function CheckoutOptionsPage() {
               size="lg"
               className={cn(
                 "body-02-semibold flex flex-col items-start text-left space-y-1",
-                selectedMethod === "Transferencia" && "!border-2"
+                selectedMethod === "Transferencia" &&
+                  "ring-[1px] ring-offset-[0px] ring-border-primary-default"
               )}
             >
               <BuildingLibraryIcon className="h-6 w-6" />
@@ -93,7 +94,8 @@ export default function CheckoutOptionsPage() {
               onClick={handleCard}
               className={cn(
                 "body-02-semibold flex flex-col items-start text-left space-y-1",
-                selectedMethod === "Tarjeta de crédito" && "!border-2"
+                selectedMethod === "Tarjeta de crédito" &&
+                  "ring-[1px] ring-offset-[0px] ring-border-primary-default"
               )}
             >
               <CreditCardIcon className="h-6 w-6" />
