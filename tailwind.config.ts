@@ -15,6 +15,14 @@ const config: Config = {
       // Usamos el operador "spread" (...) para añadir todas las propiedades
       // de nuestro objeto typography al tema de Tailwind
       ...typography,
+      keyframes: {
+        shimmer: {
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        shimmer: "shimmer 1.5s infinite",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

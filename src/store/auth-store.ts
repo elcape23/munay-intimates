@@ -56,6 +56,9 @@ export const useAuthStore = create(
               isLoggedIn: true, // Marcamos como logueado inmediatamente
               error: null,
             });
+            // Al iniciar sesión limpiamos favoritos en localStorage para
+            // evitar que se mezclen con los de otra cuenta.
+            useFavoritesStore.getState().clearFavorites();
             console.log("customerUserErrors:", response.customerUserErrors);
             // Intentamos obtener los datos del cliente en segundo plano.
             // Si esto falla, checkAuthStatus lo manejará sin bloquear el login.
