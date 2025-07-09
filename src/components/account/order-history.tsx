@@ -75,16 +75,16 @@ export function OrderHistory({
     <div className="space-y-6">
       {filteredOrders.map((order) => (
         <div key={order.id} className="">
-          <div className="flex justify-between items-start mb-4 border-b pb-3">
+          <div className="flex justify-between items-start mb-4 pb-3">
             <div className="flex flex-row justify-between w-full">
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
-                  <AccordionTrigger>
+                  <AccordionTrigger className="-ml-4 body-01-semibold">
                     Pedido #{order.orderNumber}
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="flex flex-row justify-between">
-                      <p className="body-02-regular text-text-primary-default">
+                    <div className="flex flex-col justify-between space-y-2">
+                      <p className="body-01-regular text-text-primary-default">
                         Realizado el:{" "}
                         {new Date(order.processedAt).toLocaleDateString(
                           "es-AR",
@@ -95,16 +95,7 @@ export function OrderHistory({
                           }
                         )}
                       </p>
-                      <p className="body-02-semibold">
-                        {new Intl.NumberFormat("es-AR", {
-                          style: "currency",
-                          currency: order.totalPrice.currencyCode,
-                          maximumFractionDigits: 0,
-                        }).format(parseFloat(order.totalPrice.amount))}
-                      </p>
-                    </div>
-                    <div className="flex flex-row justify-between">
-                      <p className="body-02-regular text-text-primary-default">
+                      <p className="body-01-regular text-text-primary-default">
                         Llegada estimada:{" "}
                         {new Date(
                           new Date(order.processedAt).setDate(
@@ -115,6 +106,13 @@ export function OrderHistory({
                           month: "long",
                           day: "numeric",
                         })}
+                      </p>
+                      <p className="body-01-semibold pt-2">
+                        {new Intl.NumberFormat("es-AR", {
+                          style: "currency",
+                          currency: order.totalPrice.currencyCode,
+                          maximumFractionDigits: 0,
+                        }).format(parseFloat(order.totalPrice.amount))}
                       </p>
                     </div>
                     <div className="space-y-4">
@@ -136,7 +134,7 @@ export function OrderHistory({
                           return (
                             <div
                               key={item.variant.image.url + item.title}
-                              className="flex items-center gap-4"
+                              className="flex items-center gap-4 pt-6"
                             >
                               <div className="relative w-40 h-40 rounded-md overflow-hidden flex-shrink-0">
                                 <Image
