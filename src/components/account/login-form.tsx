@@ -111,7 +111,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
         </div>
         <p
           className={cn(
-            "text-red-600 text-sm text-center min-h-5",
+            "text-red-600 body-03-regular text-center min-h-5",
             !error && "invisible"
           )}
         >

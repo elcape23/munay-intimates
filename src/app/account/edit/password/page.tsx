@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { customerAccessTokenCreate } from "@/lib/shopify";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -12,9 +14,14 @@ import {
 } from "@heroicons/react/24/outline";
 export default function EditPasswordPage() {
   const router = useRouter();
+  const { data: rawSession } = useSession();
+  const session = rawSession as any;
   const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [currentPasswordMatch, setCurrentPasswordMatch] = useState<
+    boolean | null
+  >(null);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -23,12 +30,22 @@ export default function EditPasswordPage() {
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [confirmTouched, setConfirmTouched] = useState(false);
 
-  const isCurrentPasswordValid = currentPassword.length >= 8;
+  useEffect(() => {
+    setCurrentPasswordMatch(null);
+  }, [currentPassword]);
+
+  const isCurrentPasswordLengthValid = currentPassword.length >= 8;
+  const isCurrentPasswordValid =
+    isCurrentPasswordLengthValid && currentPasswordMatch === true;
   const currentPasswordStatus = !currentPasswordTouched
     ? null
     : currentPassword.length === 0
     ? "empty"
-    : isCurrentPasswordValid
+    : !isCurrentPasswordLengthValid
+    ? "invalid"
+    : currentPasswordMatch === null
+    ? null
+    : currentPasswordMatch
     ? "valid"
     : "invalid";
 
@@ -53,8 +70,26 @@ export default function EditPasswordPage() {
   const isFormValid =
     isCurrentPasswordValid && isPasswordValid && isConfirmValid;
 
+  const handleCurrentPasswordBlur = async () => {
+    if (!session?.user?.email || currentPassword.length < 8) {
+      return;
+    }
+    try {
+      const result = await customerAccessTokenCreate({
+        email: session.user.email,
+        password: currentPassword,
+      });
+      setCurrentPasswordMatch(!!result.customerAccessToken);
+    } catch (e) {
+      setCurrentPasswordMatch(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (currentPasswordMatch === null) {
+      handleCurrentPasswordBlur();
+    }
     if (!currentPassword || !password || !confirm) {
       setError("Todos los campos son obligatorios");
       return;
@@ -86,6 +121,7 @@ export default function EditPasswordPage() {
               if (error) setError(null);
             }}
             onFocus={() => setCurrentPasswordTouched(true)}
+            onBlur={handleCurrentPasswordBlur}
             className={cn(
               "pr-10",
               currentPasswordStatus === "valid"
@@ -125,10 +161,12 @@ export default function EditPasswordPage() {
           >
             {currentPasswordTouched &&
               (currentPasswordStatus === "valid"
-                ? "Bien hecho!"
+                ? "Coincide"
                 : currentPasswordStatus === "empty"
                 ? "Requerido"
-                : "M\u00ednimo 8 caracteres")}
+                : currentPassword.length < 8
+                ? "M\u00ednimo 8 caracteres"
+                : "No coincide")}
           </p>
         </div>
         <div className="space-y-2 relative">
@@ -239,7 +277,9 @@ export default function EditPasswordPage() {
                 : "No coincide")}
           </p>
         </div>
-        {error && <p className="text-sm text-text-danger-default">{error}</p>}
+        {error && (
+          <p className="body-03-regular text-text-danger-default">{error}</p>
+        )}
         <Button type="submit" className="w-full" disabled={!isFormValid}>
           {" "}
           Guardar

@@ -169,7 +169,7 @@ export default function CartPage() {
                 <span>Total</span>
                 <span>{formatPrice(total)}</span>
               </div>
-              <div className="flex justify-between text-sm text-gray-500 mt-2">
+              <div className="flex justify-between body-03-regular text-text-secondary-default mt-2">
                 <span>Envío</span>
                 <span>{formatPrice(shipping)}</span>
               </div>

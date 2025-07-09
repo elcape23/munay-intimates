@@ -63,7 +63,7 @@ export default function LoginPage() {
           </Button>
           <LoginForm onLoginSuccess={() => setLoadingAccount(true)} />
           <div className="text-center mt-6">
-            <p className="text-sm text-gray-600">
+            <p className="body-03-regular text-text-secondary-default">
               ¿Eres un cliente nuevo? Puedes crear una cuenta durante el proceso
               de compra.
             </p>

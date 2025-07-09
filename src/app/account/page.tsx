@@ -204,7 +204,7 @@ export default function AccountPage() {
           <div>
             <div className="lg:col-span-1">
               <div className="px-6 sticky top-28">
-                <div className="space-y-3 text-sm"></div>
+                <div className="space-y-3 body-03-regular"></div>
               </div>
             </div>
             <div className="grid grid-cols-2 grid-rows-2 items-start gap-4 my-6">

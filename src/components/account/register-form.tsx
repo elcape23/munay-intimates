@@ -378,7 +378,9 @@ export default function RegisterForm() {
             Quiero recibir novedades e información de Munay vía email
           </label>
         </div>
-        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+        {error && (
+          <p className="text-red-600 body-03-regular text-center">{error}</p>
+        )}
       </div>
       <Button
         type="submit"

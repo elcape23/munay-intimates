@@ -71,7 +71,7 @@ export default function EditEmailPage() {
           )}
           <p
             className={cn(
-              "text-sm min-h-5",
+              "body-03-regular min-h-5",
               !emailTouched && "invisible",
               emailTouched &&
                 (emailStatus === "valid"

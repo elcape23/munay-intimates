@@ -180,7 +180,7 @@ export function ProductForm({ product }: ProductFormProps) {
   if (!product.variants || product.variants.edges.length === 0) {
     return (
       <div className="space-y-6">
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center body-03-regular text-text-secondary-default">
           No hay variantes disponibles para este producto.
         </p>
       </div>

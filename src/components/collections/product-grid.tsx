@@ -640,7 +640,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                   <Button
                     key={tag}
                     onClick={() => handleFilterToggle(tag)}
-                    className={`px-3 py-1 border rounded-full text-sm font-medium transition-colors ${
+                    className={`px-3 py-1 border rounded-full body-03-medium transition-colors ${
                       activeFilters.includes(tag)
                         ? "text-text-primary-default border-border-primary-default"
                         : "text-text-secondary-default border-border-secondary-default hover:"

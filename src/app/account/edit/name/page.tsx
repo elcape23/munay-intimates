@@ -63,13 +63,13 @@ export default function EditNamePage() {
 
   return (
     <div className="container mx-auto px-6 pt-[55px] space-y-6">
-      <div className="flex items-center">
+      <div className="flex flex-row items-center w-full justify-between">
         <Button onClick={() => router.back()} variant="ghost" size="icon">
           <ChevronLeftIcon className="w-6 h-6" />
         </Button>
-        <h1 className="body-01-medium ml-2">Nombre</h1>
+        <h1 className="body-01-medium ml-2 uppercase">Nombre</h1>
       </div>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6 pb-6">
         <Input
           placeholder="Nombre"
           value={firstName}
@@ -80,10 +80,10 @@ export default function EditNamePage() {
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
         />
-        <Button type="submit" className="w-full" disabled={isSaving}>
-          {isSaving ? "Guardando..." : "Guardar"}
-        </Button>
       </form>
+      <Button type="submit" className="w-full" disabled={isSaving}>
+        {isSaving ? "Guardando..." : "Guardar"}
+      </Button>
     </div>
   );
 }
