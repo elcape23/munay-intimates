@@ -30,9 +30,35 @@ export default function EditPasswordPage() {
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [confirmTouched, setConfirmTouched] = useState(false);
 
+  const verifyCurrentPassword = async () => {
+    if (!session?.user?.email || currentPassword.length < 8) {
+      return;
+    }
+    try {
+      const result = await customerAccessTokenCreate({
+        email: session.user.email,
+        password: currentPassword,
+      });
+      setCurrentPasswordMatch(!!result.customerAccessToken);
+    } catch (e) {
+      setCurrentPasswordMatch(false);
+    }
+  };
+
   useEffect(() => {
-    setCurrentPasswordMatch(null);
-  }, [currentPassword]);
+    if (!currentPasswordTouched) {
+      setCurrentPasswordMatch(null);
+      return;
+    }
+    if (currentPassword.length < 8) {
+      setCurrentPasswordMatch(null);
+      return;
+    }
+    const timer = setTimeout(() => {
+      verifyCurrentPassword();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [currentPassword, currentPasswordTouched]);
 
   const isCurrentPasswordLengthValid = currentPassword.length >= 8;
   const isCurrentPasswordValid =
@@ -70,19 +96,10 @@ export default function EditPasswordPage() {
   const isFormValid =
     isCurrentPasswordValid && isPasswordValid && isConfirmValid;
 
-  const handleCurrentPasswordBlur = async () => {
-    if (!session?.user?.email || currentPassword.length < 8) {
-      return;
-    }
-    try {
-      const result = await customerAccessTokenCreate({
-        email: session.user.email,
-        password: currentPassword,
-      });
-      setCurrentPasswordMatch(!!result.customerAccessToken);
-    } catch (e) {
-      setCurrentPasswordMatch(false);
-    }
+  // legacy handler kept for compatibility with form submission
+  // delegates to verifyCurrentPassword
+  const handleCurrentPasswordBlur = () => {
+    verifyCurrentPassword();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -121,7 +138,6 @@ export default function EditPasswordPage() {
               if (error) setError(null);
             }}
             onFocus={() => setCurrentPasswordTouched(true)}
-            onBlur={handleCurrentPasswordBlur}
             className={cn(
               "pr-10",
               currentPasswordStatus === "valid"
