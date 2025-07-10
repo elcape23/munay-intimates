@@ -116,7 +116,6 @@ export default function EditPasswordPage() {
       return;
     }
     setError(null);
-    console.log("Guardar contraseña", { currentPassword, password });
   };
 
   return (

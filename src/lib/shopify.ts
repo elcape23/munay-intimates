@@ -670,11 +670,6 @@ export async function getSaleProducts(
     };
   });
 
-  console.log(
-    "itemsWithDiscount[0].colorVariants:",
-    itemsWithDiscount[0]?.colorVariants
-  );
-
   // 3) Filtra sólo ofertas y corta al top N
   const onlyOnSale = itemsWithDiscount.filter((p) => p.discount > 0);
   const topSale = onlyOnSale.slice(0, num);

@@ -36,13 +36,10 @@ export default function CheckoutOptionsPage() {
   const handleContinue = () => {
     if (!selectedMethod) return;
     if (selectedMethod === "Tarjeta de crédito") {
-      // Shopify en ocasiones devuelve `checkoutUrl` como una ruta relativa,
-      // por lo que añadimos el dominio de la tienda para obtener una URL
-      // completamente calificada.
-      const checkoutUrl = cart.checkoutUrl.startsWith("http")
-        ? cart.checkoutUrl
-        : `https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN}${cart.checkoutUrl}`;
-      window.location.assign(checkoutUrl);
+      // `router.push` trataría esta URL externa como una ruta interna de
+      // Next.js y provocaría un 404. Usamos `window.location.assign` para
+      // redirigir al checkout de Shopify correctamente.
+      window.location.assign(cart.checkoutUrl);
     } else {
       alert(
         `Seleccionaste ${selectedMethod}. Nos pondremos en contacto para finalizar tu compra.`

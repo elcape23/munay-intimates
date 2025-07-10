@@ -12,10 +12,7 @@ export default async function CollectionPage({
   params: { handle: string };
 }) {
   const { handle } = params;
-
-  console.log("⚙️ Collection handle recibido:", handle);
   const collection = await getCollectionByHandle(handle);
-  console.log("⚙️ Resultado getCollectionByHandle:", collection);
 
   if (!collection) {
     notFound();

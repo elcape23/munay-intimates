@@ -43,11 +43,9 @@ export const useAuthStore = create(
 
       // Acción para iniciar sesión (¡LÓGICA CORREGIDA Y FINAL!)
       login: async (input) => {
-        console.log("Login, input:", input);
         set({ isLoading: true, error: null });
         try {
           const response = await customerAccessTokenCreate(input);
-          console.log("customerAccessTokenCreate response:", response);
 
           // Si la respuesta contiene un token, el login fue un éxito.
           if (response.customerAccessToken) {
@@ -59,7 +57,6 @@ export const useAuthStore = create(
             // Al iniciar sesión limpiamos favoritos en localStorage para
             // evitar que se mezclen con los de otra cuenta.
             useFavoritesStore.getState().clearFavorites();
-            console.log("customerUserErrors:", response.customerUserErrors);
             // Intentamos obtener los datos del cliente en segundo plano.
             // Si esto falla, checkAuthStatus lo manejará sin bloquear el login.
             get().checkAuthStatus();
@@ -91,7 +88,6 @@ export const useAuthStore = create(
             ...customerInput,
             acceptsMarketing: subscribeToEmails,
           });
-          console.log("customerCreate response:", createResponse);
 
           if (createResponse.customer) {
             const tokenResponse = await customerAccessTokenCreate({

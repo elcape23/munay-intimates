@@ -4,7 +4,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ShopifyProduct } from "@/lib/shopify";
+import { ShopifyProduct, ShopifyMetafield } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -20,6 +20,10 @@ import { extractColorVariants } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
 import { slugify } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+
+type ProductWithDynamicMetafields = ShopifyProduct & {
+  [key: string]: ShopifyMetafield | any;
+};
 
 const SEASONS = ["invierno", "verano", "otono", "primavera"];
 const SIZE_ORDER = ["s", "m", "l", "xl", "tu"];
@@ -338,9 +342,8 @@ export function ProductGrid({ title, products }: ProductGridProps) {
                 }
               }
 
-              // @ts-ignore
-              // @ts-ignore
-              if (product[key] && product[key].value === value) {
+              const dynamicProduct = product as ProductWithDynamicMetafields;
+              if (dynamicProduct[key] && dynamicProduct[key].value === value) {
                 return true;
               }
 

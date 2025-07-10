@@ -35,7 +35,6 @@ export default function EditEmailPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Guardar email", email);
   };
 
   return (

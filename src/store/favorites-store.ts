@@ -93,7 +93,7 @@ export const useFavoritesStore = create(
               .map((r) => r.handle);
 
             if (missingHandles.length > 0) {
-              console.log("Handles sin datos:", missingHandles);
+              console.warn("Handles sin datos:", missingHandles);
             }
             // Solo actualizamos si esta sigue siendo la petición más reciente
             if (get()._fetchId === requestId) {

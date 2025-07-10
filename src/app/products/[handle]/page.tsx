@@ -23,7 +23,6 @@ export default async function ProductDetailPage({
 }) {
   // 1️⃣ Trae el producto principal
   const product = await getProductByHandle(params.handle);
-  console.log("TAGS:", product?.tags);
   if (!product) notFound();
 
   // 2️⃣ Averigua el handle de su primera colección (o la que prefieras)

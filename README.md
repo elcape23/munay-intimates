@@ -8,6 +8,8 @@ Copy `.env.example` to `.env` and fill in the required values:'
 NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN="<your-shop-domain>.myshopify.com"
 NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN="<your-storefront-token>"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+GOOGLE_CLIENT_ID="<your-google-client-id>"
+GOOGLE_CLIENT_SECRET="<your-google-client-secret>"
 ```
 
 ## Installation
