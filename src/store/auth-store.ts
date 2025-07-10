@@ -64,9 +64,13 @@ export const useAuthStore = create(
           }
 
           // Si no hay token, es un error de credenciales.
-          const errorMessage =
-            response.customerUserErrors?.[0]?.message ||
-            "El email o la contraseña son incorrectos.";
+          const userError = response.customerUserErrors?.[0];
+          let errorMessage =
+            userError?.message || "El email o la contraseña son incorrectos.";
+
+          if (userError?.code === "UNIDENTIFIED_CUSTOMER") {
+            errorMessage = "Este email no está asociado a una cuenta";
+          }
           set({ error: errorMessage });
           return false;
         } catch (e: any) {
