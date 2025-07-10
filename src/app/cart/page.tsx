@@ -26,8 +26,8 @@ export default function CartPage() {
   const router = useRouter();
 
   const handleContinue = () => {
+    console.log("checkoutUrl =", cart?.checkoutUrl);
     if (!cart?.checkoutUrl) {
-      console.error("checkoutUrl no disponible", cart);
       return;
     }
     setLoadingCheckout(true);

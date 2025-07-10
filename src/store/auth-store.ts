@@ -70,8 +70,12 @@ export const useAuthStore = create(
           set({ error: errorMessage });
           return false;
         } catch (e: any) {
-          const errorMessage =
+          let errorMessage =
             e instanceof Error ? e.message : "Ocurrió un error desconocido.";
+          if (errorMessage.includes("Login attempt limit exceeded")) {
+            errorMessage =
+              "El correo electrónico ingresado no está asociado a ninguna cuenta.";
+          }
           set({ error: errorMessage });
           return false;
         } finally {

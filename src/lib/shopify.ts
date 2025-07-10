@@ -4,10 +4,19 @@ import { GraphQLClient, gql } from "graphql-request";
 import { slugify } from "./utils";
 
 // --- Configuración ---
-const storeDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
+const storeDomain =
+  process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN ??
+  "munayintimates.myshopify.com";
 const storefrontAccessToken =
   process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+console.log("🔧 Shopify config:", { storeDomain, appUrl });
+if (storeDomain?.includes("vercel.app")) {
+  throw new Error(
+    `⚠️ NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN está mal configurada (“${storeDomain}”). Debe ser TU-TIENDA.myshopify.com, no tu dominio de aplicación.`
+  );
+}
 
 if (!storeDomain || !storefrontAccessToken || !appUrl) {
   throw new Error(

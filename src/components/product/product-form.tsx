@@ -3,7 +3,6 @@
 "use client";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
 import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
 import { COLOR_MAP } from "@/lib/color-map";
@@ -76,7 +75,6 @@ export function ProductForm({ product }: ProductFormProps) {
 
   // Obtenemos el estado y las acciones directamente desde nuestro store de Zustand.
   const addItemToCart = useCartStore((s) => s.addItemToCart);
-  const router = useRouter();
 
   const [loadingButton, setLoadingButton] = useState<"add" | "buy" | null>(
     null
@@ -160,7 +158,12 @@ export function ProductForm({ product }: ProductFormProps) {
     try {
       setLoadingButton("buy");
       await addItemToCart(selectedVariant.id);
-      router.push("/checkout");
+      const { cart } = useCartStore.getState();
+      if (!cart?.checkoutUrl) {
+        console.error("checkoutUrl no disponible", cart);
+        return;
+      }
+      window.location.href = cart.checkoutUrl;
     } catch (error) {
       toast({ title: "Hubo un error al procesar la compra." });
     } finally {
