@@ -15,7 +15,20 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: "Munay Intimates",
-  description: "Tienda de lencería Munay Intimates",
+  description: "Tienda de lencería",
+  openGraph: {
+    title: "Munay Intimates",
+    description: "Tienda de lencería Munay Intimates",
+    images: [
+      {
+        url: "/munay-wordmark.png",
+        width: 1200,
+        height: 630,
+        alt: "Munay Intimates",
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({
