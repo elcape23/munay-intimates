@@ -5,23 +5,27 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { LayoutClient } from "@/components/layout-client";
 
-// 2. Configura la fuente con los pesos que usas
+// -- Helpers --
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+
 const manrope = Manrope({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-manrope", // 3. Asigna una variable CSS
+  variable: "--font-manrope",
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(appUrl),
   title: "Munay Intimates",
   description: "Tienda de lencería",
   openGraph: {
     title: "Munay Intimates",
-    description: "Tienda de lencería Munay Intimates",
+    description: "Tienda de lencería",
+    url: appUrl,
     images: [
       {
-        url: "/munay-wordmark.png",
+        url: new URL("/munay-wordmark.png", appUrl).toString(),
         width: 1200,
         height: 630,
         alt: "Munay Intimates",
