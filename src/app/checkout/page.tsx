@@ -107,7 +107,7 @@ export default function CheckoutOptionsPage() {
           onClick={handleContinue}
           size="lg"
           disabled={!selectedMethod}
-          className="w-full"
+          className="w-full mb-10"
         >
           Continuar
         </Button>
