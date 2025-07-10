@@ -26,12 +26,8 @@ export default function CartPage() {
   const router = useRouter();
 
   const handleContinue = () => {
-    console.log("checkoutUrl =", cart?.checkoutUrl);
-    if (!cart?.checkoutUrl) {
-      return;
-    }
     setLoadingCheckout(true);
-    window.location.href = cart.checkoutUrl;
+    router.push("/checkout");
   };
 
   const handleContinueShopping = () => {
