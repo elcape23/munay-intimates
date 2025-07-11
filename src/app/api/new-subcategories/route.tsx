@@ -21,7 +21,12 @@ async function fetchSubcategories(): Promise<NavItem[]> {
     });
   });
 
-  return Array.from(subSet).map((name) => ({
+  const EXCLUDED_SUBCATEGORIES = ["invierno", "verano"];
+  const names = Array.from(subSet).filter(
+    (name) => !EXCLUDED_SUBCATEGORIES.includes(slugify(name))
+  );
+
+  return names.map((name) => ({
     id: `subcat-${slugify(name)}`,
     title: name.toUpperCase(),
     url: `/collections/new?subcategory=${slugify(name)}`,
