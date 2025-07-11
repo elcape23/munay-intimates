@@ -129,15 +129,19 @@ export function HeroSection({
             key={slide.id}
             className="relative w-full h-screen max-h-[640px] flex-shrink-0"
           >
-            {!loaded[idx] && (
-              <Skeleton className="absolute inset-0 h-full w-full" />
-            )}
+            {" "}
+            <Skeleton
+              className={cn(
+                "absolute inset-0 z-10 h-full w-full transition-opacity duration-300",
+                loaded[idx] ? "opacity-0" : "opacity-100"
+              )}
+            />
             <Image
               src={slide.image}
               alt={slide.title}
               fill
               className={cn(
-                "object-cover transition-opacity",
+                "object-cover transition-opacity duration-300",
                 loaded[idx] ? "opacity-100" : "opacity-0"
               )}
               priority={idx === 0}

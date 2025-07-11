@@ -40,6 +40,8 @@ export default function CheckoutOptionsPage() {
       // Next.js y provocaría un 404. Usamos `window.location.assign` para
       // redirigir al checkout de Shopify correctamente.
       window.location.assign(cart.checkoutUrl);
+    } else if (selectedMethod === "Efectivo") {
+      router.push("/checkout/cash");
     } else {
       alert(
         `Seleccionaste ${selectedMethod}. Nos pondremos en contacto para finalizar tu compra.`

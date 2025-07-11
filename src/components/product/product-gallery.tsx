@@ -49,16 +49,19 @@ export default function ProductGallery({ images, productHandle }: Props) {
         <div className="flex">
           {images.map(({ node }, i) => (
             <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-              {!loaded[i] && (
-                <Skeleton className="absolute inset-0 h-full w-full" />
-              )}
+              <Skeleton
+                className={cn(
+                  "absolute inset-0 z-10 h-full w-full transition-opacity duration-300",
+                  loaded[i] ? "opacity-0" : "opacity-100"
+                )}
+              />
               <Image
                 src={node.url}
                 alt={node.altText ?? ""}
                 width={880}
                 height={1120}
                 className={cn(
-                  "w-full object-cover transition-opacity",
+                  "w-full object-cover transition-opacity duration-300",
                   loaded[i] ? "opacity-100" : "opacity-0"
                 )}
                 priority={i === 0}
