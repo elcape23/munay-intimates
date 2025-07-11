@@ -44,7 +44,6 @@ export const useCartStore = create<CartState>((set, get) => ({
 
       if (cartId) {
         cart = await getCart(cartId);
-        console.log("🔍 getCart con cartId existente:", cart);
         // Si el carrito fue eliminado o expiró en Shopify, creamos uno nuevo
         if (!cart) {
           cartId = null;
@@ -57,7 +56,6 @@ export const useCartStore = create<CartState>((set, get) => ({
         cartId = newCart.id;
         localStorage.setItem("cartId", cartId);
         cart = await getCart(cartId);
-        console.log("🔍 getCart justo después de createCart:", cart);
       }
 
       set({ cart: cart, isLoading: false });

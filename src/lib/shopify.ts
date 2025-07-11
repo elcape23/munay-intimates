@@ -1,6 +1,6 @@
 // src/lib/shopify.ts
 
-import { GraphQLClient, gql } from "graphql-request";
+import { gql } from "graphql-request";
 import { slugify } from "./utils";
 
 // --- Configuración ---
@@ -19,7 +19,6 @@ const rawAppUrl =
 const appUrl = rawAppUrl.startsWith("http")
   ? rawAppUrl
   : `https://${rawAppUrl}`;
-console.log("🔧 Shopify config:", { storeDomain, appUrl });
 if (storeDomain?.includes("vercel.app")) {
   throw new Error(
     `⚠️ NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN está mal configurada (“${storeDomain}”). Debe ser TU-TIENDA.myshopify.com, no tu dominio de aplicación.`
@@ -34,13 +33,7 @@ if (!storeDomain || !storefrontAccessToken || !appUrl) {
 
 const shopifyApiEndpoint = `https://${storeDomain}/api/2024-04/graphql.json`;
 
-const shopifyClient = new GraphQLClient(shopifyApiEndpoint, {
-  headers: {
-    "X-Shopify-Storefront-Access-Token": storefrontAccessToken,
-    "Content-Type": "application/json",
-    Origin: appUrl,
-  },
-});
+const defaultRevalidate = 60; // seconds
 
 // --- Definiciones de Tipos de Datos (Completas) ---
 export type ShopifyImage = { url: string; altText: string | null };
@@ -185,21 +178,46 @@ type GetCartResponse = { cart: ShopifyCart };
 export async function shopifyFetch<T>({
   query,
   variables,
+  revalidate = defaultRevalidate,
+  cache = "force-cache",
 }: {
   query: string;
   variables?: Record<string, any>;
+  revalidate?: number | null;
+  cache?: RequestCache;
 }): Promise<T> {
-  try {
-    return await shopifyClient.request<T>(query, variables);
-  } catch (error: any) {
-    // 1) Imprimimos a consola el error original (servidor)
-    console.error("🚨 Shopify error:", error.response?.errors || error);
+  const fetchOptions: RequestInit & { next?: { revalidate: number } } = {
+    method: "POST",
+    headers: {
+      "X-Shopify-Storefront-Access-Token": storefrontAccessToken as string,
+      "Content-Type": "application/json",
+      Origin: appUrl,
+    },
+    body: JSON.stringify({ query, variables }),
+  };
 
-    // 2) Relanzamos con toda la información para verlo en el navegador
-    const message = Array.isArray(error.response?.errors)
-      ? error.response.errors.map((e: any) => e.message).join("; ")
-      : error.message;
-    throw new Error(`Shopify GraphQL failed: ${message}`);
+  if (revalidate != null) {
+    fetchOptions.next = { revalidate };
+  } else if (cache) {
+    fetchOptions.cache = cache;
+  }
+
+  try {
+    const res = await fetch(shopifyApiEndpoint, fetchOptions);
+    const json = await res.json();
+
+    if (json.errors) {
+      console.error("🚨 Shopify error:", json.errors);
+      const message = Array.isArray(json.errors)
+        ? json.errors.map((e: any) => e.message).join("; ")
+        : "Unknown error";
+      throw new Error(`Shopify GraphQL failed: ${message}`);
+    }
+
+    return json.data as T;
+  } catch (error: any) {
+    console.error("🚨 Shopify fetch error:", error);
+    throw new Error(`Shopify GraphQL failed: ${error.message}`);
   }
 }
 

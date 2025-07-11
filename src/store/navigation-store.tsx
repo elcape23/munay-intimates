@@ -3,9 +3,7 @@ import {
   getCollectionsForMenu,
   NavItem,
   hasNewSaleProducts,
-  getNewestProductsFull,
 } from "@/lib/shopify";
-import { slugify } from "@/lib/utils";
 
 interface NavigationState {
   menuItems: NavItem[];
@@ -26,31 +24,11 @@ export const useNavigationStore = create<NavigationState>()((set) => ({
 
       // --- Subcategorías con productos nuevos ---
       try {
-        const newest = await getNewestProductsFull(250);
-        const subSet = new Set<string>();
-        newest.forEach((p) => {
-          p.tags?.forEach((tag) => {
-            const parts = tag.split(":");
-            if (
-              parts.length === 2 &&
-              ["subcategoría", "subcategoria"].includes(
-                parts[0].trim().toLowerCase()
-              )
-            ) {
-              subSet.add(parts[1].trim());
-            }
-          });
-        });
-
-        const subItems: NavItem[] = Array.from(subSet).map((name) => ({
-          id: `subcat-${slugify(name)}`,
-          title: name.toUpperCase(),
-          url: `/collections/new?subcategory=${slugify(name)}`,
-          section: "new",
-          isNew: true,
-        }));
-
-        items.push(...subItems);
+        const response = await fetch("/api/new-subcategories");
+        if (response.ok) {
+          const subItems: NavItem[] = await response.json();
+          items.push(...subItems);
+        }
       } catch (err) {
         console.error("Error cargando subcategorías nuevas", err);
       }

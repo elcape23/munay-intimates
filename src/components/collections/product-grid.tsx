@@ -726,7 +726,7 @@ export function ProductGrid({
               }}
               variant="outline"
             >
-              Load more
+              Cargar más
             </Button>
           </div>
         )}
