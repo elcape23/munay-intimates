@@ -74,7 +74,7 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
         {images.map((src, idx) => (
           <div
             key={idx}
-            className="snap-start flex-shrink-0 w-75 h-75 overflow-hidden"
+            className="snap-start flex-shrink-0 w-[300px] h-[300px] overflow-hidden"
           >
             <img
               src={src}
