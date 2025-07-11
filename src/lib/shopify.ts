@@ -9,8 +9,16 @@ const storeDomain =
   "munayintimates.myshopify.com";
 const storefrontAccessToken =
   process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
-const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+const rawAppUrl =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  process.env.NEXT_PUBLIC_VERCEL_URL ||
+  process.env.VERCEL_URL ||
+  "http://localhost:3000";
 
+// Garantiza que haya un protocolo para evitar errores al usar la URL.
+const appUrl = rawAppUrl.startsWith("http")
+  ? rawAppUrl
+  : `https://${rawAppUrl}`;
 console.log("🔧 Shopify config:", { storeDomain, appUrl });
 if (storeDomain?.includes("vercel.app")) {
   throw new Error(

@@ -6,8 +6,18 @@ import { Providers } from "@/components/providers";
 import { LayoutClient } from "@/components/layout-client";
 
 // -- Helpers --
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+// Next.js bots like WhatsApp require absolute URLs for Open Graph tags.
+// Fall back to Vercel's URL if NEXT_PUBLIC_APP_URL is not provided.
+const rawAppUrl =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  process.env.NEXT_PUBLIC_VERCEL_URL ||
+  process.env.VERCEL_URL ||
+  "http://localhost:3000";
 
+// Ensure the URL includes the protocol so new URL() doesn't throw.
+const appUrl = rawAppUrl.startsWith("http")
+  ? rawAppUrl
+  : `https://${rawAppUrl}`;
 const manrope = Manrope({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],

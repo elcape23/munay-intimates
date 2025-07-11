@@ -40,7 +40,7 @@ const SLIDES: HeroSlide[] = [
   },
   {
     id: "3",
-    image: "/images/hero/slide-3.webp",
+    image: "/images/hero/slide-n3.webp",
     title: "Nuevos lanzamientos",
     subtitle: "Lo último en lencería Munay",
     ButtonText: "Explorar novedades",

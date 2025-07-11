@@ -33,7 +33,7 @@ export default async function HomePage() {
       {/* Sección “Sin clip” */}
       <NoClipSection
         images={[
-          "/images/noclip/home-no-clip.png",
+          "/images/noclip/noclip-1.webp",
           "/images/noclip/home-no-clip-2.png",
           "/images/noclip/home-no-clip-3.png",
         ]}
