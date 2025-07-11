@@ -41,9 +41,18 @@ const formatSizeLabel = (value: string) => {
 type ProductGridProps = {
   title: string;
   products: ShopifyProduct[];
+  pageInfo: { hasNextPage: boolean; endCursor: string | null } | undefined;
+  handle: string;
 };
 
-export function ProductGrid({ title, products }: ProductGridProps) {
+export function ProductGrid({
+  title,
+  products,
+  pageInfo,
+  handle,
+}: ProductGridProps) {
+  const [items, setItems] = useState<ShopifyProduct[]>(products);
+  const [pagination, setPagination] = useState(pageInfo);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [sortMethod, setSortMethod] = useState("default");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
@@ -86,7 +95,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
         }
         return false;
       };
-      products.forEach((product) => {
+      items.forEach((product) => {
         // 1. Procesa las etiquetas (tags) para los filtros principales
         product.tags?.forEach((tag) => {
           const parts = tag.split(":");
@@ -234,7 +243,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
         minPrice,
         maxPrice,
       };
-    }, [products, showSeasonFilters]);
+    }, [items, showSeasonFilters]);
   useEffect(() => {
     setMinPriceFilter(minPrice);
     setMaxPriceFilter(maxPrice);
@@ -263,7 +272,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
   };
 
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = [...products];
+    let filtered = [...items];
     if (
       activeFilters.length > 0 ||
       minPriceFilter !== minPrice ||
@@ -374,7 +383,7 @@ export function ProductGrid({ title, products }: ProductGridProps) {
     }
     return filtered;
   }, [
-    products,
+    items,
     activeFilters,
     sortMethod,
     minPriceFilter,
@@ -702,6 +711,25 @@ export function ProductGrid({ title, products }: ProductGridProps) {
             </div>
           ))}
         </div>
+        {pagination?.hasNextPage && (
+          <div className="flex justify-center mt-6">
+            <Button
+              onClick={async () => {
+                const res = await fetch(
+                  `/api/collections/${handle}?cursor=${pagination.endCursor}`
+                );
+                if (res.ok) {
+                  const data = await res.json();
+                  setItems((prev) => [...prev, ...data.products]);
+                  setPagination(data.pageInfo);
+                }
+              }}
+              variant="outline"
+            >
+              Load more
+            </Button>
+          </div>
+        )}
       </motion.div>
     </div>
   );

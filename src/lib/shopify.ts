@@ -163,7 +163,8 @@ export type ShopifyCollection = {
   title: string;
   handle: string;
   products: {
-    edges: { node: ShopifyProduct }[];
+    edges: { node: ShopifyProduct; cursor?: string }[];
+    pageInfo?: { hasNextPage: boolean; endCursor: string | null };
   };
 };
 
@@ -1428,16 +1429,27 @@ export async function getNewestProductsFull(
 }
 
 export async function getCollectionByHandle(
-  handle: string
+  handle: string,
+  first: number = 16,
+  cursor?: string | null
 ): Promise<ShopifyCollection | null> {
   const query = gql`
-    query GetCollectionByHandle($handle: String!) {
+    query GetCollectionByHandle(
+      $handle: String!
+      $first: Int!
+      $cursor: String
+    ) {
       collection(handle: $handle) {
         id
         title
         handle
-        products(first: 250) {
+        products(first: $first, after: $cursor) {
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
           edges {
+            cursor
             node {
               id
               title
@@ -1515,7 +1527,7 @@ export async function getCollectionByHandle(
   try {
     const response = await shopifyFetch<GetCollectionByHandleResponse>({
       query,
-      variables: { handle },
+      variables: { handle, first, cursor },
     });
     return response.collection;
   } catch (error) {

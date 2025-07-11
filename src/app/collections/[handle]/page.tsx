@@ -12,13 +12,13 @@ export default async function CollectionPage({
   params: { handle: string };
 }) {
   const { handle } = params;
-  const collection = await getCollectionByHandle(handle);
-
+  const collection = await getCollectionByHandle(handle, 16);
   if (!collection) {
     notFound();
   }
 
   const products = collection.products.edges.map((edge) => edge.node);
+  const pageInfo = collection.products.pageInfo;
 
   if (products.length === 0) {
     return (
@@ -31,7 +31,12 @@ export default async function CollectionPage({
 
   return (
     <section className="container pt-[60px] mx-auto px-6 min-h-screen">
-      <ProductGrid title={collection.title} products={products} />
+      <ProductGrid
+        title={collection.title}
+        products={products}
+        pageInfo={pageInfo}
+        handle={handle}
+      />{" "}
       <Footer />
     </section>
   );
