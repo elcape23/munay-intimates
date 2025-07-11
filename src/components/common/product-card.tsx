@@ -96,7 +96,7 @@ export function ProductCard({
         {/* Detalle */}
         <div className={`py-2 space-y-2 ${size === "small" ? "pl-4" : ""}`}>
           {/* Título */}
-          <h3 className="body-01-medium text-text-primary-default truncate whitespace-nowrap line-clamp-2">
+          <h3 className="body-01-medium text-text-primary-default truncate whitespace-nowrap">
             {title}
           </h3>
           {colorVariants.length > 0 && (
