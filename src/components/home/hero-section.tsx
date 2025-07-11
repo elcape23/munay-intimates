@@ -24,7 +24,7 @@ interface HeroSlide {
 const SLIDES: HeroSlide[] = [
   {
     id: "1",
-    image: "/images/hero/hero-1.webp",
+    image: "/images/hero/slide-1.webp",
     title: "New Arrivals",
     subtitle: "",
     ButtonText: "Descubrir",
@@ -32,7 +32,7 @@ const SLIDES: HeroSlide[] = [
   },
   {
     id: "2",
-    image: "/images/hero/hero-2.webp",
+    image: "/images/hero/slide-2.webp",
     title: "Íntimos sin clip",
     subtitle: "Comodidad absoluta cada día",
     ButtonText: "Descubrir más",
@@ -40,7 +40,7 @@ const SLIDES: HeroSlide[] = [
   },
   {
     id: "3",
-    image: "/images/hero/hero-3.webp",
+    image: "/images/hero/slide-3.webp",
     title: "Nuevos lanzamientos",
     subtitle: "Lo último en lencería Munay",
     ButtonText: "Explorar novedades",
