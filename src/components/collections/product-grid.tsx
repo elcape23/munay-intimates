@@ -41,8 +41,8 @@ const formatSizeLabel = (value: string) => {
 type ProductGridProps = {
   title: string;
   products: ShopifyProduct[];
-  pageInfo: { hasNextPage: boolean; endCursor: string | null } | undefined;
-  handle: string;
+  pageInfo?: { hasNextPage: boolean; endCursor: string | null };
+  handle?: string;
 };
 
 export function ProductGrid({
