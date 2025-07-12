@@ -84,7 +84,7 @@ export function ProductCard({
                 loaded ? "opacity-100" : "opacity-0"
               )}
               priority
-              onLoadingComplete={() => setLoaded(true)}
+              onLoad={() => setLoaded(true)}
             />
           ) : (
             <Image
@@ -97,7 +97,7 @@ export function ProductCard({
                 loaded ? "opacity-100" : "opacity-0"
               )}
               priority
-              onLoadingComplete={() => setLoaded(true)}
+              onLoad={() => setLoaded(true)}
             />
           )}
           {/* Badge Oferta o NEW */}

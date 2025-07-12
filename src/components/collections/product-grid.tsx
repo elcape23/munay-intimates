@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ShopifyProduct, ShopifyMetafield } from "@/lib/shopify";
 import { ChevronLeftIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -58,6 +58,8 @@ export function ProductGrid({
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [minPriceFilter, setMinPriceFilter] = useState(0);
   const [maxPriceFilter, setMaxPriceFilter] = useState(0);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
   const router = useRouter();
   const showSeasonFilters = title.trim().toLowerCase() === "pijamas";
 
@@ -248,6 +250,34 @@ export function ProductGrid({
     setMinPriceFilter(minPrice);
     setMaxPriceFilter(maxPrice);
   }, [minPrice, maxPrice]);
+
+  useEffect(() => {
+    if (!pagination?.hasNextPage) return;
+    const target = loadMoreRef.current;
+    if (!target) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && !loadingMore) {
+          setLoadingMore(true);
+          fetch(`/api/collections/${handle}?cursor=${pagination.endCursor}`)
+            .then((res) => res.ok && res.json())
+            .then((data) => {
+              if (data) {
+                setItems((prev) => [...prev, ...data.products]);
+                setPagination(data.pageInfo);
+              }
+            })
+            .finally(() => setLoadingMore(false));
+        }
+      },
+      { rootMargin: "100px" }
+    );
+    observer.observe(target);
+    return () => {
+      observer.disconnect();
+    };
+  }, [pagination, loadingMore, handle]);
 
   const handleFilterToggle = (tag: string) => {
     setActiveFilters((prev) =>
@@ -712,22 +742,12 @@ export function ProductGrid({
           ))}
         </div>
         {pagination?.hasNextPage && (
-          <div className="flex justify-center mt-6">
-            <Button
-              onClick={async () => {
-                const res = await fetch(
-                  `/api/collections/${handle}?cursor=${pagination.endCursor}`
-                );
-                if (res.ok) {
-                  const data = await res.json();
-                  setItems((prev) => [...prev, ...data.products]);
-                  setPagination(data.pageInfo);
-                }
-              }}
-              variant="outline"
-            >
-              Cargar más
-            </Button>
+          <div ref={loadMoreRef} className="flex justify-center mt-6">
+            {loadingMore && (
+              <p className="body-02-regular text-text-secondary-default">
+                Cargando...
+              </p>
+            )}
           </div>
         )}
       </motion.div>

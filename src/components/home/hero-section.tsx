@@ -142,7 +142,7 @@ export function HeroSection({
                 loaded[idx] ? "opacity-100" : "opacity-0"
               )}
               priority={idx === 0}
-              onLoadingComplete={() =>
+              onLoad={() =>
                 setLoaded((prev) => {
                   const next = [...prev];
                   next[idx] = true;

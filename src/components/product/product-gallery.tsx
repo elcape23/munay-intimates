@@ -62,7 +62,7 @@ export default function ProductGallery({ images, productHandle }: Props) {
                   loaded[i] ? "opacity-100" : "opacity-0"
                 )}
                 priority={i === 0}
-                onLoadingComplete={() =>
+                onLoad={() =>
                   setLoaded((prev) => {
                     const next = [...prev];
                     next[i] = true;
