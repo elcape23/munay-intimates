@@ -50,12 +50,12 @@ export function ProductCard({
     setLoaded(false);
   }, [imageSrc]);
   // calcula % de descuento redondeado
-  const discountPercent = compareAtPrice
-    ? Math.min(
-        99,
-        Math.round((1 - parsePrice(price) / parsePrice(compareAtPrice)) * 100)
-      )
-    : 0;
+  const priceNum = parsePrice(price);
+  const compareNum = parsePrice(compareAtPrice ?? "");
+  const discountPercent =
+    compareAtPrice && compareNum > priceNum
+      ? Math.min(99, Math.round((1 - priceNum / compareNum) * 100))
+      : 0;
 
   return (
     <div className="relative">
