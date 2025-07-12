@@ -116,7 +116,13 @@ export default function CartPage() {
   const SHIPPING_FLAT_RATE = 1500;
 
   const currency = cart.cost.subtotalAmount.currencyCode;
-  const subtotal = parseFloat(cart.cost.subtotalAmount.amount);
+
+  const subtotal = cart.lines.edges.reduce((acc, { node }) => {
+    if (node.merchandise.quantityAvailable === 0) {
+      return acc;
+    }
+    return acc + parseFloat(node.cost.totalAmount.amount);
+  }, 0);
   const shipping = SHIPPING_FLAT_RATE;
   const total = subtotal;
   const grandTotal = subtotal + shipping;
@@ -194,9 +200,9 @@ export default function CartPage() {
           <p className="body-01-medium text-text-primary-default">
             {new Intl.NumberFormat("es-AR", {
               style: "currency",
-              currency: cart.cost.totalAmount.currencyCode,
+              currency,
               maximumFractionDigits: 0,
-            }).format(parseFloat(cart.cost.totalAmount.amount))}
+            }).format(subtotal)}{" "}
           </p>
           <p className="body-02-regular leading-none text-text-secondary-default">
             <span>Envío en checkout</span>
