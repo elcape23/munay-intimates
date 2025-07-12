@@ -126,6 +126,7 @@ export function CartItem({ line }: CartItemProps) {
   const isNew = line.merchandise.product.tags.some(
     (t) => t.toLowerCase() === "new"
   );
+  const isSoldOut = line.merchandise.quantityAvailable === 0;
 
   return (
     <>
@@ -178,6 +179,13 @@ export function CartItem({ line }: CartItemProps) {
               fill
               style={{ objectFit: "cover" }}
             />
+            {isSoldOut && (
+              <div className="absolute px-2 py-2 inset-0 flex items-end justify-start bg-background-fill-neutral-tertiary/40">
+                <span className="px-2 py-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert uppercase">
+                  Agotado
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Info */}
@@ -225,7 +233,7 @@ export function CartItem({ line }: CartItemProps) {
                 <MinusIcon className="w-5 h-5 p-1 text-icon-primary-default" />
               </Button>
               <span className="body-02-regular text-center">
-                {line.quantity}
+                {isSoldOut ? 0 : line.quantity}{" "}
               </span>
               <Button
                 onClick={handleIncrease}
