@@ -42,6 +42,8 @@ export default function CheckoutOptionsPage() {
       window.location.assign(cart.checkoutUrl);
     } else if (selectedMethod === "Efectivo") {
       router.push("/checkout/cash");
+    } else if (selectedMethod === "Transferencia") {
+      router.push("/checkout/transfer");
     } else {
       alert(
         `Seleccionaste ${selectedMethod}. Nos pondremos en contacto para finalizar tu compra.`

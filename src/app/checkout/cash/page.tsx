@@ -34,7 +34,7 @@ export default function CheckoutCashConfirmation() {
             rel="noopener noreferrer"
             className="flex items-center gap-2"
           >
-            <FontAwesomeIcon icon={faWhatsapp} className="w-5 h-5" />
+            <FontAwesomeIcon icon={faWhatsapp} className="w-6 h-6" />
             Enviar WhatsApp
           </a>
         </Button>
