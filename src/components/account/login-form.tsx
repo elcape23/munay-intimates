@@ -12,9 +12,13 @@ import Loading from "@/app/loading";
 
 interface LoginFormProps {
   onLoginSuccess?: () => void;
+  redirectOnSuccess?: boolean;
 }
 
-export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
+export default function LoginForm({
+  onLoginSuccess,
+  redirectOnSuccess = true,
+}: LoginFormProps) {
   const { login, isLoggedIn, error: authError, isLoading } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +44,9 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           setError(result.error);
         } else {
           onLoginSuccess?.();
-          router.push("/account");
+          if (redirectOnSuccess) {
+            router.push("/account");
+          }
         }
       } else {
         setError(authError || "El email o la contraseña son incorrectos.");

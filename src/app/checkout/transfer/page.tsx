@@ -21,7 +21,7 @@ export default function CheckoutTransferPage() {
       if (!isLoggedIn || !cart || orderId || loading) return;
       setLoading(true);
       try {
-        const res = await fetch("/api/create-pending-order", {
+        const res = await fetch("/api/create-pending-orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ cart }),
@@ -42,7 +42,7 @@ export default function CheckoutTransferPage() {
     return (
       <section className="pt-[55px] mx-6">
         <h1 className="body-01-medium mb-6">Inicia sesión o crea una cuenta</h1>
-        <LoginForm />
+        <LoginForm redirectOnSuccess={false} />{" "}
       </section>
     );
   }

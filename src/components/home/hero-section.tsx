@@ -130,12 +130,9 @@ export function HeroSection({
             className="relative w-full h-screen max-h-[640px] flex-shrink-0"
           >
             {" "}
-            <Skeleton
-              className={cn(
-                "absolute inset-0 z-10 h-full w-full transition-opacity duration-300",
-                loaded[idx] ? "opacity-0" : "opacity-100"
-              )}
-            />
+            {!loaded[idx] && (
+              <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-300" />
+            )}
             <Image
               src={slide.image}
               alt={slide.title}
