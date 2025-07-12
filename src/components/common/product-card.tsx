@@ -3,8 +3,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { FavoriteButton } from "./favorite-button";
 import { COLOR_MAP } from "@/lib/color-map";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 export interface ProductCardProps {
   id: string;
@@ -41,6 +44,11 @@ export function ProductCard({
   size = "default",
   fill = false,
 }: ProductCardProps) {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(false);
+  }, [imageSrc]);
   // calcula % de descuento redondeado
   const discountPercent = compareAtPrice
     ? Math.min(
@@ -63,13 +71,20 @@ export function ProductCard({
             fill ? "aspect-[220/328]" : ""
           }`}
         >
+          {!loaded && (
+            <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-300" />
+          )}
           {fill ? (
             <Image
               src={imageSrc}
               alt={altText ?? title}
               fill
-              className="object-cover w-full h-full rounded-[2px] group-hover:scale-105 transition-transform duration-300"
+              className={cn(
+                "object-cover w-full h-full rounded-[2px] group-hover:scale-105 transition-transform duration-300 transition-opacity",
+                loaded ? "opacity-100" : "opacity-0"
+              )}
               priority
+              onLoadingComplete={() => setLoaded(true)}
             />
           ) : (
             <Image
@@ -77,8 +92,12 @@ export function ProductCard({
               alt={altText ?? title}
               width={220}
               height={328}
-              className="object-cover w-full h-auto rounded-[2px] group-hover:scale-105 transition-transform duration-300"
+              className={cn(
+                "object-cover w-full h-auto rounded-[2px] group-hover:scale-105 transition-transform duration-300 transition-opacity",
+                loaded ? "opacity-100" : "opacity-0"
+              )}
               priority
+              onLoadingComplete={() => setLoaded(true)}
             />
           )}
           {/* Badge Oferta o NEW */}

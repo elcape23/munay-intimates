@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { cart } = await req.json();
+  const {
+    cart,
+    note = "Pago por transferencia",
+    tags = ["transferencia"],
+  } = await req.json();
 
   const adminToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
   const storeDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
@@ -35,8 +39,8 @@ export async function POST(req: NextRequest) {
         variantId: edge.node.merchandise.id,
         quantity: edge.node.quantity,
       })),
-      note: "Pago por transferencia",
-      tags: ["transferencia"],
+      note,
+      tags,
     },
   };
 

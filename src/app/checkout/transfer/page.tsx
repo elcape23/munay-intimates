@@ -24,7 +24,11 @@ export default function CheckoutTransferPage() {
         const res = await fetch("/api/create-pending-orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cart }),
+          body: JSON.stringify({
+            cart,
+            note: "Pago por transferencia",
+            tags: ["transferencia"],
+          }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Error");
