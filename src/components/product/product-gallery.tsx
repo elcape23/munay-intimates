@@ -19,6 +19,7 @@ export default function ProductGallery({ images, productHandle }: Props) {
   const [loaded, setLoaded] = useState<boolean[]>(() =>
     new Array(images.length).fill(false)
   );
+  const allLoaded = loaded.every(Boolean);
 
   /* ───────── Eventos ───────── */
   const onSelect = useCallback(() => {
@@ -41,14 +42,27 @@ export default function ProductGallery({ images, productHandle }: Props) {
     <div className="-mx-6 relative overflow-hidden">
       {/* Botones de acción */}
       <div className="absolute top-16 right-6 z-10 flex flex-col gap-5">
-        <FavoriteButton productHandle={productHandle} />
-        <ShareButton />
+        {allLoaded ? (
+          <>
+            <FavoriteButton productHandle={productHandle} />
+            <ShareButton />
+          </>
+        ) : (
+          <>
+            <Skeleton className="h-6 w-6 rounded-full" />
+            <Skeleton className="h-6 w-6 rounded-full" />
+          </>
+        )}
       </div>
       {/* Carrusel */}
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex">
           {images.map(({ node }, i) => (
-            <div key={i} className="relative min-w-0 flex-[0_0_100%]">
+            <div
+              key={i}
+              className="relative min-w-0 flex-[0_0_100%] aspect-[4/5]"
+            >
+              {" "}
               {!loaded[i] && (
                 <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-300" />
               )}
@@ -77,17 +91,23 @@ export default function ProductGallery({ images, productHandle }: Props) {
 
       {/* Dots */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2">
-        {images.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => emblaApi?.scrollTo(i)}
-            aria-label={`Imagen ${i + 1}`}
-            className={cn(
-              "h-2 w-2 rounded-full transition-opacity mix-blend-difference",
-              selected === i ? "bg-white opacity-100" : "bg-white/60 opacity-40"
-            )}
-          />
-        ))}
+        {!allLoaded
+          ? images.map((_, i) => (
+              <Skeleton key={i} className="h-2 w-2 rounded-full" />
+            ))
+          : images.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => emblaApi?.scrollTo(i)}
+                aria-label={`Imagen ${i + 1}`}
+                className={cn(
+                  "h-2 w-2 rounded-full transition-opacity mix-blend-difference",
+                  selected === i
+                    ? "bg-white opacity-100"
+                    : "bg-white/60 opacity-40"
+                )}
+              />
+            ))}
       </div>
     </div>
   );
