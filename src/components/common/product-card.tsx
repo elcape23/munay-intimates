@@ -70,6 +70,9 @@ export function ProductCard({
           {!loaded && (
             <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-300" />
           )}
+          {!loaded && (
+            <Skeleton className="absolute bottom-3 left-3 z-10 h-6 w-14" />
+          )}
           {fill ? (
             <Image
               src={imageSrc}
@@ -97,59 +100,76 @@ export function ProductCard({
             />
           )}
           {/* Badge Oferta o NEW */}
-          {isOnSale ? (
-            <div className="absolute bottom-3 left-3 z-10 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert">
-              {discountPercent}%
-            </div>
-          ) : isNew ? (
-            <div className="absolute bottom-3 left-3 z-10 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert">
-              NEW
-            </div>
-          ) : null}
+          {loaded &&
+            (isOnSale ? (
+              <div className="absolute bottom-3 left-3 z-10 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert">
+                {discountPercent}%
+              </div>
+            ) : isNew ? (
+              <div className="absolute bottom-3 left-3 z-10 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert">
+                NEW
+              </div>
+            ) : null)}
         </div>
 
         {/* Detalle */}
         <div className={`py-2 space-y-2 ${size === "small" ? "pl-4" : ""}`}>
-          {/* Título */}
-          <h3 className="body-01-medium text-text-primary-default truncate whitespace-nowrap">
-            {title}
-          </h3>
-          {colorVariants.length > 0 && (
-            <div className="flex items-center">
-              {colorVariants.map((color, i) => {
-                // si ya viene en HEX (ej. "#123456") lo uso directo,
-                // si no, busco en el mapa; si tampoco existe, uso gris por defecto
-                const bgColor = color.startsWith("#")
-                  ? color
-                  : COLOR_MAP[color] ?? "#cccccc";
-                const isWhite =
-                  bgColor.toLowerCase() === "#ffffff" ||
-                  bgColor.toLowerCase() === "#fff" ||
-                  bgColor.toLowerCase() === "white";
-                return (
-                  <span
-                    key={i}
-                    className={`h-4 w-4 m-[2px] rounded-full ${
-                      isWhite ? "border border-border-secondary-default" : ""
-                    }`}
-                    style={{ backgroundColor: bgColor }}
-                    title={color}
-                  />
-                );
-              })}
-            </div>
-          )}{" "}
-          {/* Precios */}
-          <div className="flex items-baseline space-x-2">
-            {isOnSale && (
-              <span className="body-01-regular line-through decoration-border-danger-hover decoration-[2px] text-text-secondary-default">
-                ${compareAtPrice}
-              </span>
-            )}
-            <span className="body-01-medium text-text-primary-default">
-              ${price}
-            </span>
-          </div>{" "}
+          {!loaded ? (
+            <>
+              <Skeleton className="h-4 w-3/4" />
+              <div className="flex items-center gap-1">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-4 w-4 rounded-full" />
+                ))}
+              </div>
+              <Skeleton className="h-4 w-1/2" />
+            </>
+          ) : (
+            <>
+              {/* Título */}
+              <h3 className="body-01-medium text-text-primary-default truncate whitespace-nowrap">
+                {title}
+              </h3>
+              {colorVariants.length > 0 && (
+                <div className="flex items-center">
+                  {colorVariants.map((color, i) => {
+                    // si ya viene en HEX (ej. "#123456") lo uso directo,
+                    // si no, busco en el mapa; si tampoco existe, uso gris por defecto
+                    const bgColor = color.startsWith("#")
+                      ? color
+                      : COLOR_MAP[color] ?? "#cccccc";
+                    const isWhite =
+                      bgColor.toLowerCase() === "#ffffff" ||
+                      bgColor.toLowerCase() === "#fff" ||
+                      bgColor.toLowerCase() === "white";
+                    return (
+                      <span
+                        key={i}
+                        className={`h-4 w-4 m-[2px] rounded-full ${
+                          isWhite
+                            ? "border border-border-secondary-default"
+                            : ""
+                        }`}
+                        style={{ backgroundColor: bgColor }}
+                        title={color}
+                      />
+                    );
+                  })}
+                </div>
+              )}{" "}
+              {/* Precios */}
+              <div className="flex items-baseline space-x-2">
+                {compareAtPrice && (
+                  <span className="body-01-regular line-through decoration-border-danger-hover decoration-[2px] text-text-secondary-default">
+                    ${compareAtPrice}
+                  </span>
+                )}
+                <span className="body-01-medium text-text-primary-default">
+                  ${price}
+                </span>
+              </div>{" "}
+            </>
+          )}
         </div>
       </Link>
       {/* Icono Favorito separado del enlace para evitar propagación */}

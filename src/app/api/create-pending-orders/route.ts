@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 // SHOPIFY_STORE_DOMAIN=munayintimates.myshopify.com
 // SHOPIFY_ADMIN_ACCESS_TOKEN=tu-admin-access-token
 // (Opcional) SHOPIFY_API_VERSION=2024-10 (o la versión que soporte tu tienda)
-const initialApiVersion = process.env.SHOPIFY_API_VERSION || "2024-10";
+const initialApiVersion = process.env.SHOPIFY_API_VERSION || "2025-04";
 
 export async function POST(req: NextRequest) {
   // 1. Leer body
