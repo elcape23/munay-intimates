@@ -61,12 +61,22 @@ export function ProductForm({ product }: ProductFormProps) {
     return !!opt && opt.values.length === 1 && isOneSizeValue(opt.values[0]);
   }, [productOptions]);
 
+  const firstAvailableVariant = useMemo(() => {
+    return (
+      product.variants?.edges.find((e) => e.node.availableForSale)?.node ||
+      product.variants?.edges[0]?.node
+    );
+  }, [product.variants?.edges]);
+
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
   >(() => {
     const defaults: Record<string, string> = {};
-    productOptions.forEach((option) => {
-      if (option.values[0]) {
+    const variantValues = firstAvailableVariant?.title.split(" / ") || [];
+    productOptions.forEach((option, index) => {
+      if (variantValues[index]) {
+        defaults[option.name] = variantValues[index];
+      } else if (option.values[0]) {
         defaults[option.name] = option.values[0];
       }
     });
