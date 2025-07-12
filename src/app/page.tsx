@@ -13,7 +13,7 @@ import {
 export default async function HomePage() {
   // 1) Traemos los productos en oferta y los más nuevos en paralelo
   const [newest, sale]: [FeaturedProduct[], FeaturedProduct[]] =
-    await Promise.all([getNewProducts(12), getSaleProducts(12, 50)]);
+    await Promise.all([getNewProducts(5), getSaleProducts(5, 50)]);
 
   // 2) Combinamos los productos en oferta con los más nuevos, evitando duplicados
   const saleIds = new Set(sale.map((p) => p.id));
