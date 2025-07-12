@@ -52,10 +52,10 @@ export function ProductCard({
   // calcula % de descuento redondeado
   const priceNum = parsePrice(price);
   const compareNum = parsePrice(compareAtPrice ?? "");
-  const discountPercent =
-    compareAtPrice && compareNum > priceNum
-      ? Math.min(99, Math.round((1 - priceNum / compareNum) * 100))
-      : 0;
+  const isOnSale = Boolean(compareAtPrice) && compareNum > priceNum;
+  const discountPercent = isOnSale
+    ? Math.min(99, Math.round((1 - priceNum / compareNum) * 100))
+    : 0;
 
   return (
     <div className="relative">
@@ -97,7 +97,7 @@ export function ProductCard({
             />
           )}
           {/* Badge Oferta o NEW */}
-          {compareAtPrice ? (
+          {isOnSale ? (
             <div className="absolute bottom-3 left-3 z-10 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert">
               {discountPercent}%
             </div>
@@ -141,7 +141,7 @@ export function ProductCard({
           )}{" "}
           {/* Precios */}
           <div className="flex items-baseline space-x-2">
-            {compareAtPrice && (
+            {isOnSale && (
               <span className="body-01-regular line-through decoration-border-danger-hover decoration-[2px] text-text-secondary-default">
                 ${compareAtPrice}
               </span>
