@@ -116,6 +116,7 @@ export function HeroSection({
 
   const prev = () => setCurrent((c) => (c - 1 + SLIDES.length) % SLIDES.length);
   const next = () => setCurrent((c) => (c + 1) % SLIDES.length);
+  const allLoaded = loaded.every(Boolean);
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden">
@@ -152,8 +153,14 @@ export function HeroSection({
             />
             <div className="absolute inset-0 bg-black/10" />
             <div className="relative z-10 flex h-full flex-col px-6 justify-end text-left text-text-primary-invert">
+              {!loaded[idx] && (
+                <div className="mb-20">
+                  <Skeleton className="mb-4 h-10 w-3/5 max-w-[320px]" />
+                  <Skeleton className="h-8 w-32 max-w-[160px]" />
+                </div>
+              )}
               <AnimatePresence mode="wait">
-                {current === idx && introDone && (
+                {current === idx && introDone && loaded[idx] && (
                   <motion.div
                     key={slide.id}
                     initial={{ opacity: 0, y: 40 }}
@@ -193,16 +200,20 @@ export function HeroSection({
 
       {/* Indicadores */}
       <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 space-x-2">
-        {SLIDES.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrent(idx)}
-            aria-label={`Slide ${idx + 1}`}
-            className={`h-2 w-2 rounded-full transition-colors ${
-              idx === current ? "bg-white" : "bg-white/50"
-            }`}
-          />
-        ))}
+        {!allLoaded
+          ? SLIDES.map((_, idx) => (
+              <Skeleton key={idx} className="h-2 w-2 rounded-full" />
+            ))
+          : SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrent(idx)}
+                aria-label={`Slide ${idx + 1}`}
+                className={`h-2 w-2 rounded-full transition-colors ${
+                  idx === current ? "bg-white" : "bg-white/50"
+                }`}
+              />
+            ))}
       </div>
     </section>
   );
