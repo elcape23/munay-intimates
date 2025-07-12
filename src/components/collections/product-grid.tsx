@@ -15,6 +15,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ProductCard } from "@/components/common/product-card";
 import { extractColorVariants } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
@@ -60,8 +61,20 @@ export function ProductGrid({
   const [maxPriceFilter, setMaxPriceFilter] = useState(0);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(0);
+  const [gridLoaded, setGridLoaded] = useState(false);
   const router = useRouter();
   const showSeasonFilters = title.trim().toLowerCase() === "pijamas";
+
+  useEffect(() => {
+    setImagesLoaded(0);
+  }, [items]);
+
+  useEffect(() => {
+    if (imagesLoaded >= items.length && items.length > 0) {
+      setGridLoaded(true);
+    }
+  }, [imagesLoaded, items.length]);
 
   useEffect(() => {
     if (isFilterModalOpen) {
@@ -643,32 +656,45 @@ export function ProductGrid({
         {/* Título renderizado aquí */}
         <div className="flex flex-row justify-between">
           <div className="flex flex-row items-center gap-2">
-            <Button
-              onClick={() => router.back()}
-              aria-label="Volver atrás"
-              variant="ghost"
-              size="icon"
-            >
-              <ChevronLeftIcon className="h-6 w-6 text-icon-primary-default" />
-            </Button>
-            <h1 className="body-01-medium uppercase tracking-tight text-text-primary-default">
-              {title}
-            </h1>
+            {gridLoaded ? (
+              <>
+                <Button
+                  onClick={() => router.back()}
+                  aria-label="Volver atrás"
+                  variant="ghost"
+                  size="icon"
+                >
+                  <ChevronLeftIcon className="h-6 w-6 text-icon-primary-default" />
+                </Button>
+                <h1 className="body-01-medium uppercase tracking-tight text-text-primary-default">
+                  {title}
+                </h1>
+              </>
+            ) : (
+              <>
+                <Skeleton className="h-6 w-6" />
+                <Skeleton className="h-6 w-32" />
+              </>
+            )}
           </div>
-          <div className="items-center flex ">
-            <Button
-              onClick={() => setIsFilterModalOpen(true)}
-              className="flex items-center gap-1 body-02-regular uppercase text-text-primary-default hover:bg-gray-50"
-              variant="ghost"
-              size="text"
-            >
-              {activeFilterCount > 0 && (
-                <span className="ml-1 bg-background-fill-neutral-default body-03-semibold text-text-primary-invert rounded-full h-4 w-4 flex items-center justify-center">
-                  {activeFilterCount}
-                </span>
-              )}
-              <span>Filtrar</span>
-            </Button>
+          <div className="items-center flex">
+            {gridLoaded ? (
+              <Button
+                onClick={() => setIsFilterModalOpen(true)}
+                className="flex items-center gap-1 body-02-regular uppercase text-text-primary-default hover:bg-gray-50"
+                variant="ghost"
+                size="text"
+              >
+                {activeFilterCount > 0 && (
+                  <span className="ml-1 bg-background-fill-neutral-default body-03-semibold text-text-primary-invert rounded-full h-4 w-4 flex items-center justify-center">
+                    {activeFilterCount}
+                  </span>
+                )}
+                <span>Filtrar</span>
+              </Button>
+            ) : (
+              <Skeleton className="h-6 w-16" />
+            )}
           </div>
         </div>
 
@@ -677,22 +703,25 @@ export function ProductGrid({
           {Object.entries(primaryFilterGroup).map(([groupName, tags]) => (
             <div key={groupName}>
               <div className="flex flex-nowrap gap-2 mt-5 overflow-x-auto no-scrollbar">
-                {" "}
-                {tags.map((tag) => (
-                  <Button
-                    key={tag}
-                    onClick={() => handleFilterToggle(tag)}
-                    className={`px-3 py-1 border rounded-full body-02-regular transition-colors ${
-                      activeFilters.includes(tag)
-                        ? "text-text-primary-default border-border-primary-default"
-                        : "text-text-secondary-default border-border-secondary-default hover:"
-                    }`}
-                    variant="outline"
-                    size="lg"
-                  >
-                    {tag.split(":")[1].trim()}
-                  </Button>
-                ))}
+                {gridLoaded
+                  ? tags.map((tag) => (
+                      <Button
+                        key={tag}
+                        onClick={() => handleFilterToggle(tag)}
+                        className={`px-3 py-1 border rounded-full body-02-regular transition-colors ${
+                          activeFilters.includes(tag)
+                            ? "text-text-primary-default border-border-primary-default"
+                            : "text-text-secondary-default border-border-secondary-default hover:"
+                        }`}
+                        variant="outline"
+                        size="lg"
+                      >
+                        {tag.split(":")[1].trim()}
+                      </Button>
+                    ))
+                  : tags.map((tag, idx) => (
+                      <Skeleton key={idx} className="h-6 w-20" />
+                    ))}
               </div>
             </div>
           ))}
@@ -737,6 +766,7 @@ export function ProductGrid({
                   return Boolean(byDate || byTag);
                 })()}
                 fill
+                onImageLoad={() => setImagesLoaded((c) => c + 1)}
               />
             </div>
           ))}

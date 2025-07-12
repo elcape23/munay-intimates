@@ -22,6 +22,7 @@ export interface ProductCardProps {
   size?: "default" | "small";
   /** If true, image adapts to parent width */
   fill?: boolean;
+  onImageLoad?: () => void;
 }
 
 function parsePrice(value: string): number {
@@ -43,6 +44,7 @@ export function ProductCard({
   colorVariants = [],
   size = "default",
   fill = false,
+  onImageLoad,
 }: ProductCardProps) {
   const [loaded, setLoaded] = useState(false);
 
@@ -83,7 +85,10 @@ export function ProductCard({
                 loaded ? "opacity-100" : "opacity-0"
               )}
               priority
-              onLoad={() => setLoaded(true)}
+              onLoad={() => {
+                setLoaded(true);
+                onImageLoad?.();
+              }}
             />
           ) : (
             <Image
@@ -96,7 +101,10 @@ export function ProductCard({
                 loaded ? "opacity-100" : "opacity-0"
               )}
               priority
-              onLoad={() => setLoaded(true)}
+              onLoad={() => {
+                setLoaded(true);
+                onImageLoad?.();
+              }}
             />
           )}
           {/* Badge Oferta o NEW */}
