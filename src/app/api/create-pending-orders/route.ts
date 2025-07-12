@@ -33,15 +33,15 @@ export async function POST(req: NextRequest) {
     }
   `;
 
+  const lineItems = cart.lines.edges
+    .filter((edge: any) => edge.node.merchandise.quantityAvailable !== 0)
+    .map((edge: any) => ({
+      variantId: edge.node.merchandise.id,
+      quantity: edge.node.quantity,
+    }));
+
   const variables = {
-    input: {
-      lineItems: cart.lines.edges.map((edge: any) => ({
-        variantId: edge.node.merchandise.id,
-        quantity: edge.node.quantity,
-      })),
-      note,
-      tags,
-    },
+    input: { lineItems, note, tags },
   };
 
   const response = await fetch(

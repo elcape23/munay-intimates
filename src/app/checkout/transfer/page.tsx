@@ -34,7 +34,7 @@ export default function CheckoutTransferPage() {
         if (!res.ok) throw new Error(data.error || "Error");
         setOrderId(data.id);
       } catch (e) {
-        setError("No se pudo crear la orden.");
+        setError(e instanceof Error ? e.message : "No se pudo crear la orden.");
       } finally {
         setLoading(false);
       }
