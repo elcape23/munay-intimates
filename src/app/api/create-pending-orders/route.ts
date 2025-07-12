@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Asegúrate de que tu token ADMIN tenga los scopes necesarios (draft_orders, write_draft_orders) y sea un Admin API Access Token, no Storefront.
-// Para verificar manualmente, corre en tu terminal:
-// curl -X POST https://YOUR_STORE_DOMAIN/admin/api/unstable/graphql.json \
-//   -H "X-Shopify-Access-Token: YOUR_ADMIN_TOKEN" \
-//   -H "Content-Type: application/json" \
-//   -d '{"query":"{ shop { name } }"}'
-// y comprueba que no obtienes 404.
-
-// Variables de entorno en .env.local:
-// SHOPIFY_STORE_DOMAIN=munayintimates.myshopify.com
-// SHOPIFY_ADMIN_ACCESS_TOKEN=tu-admin-access-token
-// (Opcional) SHOPIFY_API_VERSION=2024-10 (o la versión que soporte tu tienda)
 const initialApiVersion = process.env.SHOPIFY_API_VERSION || "2024-10";
 
+console.log("USANDO TOKEN:", process.env.SHOPIFY_ADMIN_ACCESS_TOKEN);
+console.log("USANDO VERSION:", process.env.SHOPIFY_API_VERSION);
+
 export async function POST(req: NextRequest) {
-  // 1. Leer body
   const {
     cart,
     note = "Pago por transferencia",
@@ -23,7 +13,6 @@ export async function POST(req: NextRequest) {
   } = await req.json();
   console.log("[route.ts] ▶️ Body recibido:", { cart, note, tags });
 
-  // 2. Cargar vars de entorno (solo servidor)
   const adminToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
   console.log("[route.ts] 🔐 adminToken presente?:", Boolean(adminToken));
   const storeDomain = process.env.SHOPIFY_STORE_DOMAIN;
@@ -37,7 +26,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 3. Preparar query y variables
   const query = `
     mutation draftOrderCreate($input: DraftOrderInput!) {
       draftOrderCreate(input: $input) {
@@ -54,14 +42,12 @@ export async function POST(req: NextRequest) {
     }));
   const variables = { input: { lineItems, note, tags } };
 
-  // 4. Intentar con versión inicial, fallback a 'unstable'
   let apiVersion = initialApiVersion;
   let endpoint = `https://${storeDomain}/admin/api/${apiVersion}/graphql.json`;
   console.log("[route.ts] 🌍 Intentando versión API:", apiVersion);
 
   let response;
   try {
-    // 5. Envío de petición
     console.log("[route.ts] 📤 Fetch a:", endpoint);
     response = await fetch(endpoint, {
       method: "POST",
@@ -73,7 +59,6 @@ export async function POST(req: NextRequest) {
     });
     console.log("[route.ts] 📥 Status:", response.status);
 
-    // 6. Fallback en caso de 404
     if (response.status === 404 && apiVersion !== "unstable") {
       console.warn(
         `[route.ts] ⚠️ Versión ${apiVersion} no soportada, reintentando con 'unstable'...`
@@ -92,7 +77,6 @@ export async function POST(req: NextRequest) {
       console.log("[route.ts] 📥 Status tras retry:", response.status);
     }
 
-    // 7. Leer cuerpo y parsear JSON
     const text = await response.text();
     console.log("[route.ts] 📋 Cuerpo crudo:", text);
     let json;
@@ -108,7 +92,6 @@ export async function POST(req: NextRequest) {
       throw e;
     }
 
-    // 8. Manejar errores API
     if (
       !response.ok ||
       json.errors ||
@@ -118,11 +101,20 @@ export async function POST(req: NextRequest) {
         json.errors?.[0]?.message ||
         json.data?.draftOrderCreate?.userErrors?.[0]?.message ||
         "Error desconocido";
-      console.error("[route.ts] ❌ Error del API:", message);
-      return NextResponse.json({ error: message }, { status: 400 });
+      const details = {
+        status: response.status,
+        message,
+        errors: json.errors,
+        userErrors: json.data?.draftOrderCreate?.userErrors,
+      };
+
+      console.error("[route.ts] ❌ Error del API:", details);
+
+      return NextResponse.json(details, {
+        status: response.ok ? 400 : response.status,
+      });
     }
 
-    // 9. Éxito
     const draft = json.data.draftOrderCreate.draftOrder;
     console.log("[route.ts] 🎉 Draft creado:", draft.name);
     return NextResponse.json({ id: draft.name });
