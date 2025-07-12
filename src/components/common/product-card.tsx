@@ -66,11 +66,7 @@ export function ProductCard({
         } overflow-hidden hover:transition-shadow duration-300`}
       >
         {/* Imagen */}
-        <div
-          className={`relative w-full overflow-hidden ${
-            fill ? "aspect-[220/328]" : ""
-          }`}
-        >
+        <div className="relative w-full overflow-hidden aspect-[220/328]">
           {!loaded && (
             <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-300" />
           )}

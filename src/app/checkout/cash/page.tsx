@@ -42,8 +42,7 @@ export default function CheckoutCashPage() {
       }
     };
     createOrder();
-  }, [isLoggedIn, cart, orderId, loading]);
-
+  }, [isLoggedIn, cart]);
   if (!isLoggedIn) {
     return (
       <section className="pt-[55px] mx-6">
