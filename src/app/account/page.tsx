@@ -17,6 +17,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   EllipsisHorizontalIcon,
+  ArrowLeftStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { Footer } from "@/components/common/footer";
 import { ConfirmModal } from "@/components/common/confirm-modal";
@@ -278,19 +279,18 @@ export default function AccountPage() {
       </div>
       <div className="">
         <div className="flex flex-row justify-between items-center mb-4">
-          <div className="flex flex-row gap-1">
-            <div className="body-02-medium"> {customer.email}</div>
-            <div className="body-02-regular">no sos vos?</div>
+          <div className="flex flex-row gap-1 w-full pt-10">
+            <Button
+              onClick={openLogoutConfirm}
+              variant="outline"
+              size="md"
+              className="w-full"
+              disabled={isSigningOut}
+            >
+              <ArrowLeftStartOnRectangleIcon className="w-6 h-6 mr-2" />
+              {isSigningOut ? "Saliendo..." : "Salir"}
+            </Button>
           </div>
-          <Button
-            onClick={openLogoutConfirm}
-            className="body-01-semibold"
-            variant="link"
-            size="text"
-            disabled={isSigningOut}
-          >
-            {isSigningOut ? "Saliendo..." : "Salir"}
-          </Button>
         </div>
         <Footer />
         <ConfirmModal
