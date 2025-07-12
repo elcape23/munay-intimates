@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     tags = ["transferencia"],
   } = await req.json();
 
-  const adminToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+  const adminToken = process.env.NEXT_PUBLIC_SHOPIFY_ADMIN_ACCESS_TOKEN;
   const storeDomain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 
   if (!adminToken || !storeDomain) {
