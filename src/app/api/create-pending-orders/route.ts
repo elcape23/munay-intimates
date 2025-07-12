@@ -94,6 +94,17 @@ export async function POST(req: NextRequest) {
       console.log("[route.ts] 📥 Status tras retry:", response.status);
     }
 
+    // Ambas versiones dieron 404 -> posibles credenciales incorrectas
+    if (response.status === 404) {
+      console.error("[route.ts] ❌ 404 persistente: dominio o token inválido");
+      return NextResponse.json(
+        {
+          error: "Invalid store domain or token. Verify credentials.",
+        },
+        { status: 404 }
+      );
+    }
+
     // 7. Leer cuerpo y parsear JSON
     const text = await response.text();
     console.log("[route.ts] 📋 Cuerpo crudo:", text);

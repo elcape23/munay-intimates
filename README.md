@@ -11,6 +11,9 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 GOOGLE_CLIENT_ID="<your-google-client-id>"
 GOOGLE_CLIENT_SECRET="<your-google-client-secret>"
 SHOPIFY_ADMIN_ACCESS_TOKEN="<your-admin-token>"
+SHOPIFY_STORE_DOMAIN="<your-shop-domain>.myshopify.com"
+# Optional, defaults to "2025-04" if unset
+SHOPIFY_API_VERSION="2025-04"
 ```
 
 ## Installation
