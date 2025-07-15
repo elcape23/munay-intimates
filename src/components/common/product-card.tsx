@@ -70,7 +70,7 @@ export function ProductCard({
         {/* Imagen */}
         <div className="relative w-full overflow-hidden aspect-[220/328]">
           {!loaded && (
-            <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-300" />
+            <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-600" />
           )}
           {!loaded && (
             <Skeleton className="absolute bottom-3 left-3 z-10 h-6 w-14" />
@@ -182,7 +182,11 @@ export function ProductCard({
       </Link>
       {/* Icono Favorito separado del enlace para evitar propagación */}
       <div className="absolute top-2 right-2 z-10">
-        <FavoriteButton productHandle={handle} />{" "}
+        {loaded ? (
+          <FavoriteButton productHandle={handle} />
+        ) : (
+          <Skeleton className="h-6 w-6 rounded-full" />
+        )}{" "}
       </div>{" "}
     </div>
   );

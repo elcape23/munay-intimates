@@ -12,4 +12,9 @@ export const COLOR_MAP: Record<string, string> = {
   "Gris Humo": "#74818C",
   Lila: "#B58596",
   Marfil: "#E7D5C7",
+  Amarillo: "#ece075ff",
+  Gris: "#808080",
+  Vison: "#dccd9e",
+  Mostaza: "#e8b11e",
+  Ladrillo: "#ec6d23",
 };
