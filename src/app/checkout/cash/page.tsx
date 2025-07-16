@@ -12,7 +12,7 @@ import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 export default function CheckoutCashPage() {
   const router = useRouter();
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, customer } = useAuthStore();
   const { cart, clearCart } = useCartStore();
   const createdRef = useRef(false);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -31,6 +31,7 @@ export default function CheckoutCashPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             cart,
+            customerId: customer?.id,
             note: "Pago en efectivo",
             tags: ["efectivo"],
           }),

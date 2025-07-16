@@ -18,11 +18,18 @@ export async function POST(req: NextRequest) {
   // 1. Leer body
   const {
     cart,
+    customerId,
     note = "Pago por transferencia",
     tags = ["transferencia"],
   } = await req.json();
-  console.log("[route.ts] ▶️ Body recibido:", { cart, note, tags });
+  console.log("[route.ts] ▶️ Body recibido:", { cart, customerId, note, tags });
 
+  if (!customerId) {
+    return NextResponse.json(
+      { error: "Customer ID is required" },
+      { status: 400 }
+    );
+  }
   // 2. Cargar vars de entorno (solo servidor)
   const adminToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
   console.log("[route.ts] 🔐 adminToken presente?:", Boolean(adminToken));
@@ -54,8 +61,14 @@ export async function POST(req: NextRequest) {
       variantId: edge.node.merchandise.id,
       quantity: edge.node.quantity,
     }));
-  const variables = { input: { lineItems, note, tags } };
-
+  const variables = {
+    input: {
+      lineItems,
+      note,
+      tags,
+      ...(customerId ? { customerId } : {}),
+    },
+  };
   // 4. Intentar con versión inicial, fallback a 'unstable'
   let apiVersion = initialApiVersion;
   let endpoint = `https://${storeDomain}/admin/api/${apiVersion}/graphql.json`;

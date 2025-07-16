@@ -10,7 +10,7 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
 export default function CheckoutTransferPage() {
   const router = useRouter();
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, customer } = useAuthStore();
   const { cart, clearCart } = useCartStore();
   const createdRef = useRef(false);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -29,6 +29,7 @@ export default function CheckoutTransferPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             cart,
+            customerId: customer?.id,
             note: "Pago por transferencia",
             tags: ["transferencia"],
           }),
