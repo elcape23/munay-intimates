@@ -19,7 +19,14 @@ export default function CheckoutTransferPage() {
 
   useEffect(() => {
     const createOrder = async () => {
-      if (!isLoggedIn || !cart || orderId || loading || createdRef.current)
+      if (
+        !isLoggedIn ||
+        !customer ||
+        !cart ||
+        orderId ||
+        loading ||
+        createdRef.current
+      )
         return;
       createdRef.current = true;
       setLoading(true);
@@ -45,7 +52,7 @@ export default function CheckoutTransferPage() {
       }
     };
     createOrder();
-  }, [isLoggedIn, cart]);
+  }, [isLoggedIn, cart, customer]);
   if (!isLoggedIn) {
     return (
       <section className="pt-[55px] mx-6">

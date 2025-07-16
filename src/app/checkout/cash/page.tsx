@@ -21,7 +21,14 @@ export default function CheckoutCashPage() {
 
   useEffect(() => {
     const createOrder = async () => {
-      if (!isLoggedIn || !cart || orderId || loading || createdRef.current)
+      if (
+        !isLoggedIn ||
+        !customer ||
+        !cart ||
+        orderId ||
+        loading ||
+        createdRef.current
+      )
         return;
       createdRef.current = true;
       setLoading(true);
@@ -47,7 +54,7 @@ export default function CheckoutCashPage() {
       }
     };
     createOrder();
-  }, [isLoggedIn, cart]);
+  }, [isLoggedIn, customer, cart]);
   if (!isLoggedIn) {
     return (
       <section className="pt-[55px] mx-6">
