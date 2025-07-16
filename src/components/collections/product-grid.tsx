@@ -21,6 +21,7 @@ import { extractColorVariants } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
 import { slugify } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useCollectionStore } from "@/store/collection-store";
 
 type ProductWithDynamicMetafields = ShopifyProduct & {
   [key: string]: ShopifyMetafield | any;
@@ -64,7 +65,33 @@ export function ProductGrid({
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [gridLoaded, setGridLoaded] = useState(false);
   const router = useRouter();
+  const collectionStore = useCollectionStore();
   const showSeasonFilters = title.trim().toLowerCase() === "pijamas";
+
+  // Restore state when navigating back
+  useEffect(() => {
+    if (!handle) return;
+    const saved = collectionStore.get(handle);
+    if (saved) {
+      setItems(saved.items);
+      setPagination(saved.pageInfo);
+      setTimeout(() => {
+        window.scrollTo(0, saved.scrollY);
+      }, 0);
+    }
+  }, [handle]);
+
+  // Save state on unmount
+  useEffect(() => {
+    return () => {
+      if (!handle) return;
+      collectionStore.save(handle, {
+        items,
+        pageInfo: pagination,
+        scrollY: window.scrollY,
+      });
+    };
+  }, [handle, items, pagination]);
 
   useEffect(() => {
     setImagesLoaded(0);
@@ -478,13 +505,13 @@ export function ProductGrid({
               Object.entries(modalFilterGroups).map(([groupName, values]) => (
                 <div
                   key={groupName}
-                  className="flex flex-row justify-between items-start gap-20"
+                  className="space-y-2 flex flex-row justify-between items-center gap-20"
                 >
                   <h3 className="body-02-regular uppercase text-text-primary-default">
                     {groupName}
                   </h3>
                   {groupName === "Color" ? (
-                    <div className="flex flex-wrap gap-1 justify-end">
+                    <div className="flex flex-wrap gap-2 pr-[2px]">
                       {values.map((filterString) => {
                         const value = filterString.split(":")[1].trim();
                         const active = activeFilters.includes(filterString);
@@ -496,7 +523,7 @@ export function ProductGrid({
                             key={filterString}
                             onClick={() => handleFilterToggle(filterString)}
                             aria-label={value}
-                            className={`h-6 w-6 mx-1 my-1 items-start rounded-full border ${
+                            className={`h-6 w-6 items-start rounded-full border ${
                               active
                                 ? "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default"
                                 : "border-border-secondary-default"
@@ -528,7 +555,7 @@ export function ProductGrid({
                               key={filterString}
                               onClick={() => handleFilterToggle(filterString)}
                               aria-label={label}
-                              className={`h-6 w-6 mx-1 my-1 flex items-start body-02-regular ${
+                              className={`h-6 w-6 flex items-start body-02-regular ${
                                 active
                                   ? "text-text-primary-default border-b-[2px] border-border-primary-default"
                                   : "body-02-medium text-text-secondary-default border-b-[2px] border-transparent"

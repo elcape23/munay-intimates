@@ -74,6 +74,7 @@ export type ShopifyProduct = {
   tags: string[];
   createdAt?: string;
   updatedAt?: string;
+  publishedAt?: string | null;
   descriptionHtml?: string;
   priceRange: {
     minVariantPrice: ShopifyPrice;
