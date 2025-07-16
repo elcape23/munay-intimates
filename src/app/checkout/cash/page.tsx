@@ -59,7 +59,10 @@ export default function CheckoutCashPage() {
     return (
       <section className="pt-[55px] mx-6">
         <h1 className="body-01-medium mb-6">Inicia sesión o crea una cuenta</h1>
-        <LoginForm redirectOnSuccess={false} />
+        <LoginForm
+          redirectOnSuccess={false}
+          registerReturnUrl="/checkout/cash"
+        />{" "}
       </section>
     );
   }

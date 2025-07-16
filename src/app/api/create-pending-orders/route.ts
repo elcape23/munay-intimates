@@ -61,18 +61,58 @@ export async function POST(req: NextRequest) {
       variantId: edge.node.merchandise.id,
       quantity: edge.node.quantity,
     }));
+
+  // 4. Definir endpoint y obtener dirección por defecto
+  let apiVersion = initialApiVersion;
+  let endpoint = `https://${storeDomain}/admin/api/${apiVersion}/graphql.json`;
+  console.log("[route.ts] 🌍 Intentando versión API:", apiVersion);
+
+  let address1: string | null = null;
+  if (customerId) {
+    const addrQuery = `
+      query getCustomer($id: ID!) {
+        customer(id: $id) {
+          defaultAddress { address1 }
+        }
+      }
+    `;
+    try {
+      const addrRes = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": adminToken,
+        },
+        body: JSON.stringify({
+          query: addrQuery,
+          variables: { id: customerId },
+        }),
+      });
+      if (addrRes.ok) {
+        const addrJson = await addrRes.json();
+        address1 = addrJson.data?.customer?.defaultAddress?.address1 || null;
+        console.log("[route.ts] 🏠 address1:", address1);
+      } else {
+        console.warn(
+          "[route.ts] ⚠️ No se pudo obtener address1:",
+          addrRes.status
+        );
+      }
+    } catch (e) {
+      console.error("[route.ts] ⚠️ Error obteniendo address1:", e);
+    }
+  }
   const variables = {
     input: {
       lineItems,
       note,
       tags,
       ...(customerId ? { customerId } : {}),
+      ...(address1 ? { shippingAddress: { address1 } } : {}),
     },
   };
-  // 4. Intentar con versión inicial, fallback a 'unstable'
-  let apiVersion = initialApiVersion;
-  let endpoint = `https://${storeDomain}/admin/api/${apiVersion}/graphql.json`;
-  console.log("[route.ts] 🌍 Intentando versión API:", apiVersion);
+
+  // 5. Intentar crear el draft con fallback a 'unstable'
 
   let response;
   try {

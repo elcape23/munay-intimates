@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import RegisterForm from "@/components/account/register-form";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -9,14 +9,15 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const { data: session } = useSession();
 
   useEffect(() => {
     if (session) {
-      router.push("/account");
+      router.push(returnTo || "/account");
     }
-  }, [session, router]);
-
+  }, [session, router, returnTo]);
   return (
     <div className="flex justify-center items-center pt-[55px] px-6">
       <div className="w-full max-w-md">

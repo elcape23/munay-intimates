@@ -13,11 +13,13 @@ import Loading from "@/app/loading";
 interface LoginFormProps {
   onLoginSuccess?: () => void;
   redirectOnSuccess?: boolean;
+  registerReturnUrl?: string;
 }
 
 export default function LoginForm({
   onLoginSuccess,
   redirectOnSuccess = true,
+  registerReturnUrl,
 }: LoginFormProps) {
   const { login, isLoggedIn, error: authError, isLoading } = useAuthStore();
   const [email, setEmail] = useState("");
@@ -67,7 +69,10 @@ export default function LoginForm({
 
   const handleRegisterRedirect = () => {
     setIsRedirecting(true);
-    router.push("/account/register");
+    const url = registerReturnUrl
+      ? `/account/register?returnTo=${encodeURIComponent(registerReturnUrl)}`
+      : "/account/register";
+    router.push(url);
   };
 
   useEffect(() => {
