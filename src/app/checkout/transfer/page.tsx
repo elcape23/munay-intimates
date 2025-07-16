@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import { useCartStore } from "@/store/cart-store";
@@ -11,14 +11,17 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 export default function CheckoutTransferPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
-  const { cart } = useCartStore();
+  const { cart, clearCart } = useCartStore();
+  const createdRef = useRef(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const createOrder = async () => {
-      if (!isLoggedIn || !cart || orderId || loading) return;
+      if (!isLoggedIn || !cart || orderId || loading || createdRef.current)
+        return;
+      createdRef.current = true;
       setLoading(true);
       try {
         const res = await fetch("/api/create-pending-orders", {
@@ -33,6 +36,7 @@ export default function CheckoutTransferPage() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Error");
         setOrderId(data.id);
+        clearCart();
       } catch (e) {
         setError(e instanceof Error ? e.message : "No se pudo crear la orden.");
       } finally {

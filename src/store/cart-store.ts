@@ -21,6 +21,8 @@ interface CartState {
   addItemToCart: (variantId: string) => Promise<void>;
   removeItem: (lineId: string) => Promise<void>;
   updateQuantity: (lineId: string, quantity: number) => Promise<void>;
+  /** Vacía el carrito y elimina su ID del localStorage */
+  clearCart: () => void;
 }
 
 // Creamos el store con zustand
@@ -191,6 +193,13 @@ export const useCartStore = create<CartState>((set, get) => ({
       }
       console.error(e);
     }
+  },
+
+  clearCart: () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("cartId");
+    }
+    set({ cart: null });
   },
 }));
 
