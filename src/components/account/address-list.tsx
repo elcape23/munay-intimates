@@ -42,7 +42,11 @@ export function AddressList() {
   }
 
   if (addresses.length === 0) {
-    return <p className="text-gray-500">No tienes direcciones guardadas.</p>;
+    return (
+      <p className="body-01-regular text-text-secondary-default">
+        No tienes direcciones guardadas.
+      </p>
+    );
   }
 
   return (
@@ -52,9 +56,24 @@ export function AddressList() {
           <p className="body-02-regular text-text-primary-default uppercase">
             {addr.firstName} {addr.lastName}
           </p>
-          {addr.formatted && (
+          {(addr.address1 || addr.address2) && (
             <p className="body-02-regular text-text-primary-default">
-              {addr.formatted.join(", ")}
+              {[addr.address1, addr.address2].filter(Boolean).join(" ")}{" "}
+            </p>
+          )}
+          {addr.city && (
+            <p className="body-02-regular text-text-primary-default">
+              {addr.city}
+            </p>
+          )}
+          {addr.province && (
+            <p className="body-02-regular text-text-primary-default">
+              {addr.province}
+            </p>
+          )}
+          {addr.zip && (
+            <p className="body-02-regular text-text-primary-default">
+              {addr.zip}
             </p>
           )}{" "}
           {addr.phone && (
