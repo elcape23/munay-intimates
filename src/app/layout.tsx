@@ -35,7 +35,10 @@ export const metadata: Metadata = {
     url: appUrl,
     images: [
       {
-        url: new URL("/munay-wordmark.png", appUrl).toString(),
+        url: new URL(
+          "https://www.munayintimates.com.ar/munay-wordmark.png",
+          appUrl
+        ).toString(),
         width: 1200,
         height: 630,
         alt: "Munay Intimates",
