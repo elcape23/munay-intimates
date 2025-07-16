@@ -72,8 +72,9 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
         className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar space-x-3 scroll-smooth"
       >
         {images.map((src, idx) => (
-          <div
+          <Link
             key={idx}
+            href={href ?? "#"}
             className="snap-start flex-shrink-0 w-[300px] h-[300px] overflow-hidden"
           >
             <img
@@ -81,7 +82,7 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
               alt={`Invierno Slide ${idx + 1}`}
               className="w-full h-full object-cover"
             />
-          </div>
+          </Link>
         ))}
 
         {/* Slide de "Ver más" al final */}

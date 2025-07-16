@@ -4,9 +4,12 @@ import { gql } from "graphql-request";
 import { slugify } from "./utils";
 
 // --- Configuración ---
-const storeDomain =
+const rawStoreDomain =
   process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN ??
   "munayintimates.myshopify.com";
+// Permite que la variable de entorno incluya accidentalmente el protocolo
+// y lo normaliza a solo el dominio para evitar URLs "https://https://...".
+const storeDomain = rawStoreDomain.replace(/^https?:\/\//, "");
 const storefrontAccessToken =
   process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 const rawAppUrl =
@@ -19,6 +22,11 @@ const rawAppUrl =
 const appUrl = rawAppUrl.startsWith("http")
   ? rawAppUrl
   : `https://${rawAppUrl}`;
+if (rawStoreDomain.startsWith("http")) {
+  console.warn(
+    `⚠️ NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN debería ser solo el dominio (ej. "mi-tienda.myshopify.com"). Se usará "${storeDomain}".`
+  );
+}
 if (storeDomain?.includes("vercel.app")) {
   throw new Error(
     `⚠️ NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN está mal configurada (“${storeDomain}”). Debe ser TU-TIENDA.myshopify.com, no tu dominio de aplicación.`
@@ -204,6 +212,12 @@ export async function shopifyFetch<T>({
 
   try {
     const res = await fetch(shopifyApiEndpoint, fetchOptions);
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(
+        `HTTP ${res.status} ${res.statusText}: ${text.slice(0, 100)}`
+      );
+    }
     const json = await res.json();
 
     if (json.errors) {

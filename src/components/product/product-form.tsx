@@ -388,7 +388,8 @@ export function ProductForm({ product }: ProductFormProps) {
                 isBuyButtonDisabled
                   ? "cursor-not-allowed"
                   : "hover:bg-background-fill-neutral-default"
-              }`}
+              }
+              text-text-primary-default hover:text-text-primary-invert`}
           variant="outline"
           size="lg"
         >

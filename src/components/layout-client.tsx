@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/common/nav-bar";
 import { SideMenu } from "@/components/common/side-menu";
 import { SearchModal } from "@/components/common/search-modal";
@@ -12,6 +13,7 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
   const [introLoaded, setIntroLoaded] = useState(false);
   const [introShown, setIntroShown] = useState<boolean | null>(null);
   const setIntroDone = useIntroStore((state) => state.setDone);
+  const pathname = usePathname();
 
   useEffect(() => {
     const shown =
@@ -31,6 +33,16 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
     setIntroLoaded(true);
     setIntroDone(true);
   };
+  // Ensure product pages always start at the top by disabling
+  // the browser's scroll restoration for these routes.
+  useEffect(() => {
+    if (pathname.startsWith("/products/")) {
+      window.history.scrollRestoration = "manual";
+      window.scrollTo(0, 0);
+    } else {
+      window.history.scrollRestoration = "auto";
+    }
+  }, [pathname]);
 
   if (introShown === null) return null;
 

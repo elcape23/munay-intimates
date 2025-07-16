@@ -55,7 +55,7 @@ export default function ProductGallery({ images, productHandle }: Props) {
             >
               {" "}
               {!loaded[i] && (
-                <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-300" />
+                <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-400" />
               )}
               <Image
                 src={node.url}
@@ -63,7 +63,7 @@ export default function ProductGallery({ images, productHandle }: Props) {
                 width={880}
                 height={1120}
                 className={cn(
-                  "w-full object-cover transition-opacity duration-300",
+                  "w-full object-cover transition-opacity duration-400",
                   loaded[i] ? "opacity-100" : "opacity-0"
                 )}
                 priority={i === 0}

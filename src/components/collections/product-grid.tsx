@@ -478,13 +478,13 @@ export function ProductGrid({
               Object.entries(modalFilterGroups).map(([groupName, values]) => (
                 <div
                   key={groupName}
-                  className="space-y-2 flex flex-row justify-between items-center gap-20"
+                  className="flex flex-row justify-between items-start gap-20"
                 >
                   <h3 className="body-02-regular uppercase text-text-primary-default">
                     {groupName}
                   </h3>
                   {groupName === "Color" ? (
-                    <div className="flex flex-wrap gap-2 pr-[2px]">
+                    <div className="flex flex-wrap gap-1 justify-end">
                       {values.map((filterString) => {
                         const value = filterString.split(":")[1].trim();
                         const active = activeFilters.includes(filterString);
@@ -496,7 +496,7 @@ export function ProductGrid({
                             key={filterString}
                             onClick={() => handleFilterToggle(filterString)}
                             aria-label={value}
-                            className={`h-6 w-6 items-start rounded-full border ${
+                            className={`h-6 w-6 mx-1 my-1 items-start rounded-full border ${
                               active
                                 ? "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default"
                                 : "border-border-secondary-default"
@@ -528,7 +528,7 @@ export function ProductGrid({
                               key={filterString}
                               onClick={() => handleFilterToggle(filterString)}
                               aria-label={label}
-                              className={`h-6 w-6 flex items-start body-02-regular ${
+                              className={`h-6 w-6 mx-1 my-1 flex items-start body-02-regular ${
                                 active
                                   ? "text-text-primary-default border-b-[2px] border-border-primary-default"
                                   : "body-02-medium text-text-secondary-default border-b-[2px] border-transparent"
