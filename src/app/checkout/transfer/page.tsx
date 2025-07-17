@@ -7,6 +7,8 @@ import { useCartStore } from "@/store/cart-store";
 import LoginForm from "@/components/account/login-form";
 import { Button } from "@/components/ui/button";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 export default function CheckoutTransferPage() {
   const router = useRouter();
@@ -66,23 +68,25 @@ export default function CheckoutTransferPage() {
   }
 
   return (
-    <section className="pt-[55px] mx-6 min-h-[calc(100vh-55px)] flex flex-col justify-between">
-      <div className="flex flex-col items-center justify-start gap-3 mt-20">
+    <section className="pt-[55px] mx-6 min-h-[100vh] flex flex-col justify-between">
+      <div className="flex flex-col items-start justify-start gap-3 mt-14 text-left">
         {orderId ? (
           <>
             <CheckCircleIcon className="w-6 h-6 text-icon-success-default" />
-            <h1 className="heading-06-regular text-text-primary-default">
-              Tu orden está pendiente
-            </h1>
-            <p className="body-01-regular text-text-primary-default">
-              Número de orden: {orderId}
-            </p>
-            <div className="body-01-regular text-text-primary-default">
-              <h6 className="body-01-regular text-text-primary-default underline">
+            <div>
+              <h1 className="heading-06-regular text-text-primary-default">
+                Tu orden está pendiente
+              </h1>
+              <p className="body-01-regular text-text-secondary-default">
+                Número de orden: {orderId}
+              </p>
+            </div>
+            <div className="body-01-regular text-text-primary-default space-y-1 my-4">
+              <p className="body-01-regular text-text-primary-default underline">
                 Datos para transferencia
-              </h6>
+              </p>
               <p className="body-01-regular text-text-primary-default">
-                <br /> CBU: 0000000000000000
+                CBU: 0000000000000000
                 <br />
                 Alias: munayintimates.mp
                 <br /> Nombre: Victoria Manso
@@ -92,7 +96,7 @@ export default function CheckoutTransferPage() {
             </div>
             <p className="body-01-regular text-text-primary-default">
               Cuando realices la transferencia por favor compartinos el
-              comprobante para enviarte la orden.
+              comprobante para enviarte el pedido.
             </p>
           </>
         ) : (
@@ -102,6 +106,17 @@ export default function CheckoutTransferPage() {
         )}
       </div>
       <div className="mb-12 space-y-2">
+        <Button asChild size="lg" className="w-full">
+          <a
+            href="https://wa.me/5493813638914"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2"
+          >
+            <FontAwesomeIcon icon={faWhatsapp} className="w-6 h-6" />
+            Compartir Comprobante
+          </a>
+        </Button>
         <Button
           variant="outline"
           size="lg"
