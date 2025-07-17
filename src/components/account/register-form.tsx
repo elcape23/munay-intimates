@@ -36,6 +36,11 @@ export default function RegisterForm() {
   const [emailTouched, setEmailTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
+  const [address1Touched, setAddress1Touched] = useState(false);
+  const [provinceTouched, setProvinceTouched] = useState(false);
+  const [cityTouched, setCityTouched] = useState(false);
+  const [zipTouched, setZipTouched] = useState(false);
+  const [countryTouched, setCountryTouched] = useState(false);
   const isFirstNameValid = firstName.trim().length >= 3;
   const firstNameStatus = !firstNameTouched
     ? null
@@ -79,6 +84,51 @@ export default function RegisterForm() {
     : confirmPassword.length === 0
     ? "empty"
     : isConfirmPasswordValid
+    ? "valid"
+    : "invalid";
+
+  const isAddress1Valid = address1.trim().length >= 3;
+  const address1Status = !address1Touched
+    ? null
+    : address1.length === 0
+    ? "empty"
+    : isAddress1Valid
+    ? "valid"
+    : "invalid";
+
+  const isProvinceValid = province.trim().length >= 3;
+  const provinceStatus = !provinceTouched
+    ? null
+    : province.length === 0
+    ? "empty"
+    : isProvinceValid
+    ? "valid"
+    : "invalid";
+
+  const isCityValid = city.trim().length >= 3;
+  const cityStatus = !cityTouched
+    ? null
+    : city.length === 0
+    ? "empty"
+    : isCityValid
+    ? "valid"
+    : "invalid";
+
+  const isZipValid = zip.trim().length >= 3;
+  const zipStatus = !zipTouched
+    ? null
+    : zip.length === 0
+    ? "empty"
+    : isZipValid
+    ? "valid"
+    : "invalid";
+
+  const isCountryValid = country.trim().length >= 3;
+  const countryStatus = !countryTouched
+    ? null
+    : country.length === 0
+    ? "empty"
+    : isCountryValid
     ? "valid"
     : "invalid";
 
@@ -133,7 +183,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <form className="space-y-10" onSubmit={handleRegister}>
+    <form className="space-y-10 pb-12" onSubmit={handleRegister}>
       <div className="space-y-1">
         <div className="space-y-2 relative">
           <Input
@@ -390,55 +440,220 @@ export default function RegisterForm() {
             Quiero recibir novedades e información de Munay vía email
           </label>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
+          {" "}
           <Input
             id="address1"
             name="address1"
             type="text"
             value={address1}
             onChange={(e) => handleInputChange(setAddress1, e.target.value)}
+            onBlur={() => setAddress1Touched(true)}
             placeholder="Dirección"
+            className={cn(
+              "pr-10",
+              address1Status === "valid"
+                ? "text-text-success-default"
+                : address1Status === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
           />
+          {address1Status === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {address1Status === "invalid" && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !address1Touched && "invisible",
+              address1Touched &&
+                (address1Status === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default")
+            )}
+          >
+            {address1Touched &&
+              (address1Status === "empty"
+                ? "Requerido"
+                : address1Status === "valid"
+                ? "Bien hecho!"
+                : "Incorrecto")}
+          </p>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
+          {" "}
           <Input
             id="province"
             name="province"
             type="text"
             value={province}
             onChange={(e) => handleInputChange(setProvince, e.target.value)}
+            onBlur={() => setProvinceTouched(true)}
             placeholder="Provincia"
+            className={cn(
+              "pr-10",
+              provinceStatus === "valid"
+                ? "text-text-success-default"
+                : provinceStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
           />
+          {provinceStatus === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {provinceStatus === "invalid" && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !provinceTouched && "invisible",
+              provinceTouched &&
+                (provinceStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default")
+            )}
+          >
+            {provinceTouched &&
+              (provinceStatus === "empty"
+                ? "Requerido"
+                : provinceStatus === "valid"
+                ? "Bien hecho!"
+                : "Incorrecto")}
+          </p>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
+          {" "}
           <Input
             id="city"
             name="city"
             type="text"
             value={city}
             onChange={(e) => handleInputChange(setCity, e.target.value)}
+            onBlur={() => setCityTouched(true)}
             placeholder="Ciudad"
+            className={cn(
+              "pr-10",
+              cityStatus === "valid"
+                ? "text-text-success-default"
+                : cityStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
           />
+          {cityStatus === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {cityStatus === "invalid" && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !cityTouched && "invisible",
+              cityTouched &&
+                (cityStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default")
+            )}
+          >
+            {cityTouched &&
+              (cityStatus === "empty"
+                ? "Requerido"
+                : cityStatus === "valid"
+                ? "Bien hecho!"
+                : "Incorrecto")}
+          </p>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
+          {" "}
           <Input
             id="zip"
             name="zip"
             type="text"
             value={zip}
             onChange={(e) => handleInputChange(setZip, e.target.value)}
+            onBlur={() => setZipTouched(true)}
             placeholder="Código Postal"
+            className={cn(
+              "pr-10",
+              zipStatus === "valid"
+                ? "text-text-success-default"
+                : zipStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
           />
+          {zipStatus === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {zipStatus === "invalid" && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !zipTouched && "invisible",
+              zipTouched &&
+                (zipStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default")
+            )}
+          >
+            {zipTouched &&
+              (zipStatus === "empty"
+                ? "Requerido"
+                : zipStatus === "valid"
+                ? "Bien hecho!"
+                : "Incorrecto")}
+          </p>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
+          {" "}
           <Input
             id="country"
             name="country"
             type="text"
             value={country}
             onChange={(e) => handleInputChange(setCountry, e.target.value)}
+            onBlur={() => setCountryTouched(true)}
             placeholder="País"
+            className={cn(
+              "pr-10",
+              countryStatus === "valid"
+                ? "text-text-success-default"
+                : countryStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
           />
+          {countryStatus === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {countryStatus === "invalid" && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !countryTouched && "invisible",
+              countryTouched &&
+                (countryStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default")
+            )}
+          >
+            {countryTouched &&
+              (countryStatus === "empty"
+                ? "Requerido"
+                : countryStatus === "valid"
+                ? "Bien hecho!"
+                : "Incorrecto")}
+          </p>
         </div>
         <div className="flex items-start gap-2 py-2">
           <Checkbox
