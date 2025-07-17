@@ -2127,6 +2127,88 @@ export async function getCustomerAddresses(
   }
 }
 
+export async function customerAddressCreate(
+  customerAccessToken: string,
+  address: {
+    address1?: string;
+    city?: string;
+    province?: string;
+    country?: string;
+    zip?: string;
+    firstName?: string;
+    lastName?: string;
+  }
+): Promise<string | null> {
+  const query = gql`
+    mutation customerAddressCreate(
+      $customerAccessToken: String!
+      $address: MailingAddressInput!
+    ) {
+      customerAddressCreate(
+        customerAccessToken: $customerAccessToken
+        address: $address
+      ) {
+        customerAddress {
+          id
+        }
+        customerUserErrors {
+          message
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await shopifyFetch<{
+      customerAddressCreate: {
+        customerAddress?: { id: string };
+        customerUserErrors: { message: string }[];
+      };
+    }>({ query, variables: { customerAccessToken, address } });
+
+    return response.customerAddressCreate.customerAddress?.id || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function customerDefaultAddressUpdate(
+  customerAccessToken: string,
+  addressId: string
+): Promise<boolean> {
+  const query = gql`
+    mutation customerDefaultAddressUpdate(
+      $customerAccessToken: String!
+      $addressId: ID!
+    ) {
+      customerDefaultAddressUpdate(
+        customerAccessToken: $customerAccessToken
+        addressId: $addressId
+      ) {
+        customer {
+          id
+        }
+        customerUserErrors {
+          message
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await shopifyFetch<{
+      customerDefaultAddressUpdate: {
+        customer?: { id: string } | null;
+        customerUserErrors: { message: string }[];
+      };
+    }>({ query, variables: { customerAccessToken, addressId } });
+
+    return !!response.customerDefaultAddressUpdate.customer;
+  } catch (e) {
+    return false;
+  }
+}
+
 // --- Utilidad para el menú -----------------------------------------------
 /**
  * Indica si existen productos en oferta marcados como "NEW".

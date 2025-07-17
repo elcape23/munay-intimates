@@ -6,6 +6,8 @@ import {
   customerAccessTokenCreate,
   customerAccessTokenDelete,
   customerCreate,
+  customerAddressCreate,
+  customerDefaultAddressUpdate,
   getCustomer,
   Customer,
   CustomerAccessToken,
@@ -26,6 +28,12 @@ interface AuthState {
     email: string;
     password: string;
     subscribeToEmails?: boolean;
+    address1?: string;
+    province?: string;
+    city?: string;
+    zip?: string;
+    country?: string;
+    useAsBilling?: boolean;
   }) => Promise<boolean>;
   logout: () => Promise<void>;
   checkAuthStatus: () => Promise<void>;
@@ -91,7 +99,16 @@ export const useAuthStore = create(
       signUp: async (input) => {
         set({ isLoading: true, error: null });
         try {
-          const { subscribeToEmails, ...customerInput } = input;
+          const {
+            subscribeToEmails,
+            address1,
+            province,
+            city,
+            zip,
+            country,
+            useAsBilling,
+            ...customerInput
+          } = input;
           const createResponse = await customerCreate({
             ...customerInput,
             acceptsMarketing: subscribeToEmails,
@@ -104,6 +121,23 @@ export const useAuthStore = create(
             });
 
             if (tokenResponse.customerAccessToken) {
+              const accessToken = tokenResponse.customerAccessToken.accessToken;
+
+              if (address1 || city || province || zip || country) {
+                const addressId = await customerAddressCreate(accessToken, {
+                  address1,
+                  city,
+                  province,
+                  zip,
+                  country,
+                  firstName: input.firstName,
+                  lastName: input.lastName,
+                });
+
+                if (addressId && useAsBilling) {
+                  await customerDefaultAddressUpdate(accessToken, addressId);
+                }
+              }
               set({
                 customerAccessToken: tokenResponse.customerAccessToken,
                 customer: createResponse.customer,

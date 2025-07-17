@@ -23,6 +23,12 @@ export default function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [address1, setAddress1] = useState("");
+  const [province, setProvince] = useState("");
+  const [city, setCity] = useState("");
+  const [zip, setZip] = useState("");
+  const [country, setCountry] = useState("");
+  const [useAsBilling, setUseAsBilling] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [subscribeToEmails, setSubscribeToEmails] = useState(true);
   const [firstNameTouched, setFirstNameTouched] = useState(false);
@@ -95,6 +101,12 @@ export default function RegisterForm() {
       email,
       password,
       subscribeToEmails,
+      address1,
+      province,
+      city,
+      zip,
+      country,
+      useAsBilling,
     });
     if (!success) {
       setError(authError || "No se pudo crear la cuenta.");
@@ -376,6 +388,67 @@ export default function RegisterForm() {
           />
           <label htmlFor="subscribeToEmails" className="body-02-regular">
             Quiero recibir novedades e información de Munay vía email
+          </label>
+        </div>
+        <div className="space-y-2">
+          <Input
+            id="address1"
+            name="address1"
+            type="text"
+            value={address1}
+            onChange={(e) => handleInputChange(setAddress1, e.target.value)}
+            placeholder="Dirección"
+          />
+        </div>
+        <div className="space-y-2">
+          <Input
+            id="province"
+            name="province"
+            type="text"
+            value={province}
+            onChange={(e) => handleInputChange(setProvince, e.target.value)}
+            placeholder="Provincia"
+          />
+        </div>
+        <div className="space-y-2">
+          <Input
+            id="city"
+            name="city"
+            type="text"
+            value={city}
+            onChange={(e) => handleInputChange(setCity, e.target.value)}
+            placeholder="Ciudad"
+          />
+        </div>
+        <div className="space-y-2">
+          <Input
+            id="zip"
+            name="zip"
+            type="text"
+            value={zip}
+            onChange={(e) => handleInputChange(setZip, e.target.value)}
+            placeholder="Código Postal"
+          />
+        </div>
+        <div className="space-y-2">
+          <Input
+            id="country"
+            name="country"
+            type="text"
+            value={country}
+            onChange={(e) => handleInputChange(setCountry, e.target.value)}
+            placeholder="País"
+          />
+        </div>
+        <div className="flex items-start gap-2 py-2">
+          <Checkbox
+            id="useAsBilling"
+            name="useAsBilling"
+            checked={useAsBilling}
+            onCheckedChange={(checked: boolean) => setUseAsBilling(checked)}
+          />
+          <label htmlFor="useAsBilling" className="body-02-regular">
+            Usar como dirección de facturación
           </label>
         </div>
         {error && (
