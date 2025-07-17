@@ -77,7 +77,7 @@ export default function CheckoutCashPage() {
               Gracias por tu compra en MUNAY
             </h1>
             <p className="body-01-regular text-text-primary-default">
-              Tu pedido quedó reservado con el Nro. #{orderId}
+              Tu pedido quedó reservado con el Nro. {orderId}
             </p>
             <p className="body-01-regular text-text-primary-default">
               Comunicate con nosotras para coordinar el pago de la orden.
