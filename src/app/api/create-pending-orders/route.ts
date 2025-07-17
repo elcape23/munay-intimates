@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
       }
     }
   `;
+
   const lineItems = cart.lines.edges
     .filter((edge: any) => edge.node.merchandise.quantityAvailable !== 0)
     .map((edge: any) => ({
@@ -296,7 +297,49 @@ export async function POST(req: NextRequest) {
         );
       }
     }
-    return NextResponse.json({ id: draft.name });
+    const completeMutation = `
+      mutation completeDraft($id: ID!) {
+        draftOrderComplete(id: $id, paymentPending: true) {
+          draftOrder { order { id name } }
+          userErrors { field message }
+        }
+      }
+    `;
+    const completeRes = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": adminToken,
+      },
+      body: JSON.stringify({
+        query: completeMutation,
+        variables: { id: draft.id },
+      }),
+    });
+    const completeText = await completeRes.text();
+    console.log("[route.ts] 📋 Complete raw:", completeText);
+    let completeJson;
+    try {
+      completeJson = JSON.parse(completeText);
+    } catch (e) {
+      console.error("[route.ts] ⚠️ JSON inválido al completar:", e);
+      throw e;
+    }
+    if (
+      !completeRes.ok ||
+      completeJson.errors ||
+      completeJson.data?.draftOrderComplete?.userErrors?.length
+    ) {
+      const message =
+        completeJson.errors?.[0]?.message ||
+        completeJson.data?.draftOrderComplete?.userErrors?.[0]?.message ||
+        "Error desconocido";
+      console.error("[route.ts] ❌ Error completando draft:", message);
+      return NextResponse.json({ error: message }, { status: 400 });
+    }
+    const orderName =
+      completeJson.data.draftOrderComplete.draftOrder.order.name;
+    return NextResponse.json({ id: orderName });
   } catch (err: any) {
     console.error("[route.ts] 💥 Excepción:", err.message);
     return NextResponse.json(
