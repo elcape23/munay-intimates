@@ -191,6 +191,111 @@ export async function POST(req: NextRequest) {
     // 9. Éxito
     const draft = json.data.draftOrderCreate.draftOrder;
     console.log("[route.ts] 🎉 Draft creado:", draft.name);
+
+    const locationQuery = `
+      query { shop { primaryLocation { id } } }
+    `;
+    const locRes = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": adminToken,
+      },
+      body: JSON.stringify({ query: locationQuery }),
+    });
+    const locJson = await locRes.json();
+    const locationId = locJson.data?.shop?.primaryLocation?.id || null;
+    console.log("[route.ts] 📦 locationId:", locationId);
+
+    const holdMutation = `
+      mutation hold($input: InventoryHoldInput!) {
+        inventoryHoldCreate(input: $input) {
+          inventoryHold { id }
+          userErrors { field message }
+        }
+      }
+    `;
+    const holdIds: string[] = [];
+    if (locationId) {
+      for (const item of lineItems) {
+        const holdVars = {
+          input: {
+            reason: "RESERVE_ON_PURCHASE",
+            locationId,
+            lines: [
+              {
+                merchandiseId: item.variantId,
+                quantity: item.quantity,
+              },
+            ],
+          },
+        };
+        const holdRes = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Shopify-Access-Token": adminToken,
+          },
+          body: JSON.stringify({ query: holdMutation, variables: holdVars }),
+        });
+        const holdJson = await holdRes.json();
+        const hId = holdJson.data?.inventoryHoldCreate?.inventoryHold?.id;
+        if (hId) {
+          holdIds.push(hId);
+        }
+        if (
+          holdJson.errors ||
+          holdJson.data?.inventoryHoldCreate?.userErrors?.length
+        ) {
+          console.warn(
+            "[route.ts] ⚠️ Error creando hold:",
+            holdJson.errors || holdJson.data?.inventoryHoldCreate?.userErrors
+          );
+        }
+      }
+    }
+
+    if (holdIds.length) {
+      const updateMutation = `
+        mutation updateDraft($input: DraftOrderInput!) {
+          draftOrderUpdate(input: $input) {
+            draftOrder { id }
+            userErrors { field message }
+          }
+        }
+      `;
+      const updateVars = {
+        input: {
+          id: draft.id,
+          metafields: [
+            {
+              namespace: "inventory",
+              key: "hold_ids",
+              type: "single_line_text_field",
+              value: holdIds.join(","),
+            },
+          ],
+        },
+      };
+      const updRes = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": adminToken,
+        },
+        body: JSON.stringify({ query: updateMutation, variables: updateVars }),
+      });
+      const updJson = await updRes.json();
+      if (
+        updJson.errors ||
+        updJson.data?.draftOrderUpdate?.userErrors?.length
+      ) {
+        console.warn(
+          "[route.ts] ⚠️ Error guardando metafield:",
+          updJson.errors || updJson.data?.draftOrderUpdate?.userErrors
+        );
+      }
+    }
     return NextResponse.json({ id: draft.name });
   } catch (err: any) {
     console.error("[route.ts] 💥 Excepción:", err.message);
