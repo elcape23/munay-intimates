@@ -77,8 +77,22 @@ export default function CheckoutTransferPage() {
             <p className="body-01-regular text-text-primary-default">
               Número de orden: {orderId}
             </p>
+            <div className="body-01-regular text-text-primary-default">
+              <h6 className="body-01-regular text-text-primary-default underline">
+                Datos para transferencia
+              </h6>
+              <p className="body-01-regular text-text-primary-default">
+                <br /> CBU: 0000000000000000
+                <br />
+                Alias: munayintimates.mp
+                <br /> Nombre: Victoria Manso
+                <br />
+                CUIT: 00-00000000-0
+              </p>
+            </div>
             <p className="body-01-regular text-text-primary-default">
-              Envía el comprobante de transferencia para completar la compra.
+              Cuando realices la transferencia por favor compartinos el
+              comprobante para enviarte la orden.
             </p>
           </>
         ) : (
