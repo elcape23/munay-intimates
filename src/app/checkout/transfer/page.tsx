@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+import { LoadingSpinner } from "@/components/common/loading-spinner";
 
 export default function CheckoutTransferPage() {
   const router = useRouter();
@@ -68,7 +69,7 @@ export default function CheckoutTransferPage() {
   }
 
   return (
-    <section className="pt-[55px] mx-6 min-h-[100vh] flex flex-col justify-between">
+    <section className="pt-[55px] mx-6 min-h-[100vh] mb-12 flex flex-col justify-between">
       <div className="flex flex-col items-start justify-start gap-3 mt-14 text-left">
         {orderId ? (
           <>
@@ -99,13 +100,16 @@ export default function CheckoutTransferPage() {
               comprobante para enviarte el pedido.
             </p>
           </>
+        ) : loading ? (
+          <div className="flex flex-col items-center justify-center space-y-2">
+            <LoadingSpinner />
+            <p className="body-01-regular">Generando orden...</p>
+          </div>
         ) : (
-          <p className="body-01-regular">
-            {loading ? "Generando orden..." : error}
-          </p>
+          <p className="body-01-regular">{error}</p>
         )}
       </div>
-      <div className="mb-12 space-y-2">
+      <div className="mb-16 space-y-2">
         <Button asChild size="lg" className="w-full">
           <a
             href="https://wa.me/5493813638914"

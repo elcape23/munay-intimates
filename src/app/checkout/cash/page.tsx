@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+import { LoadingSpinner } from "@/components/common/loading-spinner";
 
 export default function CheckoutCashPage() {
   const router = useRouter();
@@ -83,10 +84,13 @@ export default function CheckoutCashPage() {
               Comunicate con nosotras para coordinar el pago de la orden.
             </p>
           </>
+        ) : loading ? (
+          <div className="flex flex-col items-center space-y-2">
+            <LoadingSpinner />
+            <p className="body-01-regular">Generando orden...</p>
+          </div>
         ) : (
-          <p className="body-01-regular">
-            {loading ? "Generando orden..." : error}
-          </p>
+          <p className="body-01-regular">{error}</p>
         )}
       </div>
       <div className="mb-12 space-y-2">
