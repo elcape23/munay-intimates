@@ -70,7 +70,14 @@ export default function CheckoutCashPage() {
 
   return (
     <section className="pt-[55px] mx-6 min-h-[100vh] flex flex-col justify-between">
-      <div className="flex flex-col items-start justify-start gap-3 mt-20 text-left">
+      <div
+        className={`flex flex-col gap-3 text-left ${
+          loading
+            ? "items-center justify-center flex-1"
+            : "items-start justify-start mt-20"
+        }`}
+      >
+        {" "}
         {orderId ? (
           <>
             <CheckCircleIcon className="w-6 h-6 text-icon-success-default" />
