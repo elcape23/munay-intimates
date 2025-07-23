@@ -1,4 +1,6 @@
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
+config();
 import { shopifyToFacebook } from "../src/lib/facebook.js";
 
 const storeDomain = (
@@ -60,7 +62,23 @@ async function fetchProducts() {
     body: JSON.stringify({ query }),
   });
 
-  const json = await res.json();
+  let json;
+  try {
+    json = await res.json();
+  } catch (err) {
+    console.error("Failed to parse Shopify response", err);
+    throw err;
+  }
+
+  if (!res.ok) {
+    console.error("Shopify API request failed", json);
+    throw new Error(`HTTP ${res.status}`);
+  }
+
+  if (!json?.data?.products) {
+    console.error("Unexpected Shopify response", json);
+    throw new Error("Invalid Shopify data");
+  }
   return json.data.products.edges.map((e) => e.node);
 }
 
