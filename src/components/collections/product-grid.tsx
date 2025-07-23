@@ -193,7 +193,12 @@ export function ProductGrid({
         }
 
         // 3. Procesa metacampos personalizados
-        const customMetafields = [product.talle];
+        const customMetafields = [
+          product.talle,
+          product.genero,
+          product.material,
+          product.categoria,
+        ];
         customMetafields.forEach((metafield) => {
           if (metafield?.key && metafield?.value) {
             const key = metafield.key.toLowerCase();

@@ -22,7 +22,33 @@ if (!fbToken || !catalogId) {
 
 async function fetchProducts() {
   const query = `
-    query {\n      products(first: 100) {\n        edges {\n          node {\n            id\n            handle\n            title\n            productType\n            descriptionHtml\n            images(first: 1) { edges { node { url } } }\n            variants(first: 1) { edges { node { price { amount currencyCode } } } }\n          }\n        }\n      }\n    }`;
+  query {
+      products(first: 100) {
+        edges {
+          node {
+            id
+            handle
+            title
+            productType
+            tags
+            descriptionHtml
+            images(first: 1) { edges { node { url } } }
+            variants(first: 1) {
+              edges {
+                node {
+                  price { amount currencyCode }
+                }
+              }
+            }
+            genero: metafield(namespace: "custom", key: "genero") { value }
+            material: metafield(namespace: "custom", key: "material") { value }
+            talle: metafield(namespace: "custom", key: "talle") { value }
+            categoria: metafield(namespace: "custom", key: "categoria") { value }
+          }
+        }
+      }
+    }
+  `;
 
   const endpoint = `https://${storeDomain}/admin/api/${apiVersion}/graphql.json`;
   const res = await fetch(endpoint, {

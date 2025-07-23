@@ -87,6 +87,9 @@ export type ShopifyProduct = {
   color?: ShopifyMetafield | null;
   talle?: ShopifyMetafield | null;
   estacion?: ShopifyMetafield | null;
+  genero?: ShopifyMetafield | null;
+  material?: ShopifyMetafield | null;
+  categoria?: ShopifyMetafield | null;
   collections?: {
     edges: { node: { id: string; title: string; handle: string } }[];
   };
@@ -781,6 +784,18 @@ export async function getSaleProductsFull(
               key
               value
             }
+            genero: metafield(namespace: "custom", key: "genero") {
+              key
+              value
+            }
+            material: metafield(namespace: "custom", key: "material") {
+              key
+              value
+            }
+            categoria: metafield(namespace: "custom", key: "categoria") {
+              key
+              value
+            }
             variants(first: 1) {
               edges {
                 node {
@@ -875,6 +890,18 @@ export async function getProductByHandle(
           value
         }
         estacion: metafield(namespace: "custom", key: "season") {
+          key
+          value
+        }
+        genero: metafield(namespace: "custom", key: "genero") {
+          key
+          value
+        }
+        material: metafield(namespace: "custom", key: "material") {
+          key
+          value
+        }
+        categoria: metafield(namespace: "custom", key: "categoria") {
           key
           value
         }
@@ -1013,6 +1040,18 @@ export async function getNewestProducts(
               value
             }
             estacion: metafield(namespace: "custom", key: "season") {
+              key
+              value
+            }
+            genero: metafield(namespace: "custom", key: "genero") {
+              key
+              value
+            }
+            material: metafield(namespace: "custom", key: "material") {
+              key
+              value
+            }
+            categoria: metafield(namespace: "custom", key: "categoria") {
               key
               value
             }
@@ -1326,6 +1365,18 @@ export async function getProductsBySeason(
               key
               value
             }
+            genero: metafield(namespace: "custom", key: "genero") {
+              key
+              value
+            }
+            material: metafield(namespace: "custom", key: "material") {
+              key
+              value
+            }
+            categoria: metafield(namespace: "custom", key: "categoria") {
+              key
+              value
+            }
             variants(first: 1) {
               edges {
                 node {
@@ -1422,6 +1473,18 @@ export async function getNewestProductsFull(
               value
             }
             estacion: metafield(namespace: "custom", key: "season") {
+              key
+              value
+            }
+            genero: metafield(namespace: "custom", key: "genero") {
+              key
+              value
+            }
+            material: metafield(namespace: "custom", key: "material") {
+              key
+              value
+            }
+            categoria: metafield(namespace: "custom", key: "categoria") {
               key
               value
             }
@@ -1525,6 +1588,18 @@ export async function getCollectionByHandle(
                 value
               }
               estacion: metafield(namespace: "custom", key: "season") {
+                key
+                value
+              }
+              genero: metafield(namespace: "custom", key: "genero") {
+                key
+                value
+              }
+              material: metafield(namespace: "custom", key: "material") {
+                key
+                value
+              }
+              categoria: metafield(namespace: "custom", key: "categoria") {
                 key
                 value
               }
