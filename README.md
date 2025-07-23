@@ -14,6 +14,8 @@ SHOPIFY_ADMIN_ACCESS_TOKEN="<your-admin-token>"
 SHOPIFY_STORE_DOMAIN="<your-shop-domain>.myshopify.com"
 # Optional, defaults to "2025-04" if unset
 SHOPIFY_API_VERSION="2025-04"
+FACEBOOK_CATALOG_ID="<your-facebook-catalog-id>"
+FACEBOOK_ACCESS_TOKEN="<your-facebook-access-token>"
 ```
 
 ## Installation
@@ -47,6 +49,16 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 ## Checkout Flow
 
 The application now bypasses the old `/checkout` page. Clicking **Buy Now** or continuing from the cart sends the shopper straight to the Shopify checkout using the `checkoutUrl` provided by the API. If you need an intermediate step for alternative payment methods, you may reintroduce a custom page and update the navigation accordingly.
+
+## Sync Facebook Catalog
+
+1. Configure `FACEBOOK_CATALOG_ID` y `FACEBOOK_ACCESS_TOKEN` en tu archivo `.env`.
+2. Asegúrate de tener `SHOPIFY_ADMIN_ACCESS_TOKEN` y `SHOPIFY_STORE_DOMAIN` definidos.
+3. Ejecuta el script con:
+
+```bash
+npm run sync:catalog
+```
 
 ## Learn More
 
