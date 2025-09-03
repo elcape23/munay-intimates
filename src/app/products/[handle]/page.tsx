@@ -103,13 +103,21 @@ export default async function ProductDetailPage({
         <ProductForm product={product} />
       </div>
       {/* ► Secciones desplegables */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 py-6">
         {/* Acorddion #1 */}
         <div className="justify-between">
           <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-              <AccordionTrigger>Medidas del producto</AccordionTrigger>
-              <AccordionContent>…contenido…</AccordionContent>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Composición, cuidado & origen</AccordionTrigger>
+              <AccordionContent>
+                <div className="body-02-regular text-text-secondary-default px-4">
+                  {" "}
+                  Confeccionadas con materiales seleccionados para brindar
+                  suavidad y confort. Se recomienda lavado a mano con agua fría
+                  y secado natural. Para pijamas, puede utilizarse lavado en
+                  ciclo delicado.{" "}
+                </div>
+              </AccordionContent>
             </AccordionItem>
             {/* …más items… */}
           </Accordion>
@@ -117,31 +125,19 @@ export default async function ProductDetailPage({
         {/* Acorddion #2 */}
         <div className="justify-between">
           <Accordion type="single" collapsible>
-            <AccordionItem value="item-2">
-              <AccordionTrigger>Composición, cuidado & origen</AccordionTrigger>
-              <AccordionContent>…contenido…</AccordionContent>
-            </AccordionItem>
-            {/* …más items… */}
-          </Accordion>
-        </div>
-        {/* Acorddion #3 */}
-        <div className="justify-between">
-          <Accordion type="single" collapsible>
             <AccordionItem value="item-3">
               <AccordionTrigger>
                 Envíos, cambios & devoluciones
               </AccordionTrigger>
-              <AccordionContent>…contenido…</AccordionContent>
-            </AccordionItem>
-            {/* …más items… */}
-          </Accordion>
-        </div>
-        {/* Acorddion #4 */}
-        <div className="justify-between">
-          <Accordion type="single" collapsible>
-            <AccordionItem value="item-4">
-              <AccordionTrigger>Disponibilidad en tienda</AccordionTrigger>
-              <AccordionContent>…contenido…</AccordionContent>
+              <AccordionContent>
+                <div className="body-02-regular text-text-secondary-default px-4">
+                  Realizamos envíos a todo el país. Las devoluciones deben
+                  gestionarse dentro de las 24 horas, con costo de envío a cargo
+                  del cliente. Los cambios pueden solicitarse hasta 20 días
+                  después de la compra, siempre con el producto en perfecto
+                  estado y en su packaging original.
+                </div>
+              </AccordionContent>
             </AccordionItem>
             {/* …más items… */}
           </Accordion>

@@ -38,7 +38,12 @@ async function fetchProducts() {
             variants(first: 1) {
               edges {
                 node {
-                  price { amount currencyCode }
+                  priceSet {
+                    shopMoney {
+                      amount
+                      currencyCode
+                    }
+                  }
                 }
               }
             }

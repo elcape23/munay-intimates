@@ -25,8 +25,9 @@
  */
 export function shopifyToFacebook(product, storeDomain) {
   const variant = product.variants?.edges?.[0]?.node;
-  const price = variant
-    ? `${variant.price.amount} ${variant.price.currencyCode}`
+  const priceSet = variant?.priceSet?.shopMoney;
+  const price = priceSet
+    ? `${priceSet.amount} ${priceSet.currencyCode}`
     : undefined;
   const image = product.images?.edges?.[0]?.node?.url;
   return {
