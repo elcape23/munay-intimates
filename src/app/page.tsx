@@ -33,9 +33,9 @@ export default async function HomePage() {
       {/* Sección “Sin clip” */}
       <NoClipSection
         images={[
-          "/images/noclip/noclip-1.webp",
           "/images/noclip/noclip-2.webp",
-          "/images/noclip/noclip-3.webp",
+          "/images/noclip/noclip-1.webp",
+          "/images/noclip/noclip-4.webp",
         ]}
         href="/collections/season/invierno"
       />

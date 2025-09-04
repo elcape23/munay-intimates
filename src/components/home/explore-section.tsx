@@ -70,6 +70,7 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
             alt="Bombacha Sexy Bit"
             className="w-full h-60 object-cover rounded-[2px]"
           />
+          {/*}
           <div className="pl-3 py-2 ">
             <h4 className="body-01-medium text-text-primary-default truncate whitespace-nowrap">
               Bombacha Sexy Bitch
@@ -80,7 +81,7 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({
             <p className="body-01-semibold text-text-primary-default mt-2">
               $31.999
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     </motion.section>

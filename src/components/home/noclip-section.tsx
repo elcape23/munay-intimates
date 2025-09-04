@@ -64,7 +64,7 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       {/* Título */}
-      <h2 className="heading-06-medium ml-6">Bienvenido Invierno!</h2>
+      <h2 className="heading-06-medium ml-6">Ritmo de Primavera!</h2>
 
       {/* Carousel con slides de imagen y slide de "Ver más" */}
       <div

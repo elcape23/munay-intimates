@@ -33,7 +33,7 @@ const SLIDES: HeroSlide[] = [
   {
     id: "2",
     image: "/images/hero/slide-2.webp",
-    title: "Íntimos sin clip",
+    title: "Noches con estilo",
     subtitle: "Comodidad absoluta cada día",
     ButtonText: "Descubrir más",
     href: "/no-clip",
@@ -41,7 +41,7 @@ const SLIDES: HeroSlide[] = [
   {
     id: "3",
     image: "/images/hero/slide-n3.webp",
-    title: "Nuevos lanzamientos",
+    title: "Días relajados",
     subtitle: "Lo último en lencería Munay",
     ButtonText: "Explorar novedades",
     href: "/new",
@@ -60,7 +60,7 @@ interface HeroSectionProps {
 
 export function HeroSection({
   autoPlay = true,
-  intervalMs = 5000,
+  intervalMs = 3000,
 }: HeroSectionProps) {
   const [current, setCurrent] = useState(0);
   const introDone = useIntroStore((state) => state.done);
