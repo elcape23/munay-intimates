@@ -66,6 +66,7 @@ export function HeroSection({
   const introDone = useIntroStore((state) => state.done);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sectionRef = useRef<HTMLDivElement | null>(null);
+  const sliderRef = useRef<HTMLDivElement | null>(null);
   const [inView, setInView] = useState(false);
   const [loaded, setLoaded] = useState<boolean[]>(() =>
     new Array(SLIDES.length).fill(false)
@@ -97,16 +98,22 @@ export function HeroSection({
       return;
     }
 
-    // Limpia el timer anterior
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     timeoutRef.current = setTimeout(() => {
-      setCurrent((c) => (c + 1) % SLIDES.length);
+      const slider = sliderRef.current;
+      if (slider) {
+        const nextIndex = (current + 1) % SLIDES.length;
+        slider.scrollTo({
+          left: nextIndex * slider.clientWidth,
+          behavior: "smooth",
+        });
+        setCurrent(nextIndex);
+      }
     }, intervalMs);
 
-    // Cleanup al desmontar o antes del siguiente efecto
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -118,17 +125,32 @@ export function HeroSection({
   const next = () => setCurrent((c) => (c + 1) % SLIDES.length);
   const allLoaded = loaded.every(Boolean);
 
+  useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    const handleScroll = () => {
+      const index = Math.round(slider.scrollLeft / slider.clientWidth);
+      setCurrent(index);
+    };
+
+    slider.addEventListener("scroll", handleScroll);
+    return () => {
+      slider.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden">
       {/* Contenedor deslizante */}
       <div
-        className="flex transition-transform duration-700 ease-in-out"
-        style={{ transform: `translateX(-${current * 100}%)` }}
+        ref={sliderRef}
+        className="flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory no-scrollbar"
       >
         {SLIDES.map((slide, idx) => (
           <div
             key={slide.id}
-            className="relative w-full h-screen max-h-[640px] flex-shrink-0"
+            className="relative w-full h-screen max-h-[640px] flex-shrink-0 snap-center"
           >
             {" "}
             {!loaded[idx] && (
