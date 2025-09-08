@@ -71,9 +71,14 @@ export function Navbar({
     <motion.nav
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
+      transition={{
+        duration: 0.5,
+        ease: "easeInOut",
+        delay: isHome ? 0.3 : 0,
+      }}
       className={cn(
-        "fixed top-0 inset-x-0 z-50 transition-all duration-700 ease-in-out",
+        "fixed inset-x-0 z-40 transition-all duration-700 ease-in-out",
+        isHome ? "top-8" : "top-0",
         {
           "bg-transparent":
             !alwaysDark && !alwaysLight && ((isHome && !scrolled) || isProduct),
