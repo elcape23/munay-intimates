@@ -1669,6 +1669,40 @@ export async function createCart(): Promise<ShopifyCart> {
   return response.cartCreate.cart;
 }
 
+type CartBuyerIdentityUpdateResponse = {
+  cartBuyerIdentityUpdate: { cart: ShopifyCart };
+};
+
+export async function updateCartBuyerIdentity(
+  cartId: string,
+  customerAccessToken: string
+): Promise<ShopifyCart> {
+  const query = gql`
+    mutation cartBuyerIdentityUpdate(
+      $cartId: ID!
+      $buyerIdentity: CartBuyerIdentityInput!
+    ) {
+      cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+        cart {
+          id
+          checkoutUrl
+          totalQuantity
+        }
+      }
+    }
+  `;
+
+  const response = await shopifyFetch<CartBuyerIdentityUpdateResponse>({
+    query,
+    variables: {
+      cartId,
+      buyerIdentity: { customerAccessToken },
+    },
+  });
+
+  return response.cartBuyerIdentityUpdate.cart;
+}
+
 export async function addToCart(
   cartId: string,
   merchandiseId: string,

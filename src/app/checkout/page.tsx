@@ -19,7 +19,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useAuthStore } from "@/store/auth-store";
-import { CustomerAddress, getCustomerAddresses } from "@/lib/shopify";
+import {
+  CustomerAddress,
+  getCustomerAddresses,
+  updateCartBuyerIdentity,
+} from "@/lib/shopify";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
@@ -96,12 +100,24 @@ export default function CheckoutOptionsPage() {
     setSelectedMethod("Tarjeta de crédito");
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!selectedMethod) return;
     if (selectedMethod === "Tarjeta de crédito") {
       // `router.push` trataría esta URL externa como una ruta interna de
       // Next.js y provocaría un 404. Usamos `window.location.assign` para
       // redirigir al checkout de Shopify correctamente.
+      if (customerAccessToken) {
+        try {
+          const updatedCart = await updateCartBuyerIdentity(
+            cart.id,
+            customerAccessToken.accessToken
+          );
+          window.location.assign(updatedCart.checkoutUrl);
+          return;
+        } catch (e) {
+          console.error(e);
+        }
+      }
       window.location.assign(cart.checkoutUrl);
     } else if (selectedMethod === "Efectivo") {
       router.push("/checkout/cash");
