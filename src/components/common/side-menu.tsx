@@ -56,9 +56,10 @@ export function SideMenu() {
   );
   const collections = menuItems.filter((i) => i.section === "collections");
 
-  // --- flag para Ropa Interior ---
-  const hasNewInnerwear = newProducts.some((i) =>
-    INNERWEAR_LABELS.includes(i.title)
+  // --- flags para Ropa Interior ---
+  const newInnerwearLabels = new Set(newProducts.map((i) => i.title));
+  const hasNewInnerwear = INNERWEAR_SUBCATEGORIES.some((sub) =>
+    newInnerwearLabels.has(sub.label)
   );
 
   /* helper para renderizar la lista */
@@ -207,19 +208,29 @@ export function SideMenu() {
                             </button>
                             {isInnerwearOpen && (
                               <ul className="space-y-3 mt-3 ml-4">
-                                {INNERWEAR_SUBCATEGORIES.map((sub) => (
-                                  <li key={sub.slug}>
-                                    <Link
-                                      href={`/collections/${encodeURIComponent(
-                                        sub.slug
-                                      )}`}
-                                      onClick={closeMenu}
-                                      className="flex items-topline uppercase body-02-regular tracking-wide text-text-secondary-default hover:text-brand-primary"
-                                    >
-                                      {sub.label}
-                                    </Link>
-                                  </li>
-                                ))}
+                                {INNERWEAR_SUBCATEGORIES.map((sub) => {
+                                  const isNew = newInnerwearLabels.has(
+                                    sub.label
+                                  );
+                                  return (
+                                    <li key={sub.slug}>
+                                      <Link
+                                        href={`/collections/${encodeURIComponent(
+                                          sub.slug
+                                        )}`}
+                                        onClick={closeMenu}
+                                        className="flex items-topline uppercase body-02-regular tracking-wide text-text-secondary-default hover:text-brand-primary"
+                                      >
+                                        {sub.label}
+                                        {isNew && (
+                                          <span className="body-03-regular ml-[2px] text-text-secondary-default">
+                                            NEW
+                                          </span>
+                                        )}
+                                      </Link>
+                                    </li>
+                                  );
+                                })}
                               </ul>
                             )}
                           </>
