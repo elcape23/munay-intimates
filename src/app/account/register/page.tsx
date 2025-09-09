@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import RegisterForm from "@/components/account/register-form";
 import { useSession } from "next-auth/react";
-import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 
@@ -13,13 +12,12 @@ export default function RegisterPage() {
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("returnTo");
   const { data: session } = useSession();
-  const { isLoggedIn } = useAuthStore();
 
   useEffect(() => {
-    if (session || isLoggedIn) {
+    if (session) {
       router.push(returnTo || "/account");
     }
-  }, [session, isLoggedIn, router, returnTo]);
+  }, [session, router, returnTo]);
   return (
     <div className="flex justify-center items-center pt-[55px] px-6">
       <div className="w-full max-w-md">
