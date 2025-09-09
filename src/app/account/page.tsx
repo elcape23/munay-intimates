@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { getCustomer } from "@/lib/shopify";
 import LoginForm from "@/components/account/login-form";
@@ -28,6 +28,8 @@ export default function AccountPage() {
   const { data: rawSession, status } = useSession();
   const session = rawSession as any;
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const [customer, setCustomer] = useState<any>(null);
   const [customerError, setCustomerError] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
@@ -102,7 +104,7 @@ export default function AccountPage() {
   if (!session) {
     return (
       <div className="flex flex-col justify-center items-center h-screen space-y-10 px-6">
-        <Button
+        {/* <Button
           onClick={handleGoogle}
           className="w-full py-3 hover:bg-gray-50"
           variant="outline"
@@ -115,9 +117,13 @@ export default function AccountPage() {
           <hr className="flex-grow border-t border-border-secondary-default" />
           <p className="body-02-regular text-text-secondary-default">O</p>
           <hr className="flex-grow border-t border-border-secondary-default" />
-        </div>
+        </div> */}
         <div className="w-full ">
-          <LoginForm />
+          <LoginForm
+            onLoginSuccess={() => router.push(returnTo || "/account")}
+            redirectOnSuccess={false}
+            registerReturnUrl={returnTo || undefined}
+          />{" "}
         </div>
       </div>
     );

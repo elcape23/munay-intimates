@@ -3,6 +3,7 @@
 "use client"; // Esta página necesita ser un Client Component para interactuar con el store.
 
 import { useCartStore } from "@/store/cart-store"; // ¡NUEVO! Importamos el store.
+import { useAuthStore } from "@/store/auth-store";
 import Link from "next/link";
 import { CartItem } from "@/components/cart/cart-item";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
@@ -18,6 +19,7 @@ export default function CartPage() {
   // Obtenemos todo el estado directamente desde nuestro store de Zustand.
   // ¡Ya no necesitamos useState ni useEffect para buscar el carrito aquí!
   const { cart, isLoading } = useCartStore();
+  const { isLoggedIn } = useAuthStore();
   const [showEmpty, setShowEmpty] = useState(false);
   const [loadingCheckout, setLoadingCheckout] = useState(false);
   const [loadingHome, setLoadingHome] = useState(false);
@@ -27,7 +29,11 @@ export default function CartPage() {
 
   const handleContinue = () => {
     setLoadingCheckout(true);
-    router.push("/checkout");
+    if (isLoggedIn) {
+      router.push("/checkout");
+    } else {
+      router.push("/account?returnTo=/checkout");
+    }
   };
 
   const handleContinueShopping = () => {
