@@ -40,7 +40,7 @@ export default function OrderSummary({
     }).format(value);
 
   return (
-    <div className="bg-background-primary-default pt-6 w-full space-y-4">
+    <div className="bg-background-primary-default pt-6 w-full space-y-4 px-4">
       <h2 className="body-01-semibold">Resumen</h2>
       <div className="space-y-2">
         <div className="flex justify-between body-02-regular">
