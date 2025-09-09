@@ -63,6 +63,12 @@ export function OrderHistory({
     return true;
   });
 
+  const getOrderStatus = (order: ShopifyOrder) => {
+    if (order.canceledAt) return "Cancelada";
+    if (order.fulfillmentStatus === "FULFILLED") return "Entregada";
+    return "En progreso";
+  };
+
   if (filteredOrders.length === 0) {
     return (
       <p className="body-01-regular text-text-secondary-default">
@@ -79,8 +85,11 @@ export function OrderHistory({
             <div className="flex flex-row justify-between w-full">
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
-                  <AccordionTrigger className="-ml-4 body-01-semibold">
-                    Pedido #{order.orderNumber}
+                  <AccordionTrigger className="-ml-4 body-01-semibold flex justify-between">
+                    <span>Pedido #{order.orderNumber}</span>
+                    <span className="body-02-regular text-text-secondary-default">
+                      {getOrderStatus(order)}
+                    </span>
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="flex flex-col justify-between space-y-2">

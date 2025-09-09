@@ -159,6 +159,7 @@ export type ShopifyOrder = {
   processedAt: string;
   financialStatus: string;
   fulfillmentStatus: string;
+  canceledAt?: string | null;
   shippingAddress?: {
     address1?: string | null;
   } | null;
@@ -2149,6 +2150,7 @@ export async function getCustomerOrders(
               processedAt
               financialStatus
               fulfillmentStatus
+              canceledAt
               shippingAddress {
                 address1
               }
