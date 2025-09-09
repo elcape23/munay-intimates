@@ -9,12 +9,12 @@ import { Footer } from "@/components/common/footer";
 
 export default function PurchasesPage() {
   const router = useRouter();
-  const [tab, setTab] = useState<"en-proceso" | "entregadas" | "locales">(
+  const [tab, setTab] = useState<"en-proceso" | "entregados" | "cancelados">(
     "en-proceso"
   );
 
   const renderTab = (
-    value: "en-proceso" | "entregadas" | "locales",
+    value: "en-proceso" | "entregados" | "cancelados",
     label: string
   ) => (
     <Button
@@ -45,8 +45,8 @@ export default function PurchasesPage() {
         </div>
         <div className="flex space-x-6">
           {renderTab("en-proceso", "En proceso")}
-          {renderTab("entregadas", "Entregadas")}
-          {renderTab("locales", "Locales")}
+          {renderTab("entregados", "Entregados")}
+          {renderTab("cancelados", "Cancelados")}
         </div>
         <OrderHistory statusFilter={tab} />
       </div>

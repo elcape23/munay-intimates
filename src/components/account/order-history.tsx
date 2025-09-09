@@ -16,7 +16,7 @@ import {
 export function OrderHistory({
   statusFilter,
 }: {
-  statusFilter?: "en-proceso" | "entregadas" | "locales";
+  statusFilter?: "en-proceso" | "entregados" | "cancelados";
 }) {
   const [orders, setOrders] = useState<ShopifyOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,21 +52,21 @@ export function OrderHistory({
   const filteredOrders = orders.filter((order) => {
     if (!statusFilter) return true;
     if (statusFilter === "en-proceso") {
-      return order.fulfillmentStatus !== "FULFILLED";
+      return !order.canceledAt && order.fulfillmentStatus !== "FULFILLED";
     }
-    if (statusFilter === "entregadas") {
+    if (statusFilter === "entregados") {
       return order.fulfillmentStatus === "FULFILLED";
     }
-    if (statusFilter === "locales") {
-      return !order.shippingAddress?.address1;
+    if (statusFilter === "cancelados") {
+      return Boolean(order.canceledAt);
     }
     return true;
   });
 
   const getOrderStatus = (order: ShopifyOrder) => {
-    if (order.canceledAt) return "Cancelada";
-    if (order.fulfillmentStatus === "FULFILLED") return "Entregada";
-    return "En progreso";
+    if (order.canceledAt) return "Cancelado";
+    if (order.fulfillmentStatus === "FULFILLED") return "Entregado";
+    return "En proceso";
   };
 
   if (filteredOrders.length === 0) {
