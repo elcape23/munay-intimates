@@ -12,12 +12,10 @@ import {
   CreditCardIcon,
 } from "@heroicons/react/24/outline";
 import OrderSummary from "@/components/checkout/order-summary";
-import { useAuthStore } from "@/store/auth-store";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
   const router = useRouter();
-  const { isLoggedIn } = useAuthStore();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
 
   if (isLoading && !cart) {
@@ -38,22 +36,6 @@ export default function CheckoutOptionsPage() {
 
   const handleContinue = () => {
     if (!selectedMethod) return;
-    let target: string | undefined;
-    if (selectedMethod === "Tarjeta de crédito") {
-      target = cart.checkoutUrl;
-    } else if (selectedMethod === "Efectivo") {
-      target = "/checkout/cash";
-    } else if (selectedMethod === "Transferencia") {
-      target = "/checkout/transfer";
-    }
-
-    if (!isLoggedIn) {
-      const loginUrl = target
-        ? `/account/login?returnTo=${encodeURIComponent(target)}`
-        : "/account/login";
-      router.push(loginUrl);
-      return;
-    }
     if (selectedMethod === "Tarjeta de crédito") {
       // `router.push` trataría esta URL externa como una ruta interna de
       // Next.js y provocaría un 404. Usamos `window.location.assign` para

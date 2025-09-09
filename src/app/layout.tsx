@@ -4,6 +4,7 @@ import { Manrope } from "next/font/google"; // 1. Importa la fuente
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { LayoutClient } from "@/components/layout-client";
+import Script from "next/script";
 
 // -- Helpers --
 // Next.js bots like WhatsApp require absolute URLs for Open Graph tags.
@@ -55,7 +56,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={manrope.className}>
+      <head>
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-XXXXXXX');`,
+          }}
+        />
+      </head>
       <body className="bg-background-primary-default">
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          ></iframe>
+        </noscript>
         <Providers>
           <LayoutClient>{children}</LayoutClient>
         </Providers>

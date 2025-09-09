@@ -51,34 +51,12 @@ export default function AccountPage() {
       });
   }, [session?.user?.shopifyToken]);
 
-  useEffect(() => {
-    // Si estamos en la pestaña emergente, notificamos a la original y cerramos
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("popup") === "1" && window.opener) {
-      window.opener.postMessage("google-auth-success", window.location.origin);
-      window.close();
-    }
-
-    const handleMessage = (event: MessageEvent) => {
-      if (
-        event.origin === window.location.origin &&
-        event.data === "google-auth-success"
-      ) {
-        router.refresh();
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [router]);
-
   const handleGoogle = (e: React.MouseEvent) => {
     e.preventDefault();
 
     // Abrimos la URL de login directamente en una nueva pestaña
     window.open(
-      "/api/auth/signin/google?callbackUrl=/account?popup=1",
+      "/api/auth/signin/google?callbackUrl=/account",
       "_blank",
       "noopener"
     );
@@ -124,7 +102,7 @@ export default function AccountPage() {
   if (!session) {
     return (
       <div className="flex flex-col justify-center items-center h-screen space-y-10 px-6">
-        {/* <Button
+        <Button
           onClick={handleGoogle}
           className="w-full py-3 hover:bg-gray-50"
           variant="outline"
@@ -132,12 +110,12 @@ export default function AccountPage() {
         >
           <Image src="/icons/google.svg" alt="google" width={24} height={24} />
           Continuar con Google
-        </Button> 
+        </Button>
         <div className="flex w-full items-center gap-3">
           <hr className="flex-grow border-t border-border-secondary-default" />
           <p className="body-02-regular text-text-secondary-default">O</p>
           <hr className="flex-grow border-t border-border-secondary-default" />
-        </div> */}
+        </div>
         <div className="w-full ">
           <LoginForm />
         </div>
