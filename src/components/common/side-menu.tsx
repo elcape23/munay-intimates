@@ -31,6 +31,8 @@ const INNERWEAR_SUBCATEGORIES = [
   { label: "CONJUNTOS", slug: "conjuntos" },
 ];
 
+const INNERWEAR_LABELS = INNERWEAR_SUBCATEGORIES.map((sub) => sub.label);
+
 export function SideMenu() {
   /* estados globales */
   const { isMenuOpen, closeMenu, openSearch } = useUiStore();
@@ -45,7 +47,9 @@ export function SideMenu() {
 
   /* separar ítems según section */
   const categories = menuItems.filter(
-    (i) => !(i.section === "new" && i.id.startsWith("subcat-"))
+    (i) =>
+      !(i.section === "new" && i.id.startsWith("subcat-")) &&
+      !INNERWEAR_LABELS.includes(i.title)
   );
   const newProducts = menuItems.filter(
     (i) => i.section === "new" && i.id.startsWith("subcat-")
