@@ -36,7 +36,7 @@ const SLIDES: HeroSlide[] = [
     title: "Noches con estilo",
     subtitle: "Comodidad absoluta cada día",
     ButtonText: "Descubrir más",
-    href: "/no-clip",
+    href: "/collections/pijamas",
   },
   {
     id: "3",
