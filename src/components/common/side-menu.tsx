@@ -25,6 +25,12 @@ const SEASONS = [
   },
 ];
 
+const INNERWEAR_SUBCATEGORIES = [
+  { label: "BOMBACHAS", slug: "bombachas" },
+  { label: "CORPIÑOS", slug: "corpiños" },
+  { label: "CONJUNTOS", slug: "conjuntos" },
+];
+
 export function SideMenu() {
   /* estados globales */
   const { isMenuOpen, closeMenu, openSearch } = useUiStore();
@@ -34,6 +40,8 @@ export function SideMenu() {
   const [tab, setTab] = useState<"categories" | "new" | "collections">(
     "categories"
   );
+
+  const [isInnerwearOpen, setIsInnerwearOpen] = useState(false);
 
   /* separar ítems según section */
   const categories = menuItems.filter(
@@ -171,28 +179,62 @@ export function SideMenu() {
                   <ul className="space-y-3 mt-6">
                     {categories.map((item) => (
                       <li key={item.id}>
-                        <Link
-                          href={item.url}
-                          onClick={closeMenu}
-                          className={`flex items-topline uppercase body-01-regular tracking-wide hover:text-brand-primary ${
-                            item.id === "special-prices"
-                              ? "text-text-danger-default"
-                              : "text-text-secondary-default"
-                          }`}
-                        >
-                          <span className="body-01-regular">{item.title}</span>
-                          {item.isNew && (
-                            <span
-                              className={`body-03-regular ml-[2px] ${
-                                item.id === "special-prices"
-                                  ? "text-text-danger-default"
-                                  : "text-text-secondary-default"
-                              }`}
+                        {item.title === "ROPA INTERIOR" ? (
+                          <>
+                            <button
+                              onClick={() =>
+                                setIsInnerwearOpen((prev) => !prev)
+                              }
+                              className="flex items-topline uppercase body-01-regular tracking-wide hover:text-brand-primary text-text-secondary-default w-full text-left"
                             >
-                              NEW
+                              <span className="body-01-regular">
+                                {item.title}
+                              </span>
+                            </button>
+                            {isInnerwearOpen && (
+                              <ul className="space-y-3 mt-3 ml-4">
+                                {INNERWEAR_SUBCATEGORIES.map((sub) => (
+                                  <li key={sub.slug}>
+                                    <Link
+                                      href={`/collections/${encodeURIComponent(
+                                        sub.slug
+                                      )}`}
+                                      onClick={closeMenu}
+                                      className="flex items-topline uppercase body-02-regular tracking-wide text-text-secondary-default hover:text-brand-primary"
+                                    >
+                                      {sub.label}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </>
+                        ) : (
+                          <Link
+                            href={item.url}
+                            onClick={closeMenu}
+                            className={`flex items-topline uppercase body-01-regular tracking-wide hover:text-brand-primary ${
+                              item.id === "special-prices"
+                                ? "text-text-danger-default"
+                                : "text-text-secondary-default"
+                            }`}
+                          >
+                            <span className="body-01-regular">
+                              {item.title}
                             </span>
-                          )}
-                        </Link>
+                            {item.isNew && (
+                              <span
+                                className={`body-03-regular ml-[2px] ${
+                                  item.id === "special-prices"
+                                    ? "text-text-danger-default"
+                                    : "text-text-secondary-default"
+                                }`}
+                              >
+                                NEW
+                              </span>
+                            )}
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>
