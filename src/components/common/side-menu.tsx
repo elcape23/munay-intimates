@@ -56,6 +56,11 @@ export function SideMenu() {
   );
   const collections = menuItems.filter((i) => i.section === "collections");
 
+  // --- flag para Ropa Interior ---
+  const hasNewInnerwear = newProducts.some((i) =>
+    INNERWEAR_LABELS.includes(i.title)
+  );
+
   /* helper para renderizar la lista */
   const renderList = (items: typeof menuItems) => (
     <ul className="space-y-3 mt-6">
@@ -194,6 +199,11 @@ export function SideMenu() {
                               <span className="body-01-regular">
                                 {item.title}
                               </span>
+                              {(item.isNew || hasNewInnerwear) && (
+                                <span className="body-03-regular ml-[2px] text-text-secondary-default">
+                                  NEW
+                                </span>
+                              )}
                             </button>
                             {isInnerwearOpen && (
                               <ul className="space-y-3 mt-3 ml-4">

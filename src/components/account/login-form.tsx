@@ -132,6 +132,7 @@ export default function LoginForm({
       {isRedirecting && <Loading />}
       <div className="flex flex-row sm:flex-row gap-4">
         <Button
+          type="button"
           onClick={handleRegisterRedirect}
           variant="outline"
           size="md"
