@@ -98,7 +98,7 @@ export default function CheckoutOptionsPage() {
         </div>
         <Accordion
           type="multiple"
-          defaultValue={["payment"]}
+          defaultValue={["payment", "shipping"]}
           className="pt-6 space-y-4"
         >
           <AccordionItem value="payment">
