@@ -19,31 +19,33 @@ export default function LoginPage() {
   const handleGoogle = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    const callback = `${window.location.origin}/auth/callback`;
-    const url = `/api/auth/signin/google?callbackUrl=${encodeURIComponent(
-      callback
-    )}`;
-    window.open(url, "_blank", "noopener");
+    // Abrimos la URL de login directamente en una nueva pestaña
+    window.open(
+      "/api/auth/signin/google?callbackUrl=/account?popup=1",
+      "_blank",
+      "noopener"
+    );
   };
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (
+        event.origin === window.location.origin &&
+        event.data === "google-auth-success"
+      ) {
+        router.push("/account");
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [router]);
 
   useEffect(() => {
     if (session) {
       router.push("/account");
     }
   }, [session, router]);
-
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (
-        event.origin === window.location.origin &&
-        event.data === "auth:success"
-      ) {
-        router.refresh();
-      }
-    };
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [router]);
 
   if (loadingAccount && !session) {
     return (
