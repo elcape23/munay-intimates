@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import AddressAutocomplete from "@/components/account/address-autocomplete";
 import { signIn } from "next-auth/react";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,9 @@ export default function RegisterForm() {
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
   const [country, setCountry] = useState("");
+  const [placeId, setPlaceId] = useState("");
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
   const [useAsBilling, setUseAsBilling] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [subscribeToEmails, setSubscribeToEmails] = useState(true);
@@ -441,13 +445,9 @@ export default function RegisterForm() {
           </label>
         </div>
         <div className="space-y-2 relative">
-          {" "}
-          <Input
-            id="address1"
-            name="address1"
-            type="text"
+          <AddressAutocomplete
             value={address1}
-            onChange={(e) => handleInputChange(setAddress1, e.target.value)}
+            onChange={(val) => handleInputChange(setAddress1, val)}
             onBlur={() => setAddress1Touched(true)}
             placeholder="Dirección"
             className={cn(
@@ -458,6 +458,17 @@ export default function RegisterForm() {
                 ? "text-text-danger-default"
                 : ""
             )}
+            onSelect={(data) => {
+              handleInputChange(setAddress1, data.formatted_address);
+              setProvince(data.province);
+              setCity(data.city);
+              setZip(data.zip);
+              setCountry(data.country);
+              setPlaceId(data.place_id);
+              setLat(data.lat);
+              setLng(data.lng);
+              setAddress1Touched(true);
+            }}
           />
           {address1Status === "valid" && (
             <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
