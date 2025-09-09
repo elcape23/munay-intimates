@@ -30,6 +30,8 @@ export default function CheckoutOptionsPage() {
     null
   );
 
+  const [shippingCost, setShippingCost] = useState<number | null>(null);
+
   useEffect(() => {
     const fetchAddress = async () => {
       if (!customerAccessToken) return;
@@ -40,6 +42,31 @@ export default function CheckoutOptionsPage() {
     };
     fetchAddress();
   }, [customerAccessToken]);
+
+  useEffect(() => {
+    const fetchShipping = async () => {
+      if (!defaultAddress) return;
+      try {
+        const res = await fetch("/api/shipping-cost", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            countryCode: defaultAddress.countryCode,
+            provinceCode: defaultAddress.provinceCode,
+          }),
+        });
+        if (res.ok) {
+          const json = await res.json();
+          if (typeof json.price === "number") {
+            setShippingCost(json.price);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchShipping();
+  }, [defaultAddress]);
 
   const addressString = defaultAddress
     ? defaultAddress.formatted?.join(", ") ||
@@ -190,7 +217,11 @@ export default function CheckoutOptionsPage() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-        <OrderSummary cart={cart} paymentMethod={selectedMethod} />
+        <OrderSummary
+          cart={cart}
+          paymentMethod={selectedMethod}
+          shippingCost={shippingCost}
+        />{" "}
       </div>
       <div className="mt-6">
         <Button

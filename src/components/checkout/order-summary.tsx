@@ -5,11 +5,13 @@ import { ShopifyCart } from "@/lib/shopify";
 interface OrderSummaryProps {
   cart: ShopifyCart;
   paymentMethod: string | null;
+  shippingCost?: number | null;
 }
 
 export default function OrderSummary({
   cart,
   paymentMethod,
+  shippingCost,
 }: OrderSummaryProps) {
   const currency = cart.cost.totalAmount.currencyCode;
 
@@ -24,8 +26,10 @@ export default function OrderSummary({
   const subtotal = parseFloat(cart.cost.subtotalAmount.amount);
   const productDiscount = productTotal - subtotal;
 
-  const shipping = parseFloat(cart.cost.totalAmount.amount) - subtotal;
-
+  const shipping =
+    shippingCost != null
+      ? shippingCost
+      : parseFloat(cart.cost.totalAmount.amount) - subtotal;
   const showExtraDiscount =
     paymentMethod === "Efectivo" || paymentMethod === "Transferencia";
   const extraDiscount = showExtraDiscount ? subtotal * 0.25 : 0;

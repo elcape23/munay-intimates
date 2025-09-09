@@ -130,6 +130,8 @@ export type CustomerAddress = {
   city?: string | null;
   province?: string | null;
   country?: string | null;
+  countryCode?: string | null;
+  provinceCode?: string | null;
   zip?: string | null;
   firstName?: string | null;
   lastName?: string | null;
@@ -2172,7 +2174,9 @@ export async function getCustomerAddresses(
               address2
               city
               province
+              provinceCode
               country
+              countryCode: countryCodeV2
               zip
               firstName
               lastName
