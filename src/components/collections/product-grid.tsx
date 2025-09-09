@@ -740,10 +740,10 @@ export function ProductGrid({
                       <Button
                         key={tag}
                         onClick={() => handleFilterToggle(tag)}
-                        className={`px-3 py-1 border rounded-full body-02-regular transition-colors ${
+                        className={`px-3 py-1 border rounded-full  transition-colors ${
                           activeFilters.includes(tag)
-                            ? "text-text-primary-default border-border-primary-default"
-                            : "text-text-secondary-default border-border-secondary-default hover:"
+                            ? "body-02-semibold text-text-primary-default border-border-primary-default"
+                            : "body-02-regular text-text-secondary-default border-border-secondary-default hover:"
                         }`}
                         variant="outline"
                         size="lg"
