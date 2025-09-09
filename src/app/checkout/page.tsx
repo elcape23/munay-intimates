@@ -126,12 +126,12 @@ export default function CheckoutOptionsPage() {
         <Accordion
           type="multiple"
           defaultValue={["payment", "shipping"]}
-          className="pt-6 space-y-4"
+          className="space-y-6"
         >
           <AccordionItem value="payment">
             <AccordionTrigger>Seleccionar método de pago</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-4 px-4">
+              <div className="p-4 space-y-4">
                 <div className="grid grid-cols-2 flex-rows-2 gap-4">
                   <Button
                     onClick={() => handleOther("Efectivo")}
@@ -179,7 +179,7 @@ export default function CheckoutOptionsPage() {
           <AccordionItem value="shipping">
             <AccordionTrigger>Detalles de envío</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-4 px-4">
+              <div className="p-4 space-y-6">
                 <div>
                   <div className="flex items-center justify-between">
                     <p className="body-01-semibold">Dirección</p>

@@ -44,32 +44,36 @@ export default function OrderSummary({
     }).format(value);
 
   return (
-    <div className="bg-background-primary-default pt-6 w-full space-y-4 px-4">
-      <h2 className="body-01-semibold">Resumen</h2>
+    <div className="pt-6 w-full px-4 space-y-4">
       <div className="space-y-2">
-        <div className="flex justify-between body-02-regular">
-          <span>Productos</span>
-          <span>{formatPrice(productTotal)}</span>
-        </div>
-        <div className="flex justify-between body-02-regular">
-          <span>Envío</span>
-          <span>{shipping === 0 ? "Gratis" : formatPrice(shipping)}</span>
-        </div>
-      </div>
-      <h2 className="body-01-semibold">Descuentos</h2>
-      <div className="space-y-2">
-        <div className="flex justify-between body-02-regular">
-          <span>Productos</span>
-          <span>-{formatPrice(productDiscount)}</span>
-        </div>
-        {showExtraDiscount && (
+        <h2 className="body-01-semibold">Resumen</h2>
+        <div className="space-y-1">
           <div className="flex justify-between body-02-regular">
-            <span>25% OFF</span>
-            <span>-{formatPrice(extraDiscount)}</span>
+            <span>Productos</span>
+            <span>{formatPrice(productTotal)}</span>
           </div>
-        )}
+          <div className="flex justify-between body-02-regular">
+            <span>Envío</span>
+            <span>{shipping === 0 ? "Gratis" : formatPrice(shipping)}</span>
+          </div>
+        </div>
       </div>
-      <div className="flex justify-between body-01-bold pt-4 border-t border-border-secondary-default">
+      <div className="space-y-2">
+        <h2 className="body-01-semibold">Descuentos</h2>
+        <div className="space-y-1">
+          <div className="flex justify-between body-02-regular">
+            <span>Productos</span>
+            <span>-{formatPrice(productDiscount)}</span>
+          </div>
+          {showExtraDiscount && (
+            <div className="flex justify-between body-02-regular">
+              <span>25% OFF</span>
+              <span>-{formatPrice(extraDiscount)}</span>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="flex justify-between body-01-bold pt-2">
         <span>Total</span>
         <span>{formatPrice(total)}</span>
       </div>
