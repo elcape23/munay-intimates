@@ -11,13 +11,12 @@ import {
   BuildingLibraryIcon,
   CreditCardIcon,
 } from "@heroicons/react/24/outline";
-import OrderSummaryModal from "@/components/checkout/order-summary-modal";
+import OrderSummary from "@/components/checkout/order-summary";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
   const router = useRouter();
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
-  const [summaryOpen, setSummaryOpen] = useState(false);
 
   if (isLoading && !cart) {
     return <div className="text-center p-12">Cargando...</div>;
@@ -106,14 +105,7 @@ export default function CheckoutOptionsPage() {
               Tarjeta de crédito
             </Button>
           </div>
-          <Button
-            onClick={() => setSummaryOpen(true)}
-            variant="outline"
-            size="lg"
-            className="w-full"
-          >
-            Ver resumen
-          </Button>
+          <OrderSummary cart={cart} paymentMethod={selectedMethod} />
         </div>
       </div>
       <div className="mt-6">
@@ -126,12 +118,6 @@ export default function CheckoutOptionsPage() {
           Continuar
         </Button>
       </div>
-      <OrderSummaryModal
-        open={summaryOpen}
-        onClose={() => setSummaryOpen(false)}
-        cart={cart}
-        paymentMethod={selectedMethod}
-      />
     </section>
   );
 }
