@@ -25,10 +25,12 @@ interface AuthState {
   signUp: (input: {
     firstName: string;
     lastName: string;
+    phone: string;
     email: string;
     password: string;
     subscribeToEmails?: boolean;
     address1?: string;
+    address2?: string;
     province?: string;
     city?: string;
     zip?: string;
@@ -102,6 +104,7 @@ export const useAuthStore = create(
           const {
             subscribeToEmails,
             address1,
+            address2,
             province,
             city,
             zip,
@@ -123,9 +126,10 @@ export const useAuthStore = create(
             if (tokenResponse.customerAccessToken) {
               const accessToken = tokenResponse.customerAccessToken.accessToken;
 
-              if (address1 || city || province || zip || country) {
+              if (address1 || address2 || city || province || zip || country) {
                 const addressId = await customerAddressCreate(accessToken, {
                   address1,
+                  address2,
                   city,
                   province,
                   zip,

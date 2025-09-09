@@ -19,12 +19,14 @@ export default function RegisterForm() {
   const { signUp, error: authError, isLoading } = useAuthStore();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
   const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
@@ -37,6 +39,7 @@ export default function RegisterForm() {
   const [subscribeToEmails, setSubscribeToEmails] = useState(true);
   const [firstNameTouched, setFirstNameTouched] = useState(false);
   const [lastNameTouched, setLastNameTouched] = useState(false);
+  const [phoneTouched, setPhoneTouched] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
@@ -60,6 +63,15 @@ export default function RegisterForm() {
     : lastName.length === 0
     ? "empty"
     : isLastNameValid
+    ? "valid"
+    : "invalid";
+
+  const isPhoneValid = /^\d{10,}$/.test(phone);
+  const phoneStatus = !phoneTouched
+    ? null
+    : phone.length === 0
+    ? "empty"
+    : isPhoneValid
     ? "valid"
     : "invalid";
 
@@ -139,6 +151,7 @@ export default function RegisterForm() {
   const isFormValid =
     isFirstNameValid &&
     isLastNameValid &&
+    isPhoneValid &&
     isEmailValid &&
     isPasswordValid &&
     isConfirmPasswordValid;
@@ -152,10 +165,12 @@ export default function RegisterForm() {
     const success = await signUp({
       firstName,
       lastName,
+      phone,
       email,
       password,
       subscribeToEmails,
       address1,
+      address2,
       province,
       city,
       zip,
@@ -271,6 +286,50 @@ export default function RegisterForm() {
               (lastNameStatus === "empty"
                 ? "Requerido"
                 : lastNameStatus === "valid"
+                ? "Bien hecho!"
+                : "Incorrecto")}
+          </p>
+        </div>
+        <div className="space-y-2 relative">
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            required
+            value={phone}
+            onChange={(e) => handleInputChange(setPhone, e.target.value)}
+            onBlur={() => setPhoneTouched(true)}
+            placeholder="Celular"
+            className={cn(
+              "pr-10",
+              phoneStatus === "valid"
+                ? "text-text-success-default"
+                : phoneStatus === "invalid"
+                ? "text-text-danger-default"
+                : ""
+            )}
+          />
+          {phoneStatus === "valid" && (
+            <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
+          )}
+          {phoneStatus === "invalid" && (
+            <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
+          )}
+          <p
+            className={cn(
+              "px-3 body-03-regular min-h-5",
+              !phoneTouched && "invisible",
+              phoneTouched &&
+                (phoneStatus === "valid"
+                  ? "text-text-success-default"
+                  : "text-text-danger-default")
+            )}
+          >
+            {phoneTouched &&
+              (phoneStatus === "empty"
+                ? "Requerido"
+                : phoneStatus === "valid"
                 ? "Bien hecho!"
                 : "Incorrecto")}
           </p>
@@ -431,6 +490,7 @@ export default function RegisterForm() {
                 : "No coincide")}
           </p>
         </div>
+
         <div className="flex items-start gap-2 py-2">
           <Checkbox
             id="subscribeToEmails"
@@ -493,6 +553,16 @@ export default function RegisterForm() {
                 ? "Bien hecho!"
                 : "Incorrecto")}
           </p>
+        </div>
+        <div className="space-y-2 pb-7">
+          <Input
+            id="address2"
+            name="address2"
+            type="text"
+            value={address2}
+            onChange={(e) => handleInputChange(setAddress2, e.target.value)}
+            placeholder="Departamento o lote (opcional)"
+          />
         </div>
         <div className="space-y-2 relative">
           {" "}

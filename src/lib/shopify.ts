@@ -2246,6 +2246,7 @@ export async function customerAddressCreate(
   customerAccessToken: string,
   address: {
     address1?: string;
+    address2?: string;
     city?: string;
     province?: string;
     country?: string;
