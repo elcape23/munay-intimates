@@ -35,6 +35,8 @@ export default function CheckoutOptionsPage() {
   );
 
   const [shippingCost, setShippingCost] = useState<number | null>(null);
+  const [shippingMethod, setShippingMethod] =
+    useState<string>("Retiro de Tienda");
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -130,6 +132,9 @@ export default function CheckoutOptionsPage() {
     }
   };
 
+  const effectiveShippingCost =
+    shippingMethod === "Retiro de Tienda" ? 0 : shippingCost;
+
   return (
     <section className="pt-[55px] mx-6 min-h-[calc(100vh-55px)] flex flex-col justify-between">
       <div className="space-y-6">
@@ -141,7 +146,7 @@ export default function CheckoutOptionsPage() {
         </div>
         <Accordion
           type="multiple"
-          defaultValue={["payment", "shipping"]}
+          defaultValue={["payment", "shipping-method", "shipping"]}
           className="space-y-6"
         >
           <AccordionItem value="payment">
@@ -192,6 +197,35 @@ export default function CheckoutOptionsPage() {
               </div>
             </AccordionContent>
           </AccordionItem>
+          <AccordionItem value="shipping-method">
+            <AccordionTrigger>Método de envío</AccordionTrigger>
+            <AccordionContent>
+              <div className="p-4 space-y-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="shipping-method"
+                    value="Retiro de Tienda"
+                    checked={shippingMethod === "Retiro de Tienda"}
+                    onChange={() => setShippingMethod("Retiro de Tienda")}
+                    className="h-4 w-4 accent-primary"
+                  />
+                  <span className="body-02-regular">Retiro de Tienda</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="shipping-method"
+                    value="Envío a Domicilio"
+                    checked={shippingMethod === "Envío a Domicilio"}
+                    onChange={() => setShippingMethod("Envío a Domicilio")}
+                    className="h-4 w-4 accent-primary"
+                  />
+                  <span className="body-02-regular">Envío a Domicilio</span>
+                </label>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
           <AccordionItem value="shipping">
             <AccordionTrigger>Detalles de envío</AccordionTrigger>
             <AccordionContent>
@@ -236,7 +270,7 @@ export default function CheckoutOptionsPage() {
         <OrderSummary
           cart={cart}
           paymentMethod={selectedMethod}
-          shippingCost={shippingCost}
+          shippingCost={effectiveShippingCost}
         />{" "}
       </div>
       <div className="mt-6">
