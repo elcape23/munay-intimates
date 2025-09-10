@@ -68,13 +68,24 @@ export async function POST(req: NextRequest) {
   let endpoint = `https://${storeDomain}/admin/api/${apiVersion}/graphql.json`;
   console.log("[route.ts] 🌍 Intentando versión API:", apiVersion);
 
-  let address1: string | null = null;
+  let shippingAddress: Record<string, string | null> | null = null;
   if (customerId) {
     const addrQuery = `
       query getCustomer($id: ID!) {
         customer(id: $id) {
-          defaultAddress { address1 }
-        }
+ defaultAddress {
+            address1
+            address2
+            city
+            province
+            provinceCode
+            country
+            countryCodeV2
+            zip
+            firstName
+            lastName
+            phone
+          }        }
       }
     `;
     try {
@@ -91,16 +102,31 @@ export async function POST(req: NextRequest) {
       });
       if (addrRes.ok) {
         const addrJson = await addrRes.json();
-        address1 = addrJson.data?.customer?.defaultAddress?.address1 || null;
-        console.log("[route.ts] 🏠 address1:", address1);
+        const addr = addrJson.data?.customer?.defaultAddress;
+        if (addr) {
+          shippingAddress = {
+            address1: addr.address1,
+            address2: addr.address2,
+            city: addr.city,
+            province: addr.province,
+            provinceCode: addr.provinceCode,
+            country: addr.country,
+            countryCode: addr.countryCodeV2,
+            zip: addr.zip,
+            firstName: addr.firstName,
+            lastName: addr.lastName,
+            phone: addr.phone,
+          };
+        }
+        console.log("[route.ts] 🏠 shippingAddress:", shippingAddress);
       } else {
         console.warn(
-          "[route.ts] ⚠️ No se pudo obtener address1:",
+          "[route.ts] ⚠️ No se pudo obtener shippingAddress:",
           addrRes.status
         );
       }
     } catch (e) {
-      console.error("[route.ts] ⚠️ Error obteniendo address1:", e);
+      console.error("[route.ts] ⚠️ Error obteniendo shippingAddress:", e);
     }
   }
   const variables = {
@@ -109,7 +135,7 @@ export async function POST(req: NextRequest) {
       note,
       tags,
       ...(customerId ? { customerId } : {}),
-      ...(address1 ? { shippingAddress: { address1 } } : {}),
+      ...(shippingAddress ? { shippingAddress } : {}),
     },
   };
 
