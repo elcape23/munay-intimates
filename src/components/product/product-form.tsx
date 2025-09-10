@@ -382,6 +382,34 @@ export function ProductForm({ product }: ProductFormProps) {
             );
           })}
       </div>
+      {/* Precio */}
+      <div className="flex flex-row justify-between items-center">
+        <label className="body-01-medium text-text-primary-default">
+          Precio
+        </label>
+        <div className="flex items-center gap-2">
+          {selectedVariant && selectedVariant.price && (
+            <>
+              {selectedVariant.compareAtPrice && (
+                <span className="body-01-semibold line-through text-text-secondary-default">
+                  {new Intl.NumberFormat("es-AR", {
+                    style: "currency",
+                    currency: selectedVariant.compareAtPrice.currencyCode,
+                    maximumFractionDigits: 0,
+                  }).format(parseFloat(selectedVariant.compareAtPrice.amount))}
+                </span>
+              )}
+              <span className="body-01-semibold text-text-primary-default">
+                {new Intl.NumberFormat("es-AR", {
+                  style: "currency",
+                  currency: selectedVariant.price.currencyCode,
+                  maximumFractionDigits: 0,
+                }).format(parseFloat(selectedVariant.price.amount))}
+              </span>
+            </>
+          )}
+        </div>
+      </div>
       {/* Botones de acción */}
       <div ref={buttonContainerRef} className="flex flex-row gap-4">
         <Button
