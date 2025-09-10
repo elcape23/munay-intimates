@@ -42,7 +42,11 @@ export default function AddressAutocomplete({
       if (!google || !inputRef.current) return;
       const autocomplete = new google.maps.places.Autocomplete(
         inputRef.current,
-        { types: ["address"] }
+        {
+          types: ["address"],
+          componentRestrictions: { country: "ARG" },
+          strictBounds: true,
+        }
       );
       autocomplete.addListener("place_changed", async () => {
         const place = autocomplete.getPlace();
