@@ -73,6 +73,7 @@ export type ShopifyProduct = {
   productType?: string | null;
   handle: string;
   tags: string[];
+  availableForSale: boolean;
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string | null;
@@ -308,6 +309,7 @@ export interface FeaturedProduct {
   altText?: string;
   colorVariants: string[];
   isNew?: boolean;
+  availableForSale?: boolean;
 }
 
 interface NewProductsResponse {
@@ -321,6 +323,7 @@ interface NewProductsResponse {
         options: Array<{ name: string; values: string[] }>;
         color: ShopifyMetafield | null;
         createdAt: string;
+        availableForSale: boolean;
         variants: {
           edges: Array<{
             node: {
@@ -372,6 +375,7 @@ export async function getNewProducts(
               }
             }
             createdAt
+            availableForSale
             variants(first: 10) {
               edges {
                 node {
@@ -474,6 +478,7 @@ export async function getNewProducts(
           : undefined,
       colorVariants,
       isNew,
+      availableForSale: node.availableForSale,
     };
   });
 }
@@ -490,6 +495,7 @@ export async function getProducts(
             id
             title
             handle
+            availableForSale
             priceRange {
               minVariantPrice {
                 amount
@@ -579,6 +585,7 @@ interface SaleResponse {
         color: ShopifyMetafield | null;
         createdAt: string;
         updatedAt: string;
+        availableForSale: boolean;
       };
     }>;
   };
@@ -639,6 +646,7 @@ export async function getSaleProducts(
             }
             createdAt
             updatedAt
+            availableForSale
           }
         }
       }
@@ -726,6 +734,7 @@ export async function getSaleProducts(
       colorVariants, // ← aquí van los colores
       discount, // para filtrar
       isNew, // para destacar productos nuevos
+      availableForSale: node.availableForSale,
     };
   });
 
@@ -748,6 +757,7 @@ export async function getSaleProductsFull(
             title
             handle
             tags
+            availableForSale
             createdAt
             updatedAt
             priceRange {
@@ -977,7 +987,7 @@ export async function getProductsByHandles(
             products(first: ${handles.length}, query: $query) {
                 edges {
                     node {
-                        id, title, handle,
+                        id, title, handle, availableForSale,
                         priceRange { minVariantPrice { amount, currencyCode } },
                         images(first: 1) { edges { node { url, altText } } }
                     }
@@ -1009,6 +1019,7 @@ export async function getNewestProducts(
             title
             handle
             tags
+            availableForSale
             createdAt
             priceRange {
               minVariantPrice {
@@ -1121,6 +1132,7 @@ export async function getRecommendedProducts(
         title
         handle
         tags
+        availableForSale
         createdAt
         variants(first: 10) {
           edges {
@@ -1331,6 +1343,7 @@ export async function getProductsBySeason(
             title
             handle
             tags
+            availableForSale
             createdAt
             priceRange {
               minVariantPrice {
@@ -1557,6 +1570,7 @@ export async function getCollectionByHandle(
               title
               handle
               tags
+              availableForSale
               createdAt
               priceRange {
                 minVariantPrice {

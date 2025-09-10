@@ -52,6 +52,7 @@ export default function RelatedProductsCarousel({
                 product.options.find((o) => o.name.toLowerCase() === "color")
                   ?.values || [],
               isNew: product.isNew,
+              availableForSale: product.availableForSale,
             };
           } else {
             // FeaturedProduct ya contiene todos los datos necesarios
@@ -65,6 +66,7 @@ export default function RelatedProductsCarousel({
               compareAtPrice: product.compareAtPrice,
               colorVariants: product.colorVariants,
               isNew: product.isNew,
+              availableForSale: product.availableForSale,
             };
           }
 

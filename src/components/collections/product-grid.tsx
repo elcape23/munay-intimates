@@ -797,6 +797,7 @@ export function ProductGrid({
                   const byTag = product.tags?.includes("new");
                   return Boolean(byDate || byTag);
                 })()}
+                availableForSale={product.availableForSale}
                 fill
                 onImageLoad={() => setImagesLoaded((c) => c + 1)}
               />

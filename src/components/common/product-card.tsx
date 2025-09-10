@@ -18,6 +18,7 @@ export interface ProductCardProps {
   price: string; // e.g. "24.99"
   compareAtPrice?: string; // e.g. "29.99"
   isNew?: boolean; // marca NEW
+  availableForSale?: boolean; // controla badge SIN STOCK
   colorVariants?: string[]; // lista de colores (hex o clases Tailwind)
   size?: "default" | "small";
   /** If true, image adapts to parent width */
@@ -41,6 +42,7 @@ export function ProductCard({
   price,
   compareAtPrice,
   isNew = false,
+  availableForSale = true,
   colorVariants = [],
   size = "default",
   fill = false,
@@ -106,10 +108,14 @@ export function ProductCard({
                 onImageLoad?.();
               }}
             />
-          )}
-          {/* Badge Oferta o NEW */}
+          )}{" "}
+          {/* Badge Oferta, NEW o SIN STOCK */}
           {loaded &&
-            (isOnSale ? (
+            (!availableForSale ? (
+              <div className="absolute bottom-3 left-3 z-10 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert">
+                SIN STOCK
+              </div>
+            ) : isOnSale ? (
               <div className="absolute bottom-3 left-3 z-10 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert">
                 {discountPercent}%
               </div>
