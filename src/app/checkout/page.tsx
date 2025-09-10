@@ -25,6 +25,7 @@ import {
   getCustomerAddresses,
   updateCartBuyerIdentity,
 } from "@/lib/shopify";
+import { DeliveryDateModal } from "@/components/checkout/delivery-date-modal";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
@@ -38,6 +39,9 @@ export default function CheckoutOptionsPage() {
   const [shippingCost, setShippingCost] = useState<number | null>(null);
   const [shippingMethod, setShippingMethod] =
     useState<string>("Envío a Domicilio");
+  const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
+  const [deliveryDateLabel, setDeliveryDateLabel] = useState("Mañana");
+  const [deliveryTime, setDeliveryTime] = useState("10hs a 13hs");
   useEffect(() => {
     const fetchAddress = async () => {
       if (!customerAccessToken) return;
@@ -263,12 +267,17 @@ export default function CheckoutOptionsPage() {
                 <div>
                   <div className="flex items-center justify-between">
                     <p className="body-01-semibold">Fecha de envío</p>
-                    <Button variant="link" size="text" onClick={() => {}}>
+                    <Button
+                      variant="link"
+                      size="text"
+                      onClick={() => setIsDeliveryModalOpen(true)}
+                    >
+                      {" "}
                       Cambiar
                     </Button>
                   </div>
                   <p className="body-02-regular text-text-secondary-default">
-                    Mañana
+                    {deliveryDateLabel} - {deliveryTime}{" "}
                   </p>
                 </div>
                 <div>
@@ -302,6 +311,14 @@ export default function CheckoutOptionsPage() {
           Continuar
         </Button>
       </div>
+      <DeliveryDateModal
+        open={isDeliveryModalOpen}
+        onClose={() => setIsDeliveryModalOpen(false)}
+        onConfirm={(date, time) => {
+          setDeliveryDateLabel(date);
+          setDeliveryTime(time);
+        }}
+      />
     </section>
   );
 }
