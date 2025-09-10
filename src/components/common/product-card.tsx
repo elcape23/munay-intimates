@@ -109,18 +109,21 @@ export function ProductCard({
               }}
             />
           )}{" "}
+          {loaded && !availableForSale && (
+            <div className="absolute inset-0 z-10 bg-white/70  pointer-events-none" />
+          )}
           {/* Badge Oferta, NEW o SIN STOCK */}
           {loaded &&
             (!availableForSale ? (
-              <div className="absolute bottom-3 left-3 z-10 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert">
+              <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert">
                 SIN STOCK
               </div>
             ) : isOnSale ? (
-              <div className="absolute bottom-3 left-3 z-10 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert">
+              <div className="absolute bottom-3 left-3 z-20 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert">
                 {discountPercent}%
               </div>
             ) : isNew ? (
-              <div className="absolute bottom-3 left-3 z-10 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert">
+              <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert">
                 NEW
               </div>
             ) : null)}
