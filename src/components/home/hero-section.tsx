@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
@@ -63,6 +64,7 @@ export function HeroSection({
   intervalMs = 3000,
 }: HeroSectionProps) {
   const [current, setCurrent] = useState(0);
+  const router = useRouter();
   const introDone = useIntroStore((state) => state.done);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sectionRef = useRef<HTMLDivElement | null>(null);
@@ -150,7 +152,11 @@ export function HeroSection({
         {SLIDES.map((slide, idx) => (
           <div
             key={slide.id}
-            className="relative w-full h-screen max-h-[640px] flex-shrink-0 snap-center"
+            className="relative w-full h-screen max-h-[640px] flex-shrink-0 snap-center cursor-pointer"
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest("a")) return;
+              if (slide.href) router.push(slide.href);
+            }}
           >
             {" "}
             {!loaded[idx] && (
