@@ -159,12 +159,17 @@ export default function CheckoutOptionsPage() {
                     variant="outline"
                     size="lg"
                     className={cn(
-                      "body-02-semibold flex flex-col items-start text-left space-y-1",
+                      "body-02-semibold flex flex-col items-start text-left space-y-1 p-4 pb-6",
                       selectedMethod === "Efectivo" &&
                         "ring-[1px] ring-offset-[0px] ring-border-primary-default"
                     )}
                   >
-                    <CurrencyDollarIcon className="h-6 w-6" />
+                    <div className="flex items-center justify-between w-full">
+                      <CurrencyDollarIcon className="h-6 w-6" />
+                      <span className="rounded border border-warning-default bg-background-fill-warning-default px-2 py-1 body-03-semibold text-text-primary-invert">
+                        25% OFF
+                      </span>
+                    </div>{" "}
                     Efectivo
                   </Button>
                   <Button
@@ -172,12 +177,17 @@ export default function CheckoutOptionsPage() {
                     variant="outline"
                     size="lg"
                     className={cn(
-                      "body-02-semibold flex flex-col items-start text-left space-y-1",
+                      "body-02-semibold flex flex-col items-start text-left space-y-1 p-4 pb-6",
                       selectedMethod === "Transferencia" &&
                         "ring-[1px] ring-offset-[0px] ring-border-primary-default"
                     )}
                   >
-                    <BuildingLibraryIcon className="h-6 w-6" />
+                    <div className="flex items-center justify-between w-full">
+                      <BuildingLibraryIcon className="h-6 w-6" />
+                      <span className="rounded border border-warning-default bg-background-fill-warning-default px-2 py-1 body-03-semibold text-text-primary-invert">
+                        25% OFF
+                      </span>
+                    </div>{" "}
                     Transferencia
                   </Button>
                   <Button
@@ -185,7 +195,7 @@ export default function CheckoutOptionsPage() {
                     variant="outline"
                     onClick={handleCard}
                     className={cn(
-                      "body-02-semibold flex flex-col items-start text-left space-y-1",
+                      "body-02-semibold flex flex-col items-start text-left space-y-1 p-4 pb-6",
                       selectedMethod === "Tarjeta de crédito" &&
                         "ring-[1px] ring-offset-[0px] ring-border-primary-default"
                     )}
