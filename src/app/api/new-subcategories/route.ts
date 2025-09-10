@@ -7,8 +7,7 @@ const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 
 async function fetchSubcategories(): Promise<NavItem[]> {
   const newest = await getNewestProductsFull(250);
-  const subSet = new Set<string>();
-
+  const counts = new Map<string, number>();
   newest.forEach((p) => {
     p.tags?.forEach((tag) => {
       const parts = tag.split(":");
@@ -16,15 +15,18 @@ async function fetchSubcategories(): Promise<NavItem[]> {
         parts.length === 2 &&
         ["subcategoría", "subcategoria"].includes(parts[0].trim().toLowerCase())
       ) {
-        subSet.add(parts[1].trim());
+        const name = parts[1].trim();
+        counts.set(name, (counts.get(name) ?? 0) + 1);
       }
     });
   });
 
   const EXCLUDED_SUBCATEGORIES = ["invierno", "verano"];
-  const names = Array.from(subSet).filter(
-    (name) => !EXCLUDED_SUBCATEGORIES.includes(slugify(name))
-  );
+  const names = Array.from(counts.entries())
+    .filter(([name]) => !EXCLUDED_SUBCATEGORIES.includes(slugify(name)))
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name]) => name);
 
   return names.map((name) => ({
     id: `subcat-${slugify(name)}`,

@@ -51,9 +51,9 @@ export function SideMenu() {
       !(i.section === "new" && i.id.startsWith("subcat-")) &&
       !INNERWEAR_LABELS.includes(i.title)
   );
-  const newProducts = menuItems.filter(
-    (i) => i.section === "new" && i.id.startsWith("subcat-")
-  );
+  const newProducts = menuItems
+    .filter((i) => i.section === "new" && i.id.startsWith("subcat-"))
+    .slice(0, 8);
   const collections = menuItems.filter((i) => i.section === "collections");
 
   // --- flags para Ropa Interior ---
