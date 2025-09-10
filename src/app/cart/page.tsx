@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { Footer } from "@/components/common/footer";
 import { LoadingSpinner } from "@/components/common/loading-spinner";
 import Image from "next/image";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 export default function CartPage() {
   // Obtenemos todo el estado directamente desde nuestro store de Zustand.
@@ -28,7 +29,15 @@ export default function CartPage() {
   const router = useRouter();
 
   const handleContinue = () => {
+    if (!cart) return;
     setLoadingCheckout(true);
+    const items = cart.lines.edges.map(({ node }) => ({
+      item_name: node.merchandise.product.title,
+      item_id: node.merchandise.sku || node.merchandise.id,
+      price: parseFloat(node.merchandise.price.amount),
+      quantity: node.quantity,
+    }));
+    trackBeginCheckout(items);
     if (isLoggedIn) {
       router.push("/checkout");
     } else {

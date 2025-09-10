@@ -8,6 +8,7 @@ import { useCartStore } from "@/store/cart-store";
 import { COLOR_MAP } from "@/lib/color-map";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { trackAddToCart } from "@/lib/analytics";
 
 type ProductFormProps = {
   product: ShopifyProduct;
@@ -146,6 +147,12 @@ export function ProductForm({ product }: ProductFormProps) {
     try {
       setLoadingButton("add");
       await addItemToCart(selectedVariant.id);
+      trackAddToCart({
+        item_name: product.title,
+        item_id: selectedVariant.sku || selectedVariant.id,
+        price: parseFloat(selectedVariant.price.amount),
+        quantity: 1,
+      });
       toast({ title: "¡Producto añadido al carrito!" });
     } catch (error) {
       toast({ title: "Hubo un error al añadir el producto." });
@@ -168,6 +175,12 @@ export function ProductForm({ product }: ProductFormProps) {
     try {
       setLoadingButton("buy");
       await addItemToCart(selectedVariant.id);
+      trackAddToCart({
+        item_name: product.title,
+        item_id: selectedVariant.sku || selectedVariant.id,
+        price: parseFloat(selectedVariant.price.amount),
+        quantity: 1,
+      });
       const { cart } = useCartStore.getState();
       if (!cart?.checkoutUrl) {
         console.error("checkoutUrl no disponible", cart);

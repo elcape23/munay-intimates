@@ -49,6 +49,7 @@ export type ShopifyPrice = { amount: string; currencyCode: string };
 export type ShopifyProductVariant = {
   id: string;
   title: string;
+  sku?: string | null;
   availableForSale: boolean;
   price: ShopifyPrice;
   compareAtPrice?: ShopifyPrice;
@@ -100,6 +101,7 @@ export type ShopifyCartLine = {
   cost: { totalAmount: ShopifyPrice };
   merchandise: {
     id: string;
+    sku?: string | null;
     title: string;
     selectedOptions: { name: string; value: string }[];
     price: ShopifyPrice;
@@ -927,6 +929,7 @@ export async function getProductByHandle(
             node {
               id
               title
+              sku
               availableForSale
               price {
                 amount
@@ -1731,6 +1734,7 @@ export async function addToCart(
                   ... on ProductVariant {
                     id
                     title
+                    sku
                     quantityAvailable
                     selectedOptions {
                       name
@@ -1811,6 +1815,7 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
                 ... on ProductVariant {
                   id
                   title
+                  sku
                   quantityAvailable
                   selectedOptions {
                     name
@@ -1878,6 +1883,7 @@ export async function removeFromCart(
                   ... on ProductVariant {
                     id
                     title
+                    sku
                     quantityAvailable
                     selectedOptions {
                       name
@@ -1953,6 +1959,7 @@ export async function updateCartItemQuantity(
                   ... on ProductVariant {
                     id
                     title
+                    sku
                     quantityAvailable
                     selectedOptions {
                       name

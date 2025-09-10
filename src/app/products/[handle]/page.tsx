@@ -14,6 +14,7 @@ import ProductGallery from "@/components/product/product-gallery";
 import { COLOR_MAP } from "@/lib/color-map";
 import { Footer } from "@/components/common/footer";
 import SlideUpSection from "@/components/common/slide-up-section";
+import { ProductAnalytics } from "@/components/product/product-analytics";
 
 // Esta es una página dinámica. Next.js le pasará los 'params' desde la URL.
 export default async function ProductDetailPage({
@@ -32,6 +33,7 @@ export default async function ProductDetailPage({
 
   return (
     <SlideUpSection className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar mb-24">
+      <ProductAnalytics product={product} />
       {/* Columna de la Galería de Imágenes */}
       {/* ▶ Carrusel principal */}
       <ProductGallery

@@ -10,6 +10,7 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { LoadingSpinner } from "@/components/common/loading-spinner";
+import { trackPurchase } from "@/lib/analytics";
 
 export default function CheckoutCashPage() {
   const router = useRouter();
@@ -47,6 +48,20 @@ export default function CheckoutCashPage() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Error");
         setOrderId(data.id);
+        if (cart) {
+          const items = cart.lines.edges.map(({ node }) => ({
+            item_name: node.merchandise.product.title,
+            item_id: node.merchandise.sku || node.merchandise.id,
+            price: parseFloat(node.merchandise.price.amount),
+            quantity: node.quantity,
+          }));
+          trackPurchase(
+            data.id,
+            parseFloat(cart.cost.totalAmount.amount),
+            cart.cost.totalAmount.currencyCode,
+            items
+          );
+        }
         clearCart();
       } catch (e) {
         setError(e instanceof Error ? e.message : "No se pudo crear la orden.");
