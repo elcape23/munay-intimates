@@ -64,8 +64,9 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const firstAvailableVariant = useMemo(() => {
     return (
-      product.variants?.edges.find((e) => e.node.availableForSale)?.node ||
-      product.variants?.edges[0]?.node
+      product.variants?.edges.find(
+        (e) => e.node.availableForSale && (e.node.quantityAvailable ?? 0) > 0
+      )?.node || product.variants?.edges[0]?.node
     );
   }, [product.variants?.edges]);
 
@@ -139,7 +140,10 @@ export function ProductForm({ product }: ProductFormProps) {
       return;
     }
 
-    if (!selectedVariant.availableForSale) {
+    if (
+      !selectedVariant.availableForSale ||
+      (selectedVariant.quantityAvailable ?? 0) <= 0
+    ) {
       toast({ title: "Esta variante no está disponible." });
       return;
     }
@@ -167,7 +171,10 @@ export function ProductForm({ product }: ProductFormProps) {
       return;
     }
 
-    if (!selectedVariant.availableForSale) {
+    if (
+      !selectedVariant.availableForSale ||
+      (selectedVariant.quantityAvailable ?? 0) <= 0
+    ) {
       toast({ title: "Esta variante no está disponible." });
       return;
     }
@@ -197,10 +204,12 @@ export function ProductForm({ product }: ProductFormProps) {
   const isAddButtonDisabled =
     !selectedVariant ||
     !selectedVariant.availableForSale ||
+    (selectedVariant.quantityAvailable ?? 0) <= 0 ||
     loadingButton === "add";
   const isBuyButtonDisabled =
     !selectedVariant ||
     !selectedVariant.availableForSale ||
+    (selectedVariant.quantityAvailable ?? 0) <= 0 ||
     loadingButton === "buy";
 
   if (!product.variants || product.variants.edges.length === 0) {

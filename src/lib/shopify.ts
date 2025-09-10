@@ -51,6 +51,7 @@ export type ShopifyProductVariant = {
   title: string;
   sku?: string | null;
   availableForSale: boolean;
+  quantityAvailable?: number | null;
   price: ShopifyPrice;
   compareAtPrice?: ShopifyPrice;
   selectedOptions?: { name: string; value: string }[];
@@ -941,6 +942,7 @@ export async function getProductByHandle(
               title
               sku
               availableForSale
+              quantityAvailable
               price {
                 amount
                 currencyCode
