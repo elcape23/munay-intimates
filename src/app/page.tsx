@@ -15,11 +15,15 @@ export default async function HomePage() {
   const [newest, sale]: [FeaturedProduct[], FeaturedProduct[]] =
     await Promise.all([getNewProducts(5), getSaleProducts(5, 50)]);
 
-  // 2) Combinamos los productos en oferta con los más nuevos, evitando duplicados
-  const saleIds = new Set(sale.map((p) => p.id));
+  // 2) Filtramos los productos sin stock
+  const newestInStock = newest.filter((p) => p.availableForSale !== false);
+  const saleInStock = sale.filter((p) => p.availableForSale !== false);
+
+  // 3) Combinamos los productos en oferta con los más nuevos, evitando duplicados
+  const saleIds = new Set(saleInStock.map((p) => p.id));
   const combined: FeaturedProduct[] = [
-    ...newest.filter((p) => !saleIds.has(p.id)),
-    ...sale,
+    ...newestInStock.filter((p) => !saleIds.has(p.id)),
+    ...saleInStock,
   ];
 
   return (
