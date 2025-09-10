@@ -18,6 +18,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuthStore } from "@/store/auth-store";
 import {
   CustomerAddress,
@@ -36,8 +37,7 @@ export default function CheckoutOptionsPage() {
 
   const [shippingCost, setShippingCost] = useState<number | null>(null);
   const [shippingMethod, setShippingMethod] =
-    useState<string>("Retiro de Tienda");
-
+    useState<string>("Envío a Domicilio");
   useEffect(() => {
     const fetchAddress = async () => {
       if (!customerAccessToken) return;
@@ -200,29 +200,36 @@ export default function CheckoutOptionsPage() {
           <AccordionItem value="shipping-method">
             <AccordionTrigger>Método de envío</AccordionTrigger>
             <AccordionContent>
-              <div className="p-4 space-y-4">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    name="shipping-method"
-                    value="Retiro de Tienda"
-                    checked={shippingMethod === "Retiro de Tienda"}
-                    onChange={() => setShippingMethod("Retiro de Tienda")}
-                    className="h-4 w-4 accent-primary"
-                  />
-                  <span className="body-02-regular">Retiro de Tienda</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    name="shipping-method"
-                    value="Envío a Domicilio"
-                    checked={shippingMethod === "Envío a Domicilio"}
-                    onChange={() => setShippingMethod("Envío a Domicilio")}
-                    className="h-4 w-4 accent-primary"
-                  />
-                  <span className="body-02-regular">Envío a Domicilio</span>
-                </label>
+              <div className="p-4">
+                <RadioGroup
+                  value={shippingMethod}
+                  onValueChange={setShippingMethod}
+                  className="space-y-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="Envío a Domicilio"
+                      id="envio-domicilio"
+                      className="h-4 w-4 border-border-primary-default text-primary"
+                    />
+                    <label
+                      htmlFor="envio-domicilio"
+                      className="body-02-regular"
+                    >
+                      Envío a Domicilio
+                    </label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="Retiro de Tienda"
+                      id="retiro-tienda"
+                      className="h-4 w-4 border-border-primary-default text-primary"
+                    />
+                    <label htmlFor="retiro-tienda" className="body-02-regular">
+                      Retiro de Tienda
+                    </label>
+                  </div>
+                </RadioGroup>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -238,7 +245,9 @@ export default function CheckoutOptionsPage() {
                     </Button>
                   </div>
                   <p className="body-02-regular text-text-secondary-default pr-20">
-                    {addressString}
+                    {shippingMethod === "Retiro de Tienda"
+                      ? "Retiro de Tienda"
+                      : addressString}{" "}
                   </p>
                 </div>
                 <div>
