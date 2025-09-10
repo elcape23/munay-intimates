@@ -347,13 +347,16 @@ export function ProductGrid({
   };
 
   const filteredAndSortedProducts = useMemo(() => {
-    // Exclude products that are completely out of stock before applying any filters
-    let filtered = items.filter((product) => product.availableForSale);
-    if (
+    const isFiltering =
       activeFilters.length > 0 ||
       minPriceFilter !== minPrice ||
-      maxPriceFilter !== maxPrice
-    ) {
+      maxPriceFilter !== maxPrice;
+
+    let filtered = isFiltering
+      ? items.filter((product) => product.availableForSale)
+      : [...items];
+
+    if (isFiltering) {
       const activeGroups: Record<string, string[]> = {};
       activeFilters.forEach((filter) => {
         const key = filter.split(":")[0].trim();
