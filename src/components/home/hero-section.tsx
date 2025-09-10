@@ -25,19 +25,19 @@ interface HeroSlide {
 const SLIDES: HeroSlide[] = [
   {
     id: "1",
-    image: "/images/hero/slide-1.webp",
-    title: "New Arrivals",
-    subtitle: "",
-    ButtonText: "Descubrir",
-    href: "/collections/new",
-  },
-  {
-    id: "2",
     image: "/images/hero/slide-2.webp",
     title: "Noches con estilo",
     subtitle: "Comodidad absoluta cada día",
     ButtonText: "Descubrir más",
     href: "/collections/pijamas",
+  },
+  {
+    id: "2",
+    image: "/images/hero/slide-1.webp",
+    title: "New Arrivals",
+    subtitle: "",
+    ButtonText: "Descubrir",
+    href: "/collections/new",
   },
   {
     id: "3",

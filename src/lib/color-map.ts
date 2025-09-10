@@ -17,4 +17,5 @@ export const COLOR_MAP: Record<string, string> = {
   Vison: "#dccd9e",
   Mostaza: "#e8b11e",
   Ladrillo: "#ec6d23",
+  Durazno: "#F7D0A2",
 };

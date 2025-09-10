@@ -347,7 +347,8 @@ export function ProductGrid({
   };
 
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = [...items];
+    // Exclude products that are completely out of stock before applying any filters
+    let filtered = items.filter((product) => product.availableForSale);
     if (
       activeFilters.length > 0 ||
       minPriceFilter !== minPrice ||
