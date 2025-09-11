@@ -35,6 +35,17 @@ export default function CheckoutCashPage() {
       createdRef.current = true;
       setLoading(true);
       try {
+        const shippingMethod =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("shippingMethod")
+            : null;
+        const shippingCostStr =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("shippingCost")
+            : null;
+        const shippingCost = shippingCostStr
+          ? parseFloat(shippingCostStr)
+          : undefined;
         const res = await fetch("/api/create-pending-orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -43,6 +54,8 @@ export default function CheckoutCashPage() {
             customerId: customer?.id,
             note: "Pago en efectivo",
             tags: ["efectivo"],
+            shippingMethod,
+            shippingCost,
           }),
         });
         const data = await res.json();

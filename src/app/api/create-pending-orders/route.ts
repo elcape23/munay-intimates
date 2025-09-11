@@ -21,9 +21,17 @@ export async function POST(req: NextRequest) {
     customerId,
     note = "Pago por transferencia",
     tags = ["transferencia"],
+    shippingMethod,
+    shippingCost,
   } = await req.json();
-  console.log("[route.ts] ▶️ Body recibido:", { cart, customerId, note, tags });
-
+  console.log("[route.ts] ▶️ Body recibido:", {
+    cart,
+    customerId,
+    note,
+    tags,
+    shippingMethod,
+    shippingCost,
+  });
   if (!customerId) {
     return NextResponse.json(
       { error: "Customer ID is required" },
@@ -136,6 +144,14 @@ export async function POST(req: NextRequest) {
       tags,
       ...(customerId ? { customerId } : {}),
       ...(shippingAddress ? { shippingAddress } : {}),
+      ...(shippingMethod
+        ? {
+            shippingLine: {
+              title: shippingMethod,
+              price: shippingCost != null ? String(shippingCost) : "0",
+            },
+          }
+        : {}),
     },
   };
 

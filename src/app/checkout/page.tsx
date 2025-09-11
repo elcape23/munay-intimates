@@ -108,22 +108,28 @@ export default function CheckoutOptionsPage() {
 
   const handleContinue = async () => {
     if (!selectedMethod) return;
+    if (typeof window !== "undefined") {
+      const cost = shippingMethod === "Retiro de Tienda" ? 0 : shippingCost;
+      sessionStorage.setItem("shippingMethod", shippingMethod);
+      sessionStorage.setItem("shippingCost", cost != null ? String(cost) : "");
+    }
     if (selectedMethod === "Tarjeta de crédito") {
       // `router.push` trataría esta URL externa como una ruta interna de
-      // Next.js y provocaría un 404. Usamos `window.location.href` para      // redirigir al checkout de Shopify correctamente.
+      // Next.js y provocaría un 404. Usamos `window.location.assign` para
+      // redirigir al checkout de Shopify correctamente.
       if (customerAccessToken) {
         try {
           const updatedCart = await updateCartBuyerIdentity(
             cart.id,
             customerAccessToken.accessToken
           );
-          window.location.href = updatedCart.checkoutUrl;
+          window.location.assign(updatedCart.checkoutUrl);
           return;
         } catch (e) {
           console.error(e);
         }
       }
-      window.location.href = cart.checkoutUrl;
+      window.location.assign(cart.checkoutUrl);
     } else if (selectedMethod === "Efectivo") {
       router.push("/checkout/cash");
     } else if (selectedMethod === "Transferencia") {
