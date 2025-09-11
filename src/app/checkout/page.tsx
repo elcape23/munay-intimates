@@ -110,21 +110,20 @@ export default function CheckoutOptionsPage() {
     if (!selectedMethod) return;
     if (selectedMethod === "Tarjeta de crédito") {
       // `router.push` trataría esta URL externa como una ruta interna de
-      // Next.js y provocaría un 404. Usamos `window.location.assign` para
-      // redirigir al checkout de Shopify correctamente.
+      // Next.js y provocaría un 404. Usamos `window.location.href` para      // redirigir al checkout de Shopify correctamente.
       if (customerAccessToken) {
         try {
           const updatedCart = await updateCartBuyerIdentity(
             cart.id,
             customerAccessToken.accessToken
           );
-          window.location.assign(updatedCart.checkoutUrl);
+          window.location.href = updatedCart.checkoutUrl;
           return;
         } catch (e) {
           console.error(e);
         }
       }
-      window.location.assign(cart.checkoutUrl);
+      window.location.href = cart.checkoutUrl;
     } else if (selectedMethod === "Efectivo") {
       router.push("/checkout/cash");
     } else if (selectedMethod === "Transferencia") {

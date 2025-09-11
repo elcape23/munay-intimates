@@ -46,7 +46,7 @@ export function DeliveryDateModal({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex justify-center items-end ${
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${
         open ? "" : "pointer-events-none"
       }`}
     >
@@ -57,8 +57,8 @@ export function DeliveryDateModal({
         }`}
       />
       <div
-        className={`relative w-full bg-background-primary-default p-6 space-y-6 transition-transform duration-300 transform ${
-          open ? "translate-y-0" : "translate-y-full"
+        className={`relative w-full max-w-sm rounded-lg bg-background-primary-default p-6 space-y-6 transition-transform duration-300 transform ${
+          open ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
         <div className="flex justify-end">
@@ -68,14 +68,15 @@ export function DeliveryDateModal({
         </div>
         <div className="space-y-4">
           <h2 className="body-01-semibold">Fecha de envío</h2>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-4">
+            {" "}
             {dates.map((d, i) => (
               <button
                 key={i}
                 onClick={() => setSelectedDate(i)}
-                className={`body-02-semibold flex flex-col items-start text-left border border-secondary-default space-y-1 p-4 pb-10 ${
+                className={`body-02-semibold flex flex-col items-start space-y-1 rounded-md border p-4 text-left ${
                   selectedDate === i
-                    ? "ring-[2px] ring-offset-[0px] ring-border-primary-default"
+                    ? "ring-2 ring-border-primary-default"
                     : "border-border-primary-default"
                 }`}
               >
