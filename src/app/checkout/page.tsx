@@ -45,10 +45,14 @@ export default function CheckoutOptionsPage() {
   useEffect(() => {
     const fetchAddress = async () => {
       if (!customerAccessToken) return;
-      const addresses = await getCustomerAddresses(
+      const { addresses, defaultAddressId } = await getCustomerAddresses(
         customerAccessToken.accessToken
       );
-      setDefaultAddress(addresses[0] || null);
+      const chosen =
+        addresses.find((addr) => addr.id === defaultAddressId) ||
+        addresses[0] ||
+        null;
+      setDefaultAddress(chosen);
     };
     fetchAddress();
   }, [customerAccessToken]);
@@ -112,6 +116,27 @@ export default function CheckoutOptionsPage() {
       const cost = shippingMethod === "Retiro de Tienda" ? 0 : shippingCost;
       sessionStorage.setItem("shippingMethod", shippingMethod);
       sessionStorage.setItem("shippingCost", cost != null ? String(cost) : "");
+      if (defaultAddress) {
+        const addressForOrder = {
+          address1: defaultAddress.address1,
+          address2: defaultAddress.address2,
+          city: defaultAddress.city,
+          province: defaultAddress.province,
+          provinceCode: defaultAddress.provinceCode,
+          country: defaultAddress.country,
+          countryCode: defaultAddress.countryCode,
+          zip: defaultAddress.zip,
+          firstName: defaultAddress.firstName,
+          lastName: defaultAddress.lastName,
+          phone: defaultAddress.phone,
+        };
+        sessionStorage.setItem(
+          "defaultAddress",
+          JSON.stringify(addressForOrder)
+        );
+      } else {
+        sessionStorage.removeItem("defaultAddress");
+      }
     }
     if (selectedMethod === "Tarjeta de crédito") {
       // `router.push` trataría esta URL externa como una ruta interna de

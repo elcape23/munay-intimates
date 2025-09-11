@@ -16,6 +16,10 @@ SHOPIFY_STORE_DOMAIN="<your-shop-domain>.myshopify.com"
 SHOPIFY_API_VERSION="2025-04"
 FACEBOOK_CATALOG_ID="<your-facebook-catalog-id>"
 FACEBOOK_ACCESS_TOKEN="<your-facebook-access-token>"
+WHATSAPP_TOKEN="<your-whatsapp-token>"
+WHATSAPP_PHONE_ID="<your-whatsapp-phone-id>"
+# Optional if using Twilio or a custom sender
+WHATSAPP_FROM="<your-whatsapp-from-number>"
 ```
 
 ## Installation
@@ -59,6 +63,33 @@ The application now bypasses the old `/checkout` page. Clicking **Buy Now** or c
 ```bash
 npm run sync:catalog
 ```
+
+## WhatsApp Order Notifications
+
+The checkout pages trigger a request to `/api/send-whatsapp` when a pending order is created.
+Configure the WhatsApp Business Cloud API or Twilio to send the message automatically.
+
+1. Obtain a token and phone number ID from the [WhatsApp Business Cloud API](https://developers.facebook.com/docs/whatsapp/).
+2. In Business Manager, register a template named `order_confirmation` with body:
+   `Hola {{1}}, recibimos tu pedido {{2}} por {{3}}.`
+3. Populate the variables in `.env.local`:
+
+   ```
+   WHATSAPP_TOKEN="<your-whatsapp-token>"
+   WHATSAPP_PHONE_ID="<your-whatsapp-phone-id>"
+   # Optional if using Twilio or a custom sender
+   WHATSAPP_FROM="<your-whatsapp-from-number>"
+   ```
+
+4. Test the endpoint locally:
+
+   ```bash
+   curl -X POST http://localhost:3000/api/send-whatsapp \
+     -H "Content-Type: application/json" \
+     -d '{"phone":"<destination>","orderId":"123","paymentMethod":"efectivo"}'
+   ```
+
+If the API call fails the checkout pages still expose a manual WhatsApp button as a fallback.
 
 ## Learn More
 

@@ -46,6 +46,13 @@ export default function CheckoutCashPage() {
         const shippingCost = shippingCostStr
           ? parseFloat(shippingCostStr)
           : undefined;
+        const shippingAddressStr =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("defaultAddress")
+            : null;
+        const shippingAddress = shippingAddressStr
+          ? JSON.parse(shippingAddressStr)
+          : undefined;
         const res = await fetch("/api/create-pending-orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -56,6 +63,7 @@ export default function CheckoutCashPage() {
             tags: ["efectivo"],
             shippingMethod,
             shippingCost,
+            shippingAddress,
           }),
         });
         const data = await res.json();

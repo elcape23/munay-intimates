@@ -16,7 +16,7 @@ export function AddressList() {
         return;
       }
       try {
-        const fetched = await getCustomerAddresses(
+        const { addresses: fetched } = await getCustomerAddresses(
           customerAccessToken.accessToken
         );
         const unique = Array.from(

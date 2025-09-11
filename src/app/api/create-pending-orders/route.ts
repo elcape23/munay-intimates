@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
     tags = ["transferencia"],
     shippingMethod,
     shippingCost,
+    shippingAddress,
   } = await req.json();
   console.log("[route.ts] ▶️ Body recibido:", {
     cart,
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
     tags,
     shippingMethod,
     shippingCost,
+    shippingAddress,
   });
   if (!customerId) {
     return NextResponse.json(
@@ -76,13 +78,13 @@ export async function POST(req: NextRequest) {
   let endpoint = `https://${storeDomain}/admin/api/${apiVersion}/graphql.json`;
   console.log("[route.ts] 🌍 Intentando versión API:", apiVersion);
 
-  let shippingAddress: Record<string, string | null> | null = null;
-  if (customerId) {
+  let finalShippingAddress: Record<string, string | null> | null =
+    shippingAddress || null;
+  if (!finalShippingAddress && customerId) {
     const addrQuery = `
       query getCustomer($id: ID!) {
         customer(id: $id) {
- defaultAddress {
-            address1
+  defaultAddress {            address1
             address2
             city
             province
@@ -93,8 +95,8 @@ export async function POST(req: NextRequest) {
             firstName
             lastName
             phone
-          }        }
-      }
+}
+        }      }
     `;
     try {
       const addrRes = await fetch(endpoint, {
@@ -112,7 +114,7 @@ export async function POST(req: NextRequest) {
         const addrJson = await addrRes.json();
         const addr = addrJson.data?.customer?.defaultAddress;
         if (addr) {
-          shippingAddress = {
+          finalShippingAddress = {
             address1: addr.address1,
             address2: addr.address2,
             city: addr.city,
@@ -126,7 +128,7 @@ export async function POST(req: NextRequest) {
             phone: addr.phone,
           };
         }
-        console.log("[route.ts] 🏠 shippingAddress:", shippingAddress);
+        console.log("[route.ts] 🏠 shippingAddress:", finalShippingAddress);
       } else {
         console.warn(
           "[route.ts] ⚠️ No se pudo obtener shippingAddress:",
@@ -143,7 +145,9 @@ export async function POST(req: NextRequest) {
       note,
       tags,
       ...(customerId ? { customerId } : {}),
-      ...(shippingAddress ? { shippingAddress } : {}),
+      ...(finalShippingAddress
+        ? { shippingAddress: finalShippingAddress }
+        : {}),
       ...(shippingMethod
         ? {
             shippingLine: {

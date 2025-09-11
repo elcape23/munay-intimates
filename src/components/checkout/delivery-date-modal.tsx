@@ -68,7 +68,7 @@ export function DeliveryDateModal({
         }`}
       />
       <div
-        className={`relative w-screen max-w-none bg-background-primary-default p-6 pt-5 pb-10 border-t border-t-border-primary-default space-y-6 transition-transform duration-300 transform ${
+        className={`relative w-screen max-w-none bg-background-primary-default p-6 pt-5 pb-10 border-t border-t-border-secondary-default space-y-6 transition-transform duration-300 transform ${
           open ? "translate-y-0" : "translate-y-full"
         }`}
       >
@@ -89,7 +89,7 @@ export function DeliveryDateModal({
                   className={`body-02-bold flex flex-col items-center justify-between space-y-1 border w-[80px] h-[88px] p-2 text-left ${
                     selectedDate === i
                       ? "ring-2 ring-border-primary-default"
-                      : "border-border-primary-default"
+                      : "border-border-secondary-default"
                   }`}
                 >
                   <p className="body-01-bold">{d.formattedDate}</p>

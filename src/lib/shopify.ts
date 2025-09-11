@@ -2221,10 +2221,13 @@ export async function getCustomerOrders(
 
 export async function getCustomerAddresses(
   customerAccessToken: string
-): Promise<CustomerAddress[]> {
+): Promise<{ addresses: CustomerAddress[]; defaultAddressId: string | null }> {
   const query = gql`
     query getCustomerAddresses($customerAccessToken: String!) {
       customer(customerAccessToken: $customerAccessToken) {
+        defaultAddress {
+          id
+        }
         addresses(first: 20) {
           edges {
             node {
@@ -2251,17 +2254,21 @@ export async function getCustomerAddresses(
   try {
     const response = await shopifyFetch<{
       customer: {
+        defaultAddress: { id: string } | null;
         addresses: { edges: { node: CustomerAddress }[] };
       } | null;
     }>({ query, variables: { customerAccessToken } });
 
     if (!response.customer) {
-      return [];
+      return { addresses: [], defaultAddressId: null };
     }
 
-    return response.customer.addresses.edges.map((edge) => edge.node);
+    return {
+      addresses: response.customer.addresses.edges.map((edge) => edge.node),
+      defaultAddressId: response.customer.defaultAddress?.id || null,
+    };
   } catch (e) {
-    return [];
+    return { addresses: [], defaultAddressId: null };
   }
 }
 
