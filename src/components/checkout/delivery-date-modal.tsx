@@ -17,15 +17,26 @@ export function DeliveryDateModal({
   onConfirm,
 }: DeliveryDateModalProps) {
   const dates = useMemo(() => {
+    const months = [
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic",
+    ];
     return Array.from({ length: 4 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() + i + 1);
-      const formattedDate = date
-        .toLocaleDateString("es-AR", {
-          day: "2-digit",
-          month: "short",
-        })
-        .replace(".", "");
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = months[date.getMonth()];
+      const formattedDate = `${day} ${month}`;
       const label =
         i === 0
           ? "Mañana"
@@ -46,19 +57,19 @@ export function DeliveryDateModal({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${
+      className={`fixed inset-0 z-50 flex items-end justify-center  ${
         open ? "" : "pointer-events-none"
       }`}
     >
       <div
         onClick={onClose}
-        className={`fixed inset-0 bg-black transition-opacity duration-300 ${
-          open ? "opacity-50" : "opacity-0"
+        className={`absolute inset-0 bg-black transition-opacity duration-300 ${
+          open ? "opacity-40" : "opacity-0"
         }`}
       />
       <div
-        className={`relative w-full max-w-sm bg-background-primary-default p-6 pt-5 pb-10 border-t border-t-border-primary-default space-y-6 transition-transform duration-300 transform ${
-          open ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        className={`relative w-screen max-w-none bg-background-primary-default p-6 pt-5 pb-10 border-t border-t-border-primary-default space-y-6 transition-transform duration-300 transform ${
+          open ? "translate-y-0" : "translate-y-full"
         }`}
       >
         <div className="flex justify-end">
@@ -75,13 +86,13 @@ export function DeliveryDateModal({
                 <button
                   key={i}
                   onClick={() => setSelectedDate(i)}
-                  className={`body-02-semibold flex flex-col items-center justify-between space-y-1 border w-[80px] h-[88px] p-2 text-left ${
+                  className={`body-02-bold flex flex-col items-center justify-between space-y-1 border w-[80px] h-[88px] p-2 text-left ${
                     selectedDate === i
                       ? "ring-2 ring-border-primary-default"
                       : "border-border-primary-default"
                   }`}
                 >
-                  <p className="body-01-semibold">{d.formattedDate}</p>
+                  <p className="body-01-bold">{d.formattedDate}</p>
                   <p className="body-02-regular text-text-secondary-default capitalize">
                     {d.label}
                   </p>
@@ -111,9 +122,11 @@ export function DeliveryDateModal({
             </RadioGroup>
           </div>
         </div>
-        <Button onClick={handleConfirm} size="lg" className="w-full">
-          Confirmar
-        </Button>
+        <div className="pt-9">
+          <Button onClick={handleConfirm} size="lg" className="w-full">
+            Confirmar
+          </Button>
+        </div>
       </div>
     </div>
   );
