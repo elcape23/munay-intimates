@@ -116,6 +116,8 @@ export default function CheckoutOptionsPage() {
       const cost = shippingMethod === "Retiro de Tienda" ? 0 : shippingCost;
       sessionStorage.setItem("shippingMethod", shippingMethod);
       sessionStorage.setItem("shippingCost", cost != null ? String(cost) : "");
+      sessionStorage.setItem("deliveryDate", deliveryDateLabel);
+      sessionStorage.setItem("deliveryTime", deliveryTime);
       if (defaultAddress) {
         const addressForOrder = {
           address1: defaultAddress.address1,

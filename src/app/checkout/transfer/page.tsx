@@ -53,13 +53,25 @@ export default function CheckoutTransferPage() {
         const shippingAddress = shippingAddressStr
           ? JSON.parse(shippingAddressStr)
           : undefined;
+        const deliveryDate =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("deliveryDate")
+            : null;
+        const deliveryTime =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("deliveryTime")
+            : null;
+        const noteParts = ["Pago por transferencia"];
+        if (deliveryDate) noteParts.push(`Fecha: ${deliveryDate}`);
+        if (deliveryTime) noteParts.push(`Horario: ${deliveryTime}`);
+        const note = noteParts.join(" - ");
         const res = await fetch("/api/create-pending-orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             cart,
             customerId: customer?.id,
-            note: "Pago por transferencia",
+            note,
             tags: ["transferencia"],
             shippingMethod,
             shippingCost,
