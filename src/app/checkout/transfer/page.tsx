@@ -70,6 +70,8 @@ export default function CheckoutTransferPage() {
         if (!res.ok) throw new Error(data.error || "Error");
         setOrderId(data.id);
         if (customer?.phone) {
+          const orderTotal =
+            parseFloat(cart.cost.totalAmount.amount) + (shippingCost ?? 0);
           fetch("/api/send-whatsapp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -78,6 +80,7 @@ export default function CheckoutTransferPage() {
               orderId: data.id,
               paymentMethod: "transferencia",
               name: customer.firstName,
+              orderTotal,
             }),
           });
         }
