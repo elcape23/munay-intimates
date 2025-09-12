@@ -1625,9 +1625,15 @@ export async function getCollectionByHandle(
                 key
                 value
               }
-              variants(first: 1) {
+              variants(first: 10) {
                 edges {
                   node {
+                    availableForSale
+                    quantityAvailable
+                    selectedOptions {
+                      name
+                      value
+                    }
                     price {
                       amount
                       currencyCode

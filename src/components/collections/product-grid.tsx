@@ -412,22 +412,26 @@ export function ProductGrid({
               }
 
               if (["talle", "talla", "size"].includes(key)) {
-                const meta = product.talle?.value;
-                if (
-                  meta &&
-                  meta
-                    .split(",")
-                    .map((v) => v.trim())
-                    .includes(value)
-                ) {
+                const hasVariantWithStock =
+                  product.variants?.edges.some((edge) => {
+                    const matchesSize = edge.node.selectedOptions?.some(
+                      (sel) =>
+                        ["talle", "talla", "size"].includes(
+                          sel.name.toLowerCase()
+                        ) && sel.value.trim() === value
+                    );
+                    const hasStock =
+                      edge.node.availableForSale &&
+                      (edge.node.quantityAvailable == null ||
+                        edge.node.quantityAvailable > 0);
+                    return matchesSize && hasStock;
+                  }) ?? false;
+
+                if (hasVariantWithStock) {
                   return true;
                 }
-                const opt = product.options?.find((o) =>
-                  ["talle", "talla", "size"].includes(o.name.toLowerCase())
-                );
-                if (opt && opt.values.some((v) => v.trim() === value)) {
-                  return true;
-                }
+
+                return false;
               }
 
               const dynamicProduct = product as ProductWithDynamicMetafields;
