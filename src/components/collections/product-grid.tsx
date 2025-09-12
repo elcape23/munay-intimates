@@ -744,21 +744,31 @@ export function ProductGrid({
             <div key={groupName}>
               <div className="flex flex-nowrap gap-2 mt-5 overflow-x-auto no-scrollbar">
                 {gridLoaded
-                  ? tags.map((tag) => (
-                      <Button
-                        key={tag}
-                        onClick={() => handleFilterToggle(tag)}
-                        className={`px-3 py-1 border rounded-full  transition-colors ${
-                          activeFilters.includes(tag)
-                            ? "body-02-semibold text-text-primary-default border-border-primary-default"
-                            : "body-02-regular text-text-secondary-default border-border-secondary-default hover:"
-                        }`}
-                        variant="outline"
-                        size="lg"
-                      >
-                        {tag.split(":")[1].trim()}
-                      </Button>
-                    ))
+                  ? (() => {
+                      const orderedTags = [...tags];
+                      activeFilters.forEach((f) => {
+                        const idx = orderedTags.indexOf(f);
+                        if (idx > -1) {
+                          orderedTags.splice(idx, 1);
+                          orderedTags.unshift(f);
+                        }
+                      });
+                      return orderedTags.map((tag) => (
+                        <Button
+                          key={tag}
+                          onClick={() => handleFilterToggle(tag)}
+                          className={`px-3 py-1 border rounded-full  transition-colors ${
+                            activeFilters.includes(tag)
+                              ? "body-02-semibold text-text-primary-default border-border-primary-default"
+                              : "body-02-regular text-text-secondary-default border-border-secondary-default hover:"
+                          }`}
+                          variant="outline"
+                          size="lg"
+                        >
+                          {tag.split(":")[1].trim()}
+                        </Button>
+                      ));
+                    })()
                   : tags.map((tag, idx) => (
                       <Skeleton key={idx} className="h-6 w-20" />
                     ))}
