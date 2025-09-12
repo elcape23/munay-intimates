@@ -69,6 +69,18 @@ export default function CheckoutTransferPage() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Error");
         setOrderId(data.id);
+        if (customer?.phone) {
+          fetch("/api/send-whatsapp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              phone: customer.phone,
+              orderId: data.id,
+              paymentMethod: "transferencia",
+              name: customer.firstName,
+            }),
+          });
+        }
         if (cart) {
           const items = cart.lines.edges.map(({ node }) => ({
             item_name: node.merchandise.product.title,
