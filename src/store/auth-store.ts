@@ -162,9 +162,12 @@ export const useAuthStore = create(
             return false;
           }
 
-          const errorMessage =
-            createResponse.customerUserErrors?.[0]?.message ||
-            "No se pudo crear la cuenta.";
+          const userError = createResponse.customerUserErrors?.[0];
+          let errorMessage =
+            userError?.message || "No se pudo crear la cuenta.";
+          if (userError?.code === "TAKEN") {
+            errorMessage = "El email ya está registrado.";
+          }
           set({ error: errorMessage });
           return false;
         } catch (e: any) {
