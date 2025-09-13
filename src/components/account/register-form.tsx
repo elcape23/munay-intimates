@@ -16,7 +16,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 export default function RegisterForm() {
-  const { signUp, error: authError, isLoading } = useAuthStore();
+  const { signUp, isLoading } = useAuthStore();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -179,7 +179,8 @@ export default function RegisterForm() {
       useAsBilling,
     });
     if (!success) {
-      const message = authError || "No se pudo crear la cuenta.";
+      const message =
+        useAuthStore.getState().error || "No se pudo crear la cuenta.";
       setError(message);
       setEmailTaken(message === "El email ya está registrado.");
       return;
@@ -363,7 +364,7 @@ export default function RegisterForm() {
           {emailStatus === "valid" && !emailTaken && (
             <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
           )}
-          {emailStatus === "invalid" && (
+          {(emailStatus === "invalid" || emailTaken) && (
             <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
           )}
           <p
