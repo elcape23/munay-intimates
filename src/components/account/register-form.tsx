@@ -199,9 +199,13 @@ export default function RegisterForm() {
 
   const handleInputChange = (
     setter: (value: string) => void,
-    value: string
+    value: string,
+    setTouched?: (value: boolean) => void
   ) => {
     setter(value);
+    if (value.length >= 3) {
+      setTouched?.(true);
+    }
     if (error) setError(null);
   };
 
@@ -215,8 +219,13 @@ export default function RegisterForm() {
             type="text"
             required
             value={firstName}
-            onChange={(e) => handleInputChange(setFirstName, e.target.value)}
-            onBlur={() => setFirstNameTouched(true)}
+            onChange={(e) =>
+              handleInputChange(
+                setFirstName,
+                e.target.value,
+                setFirstNameTouched
+              )
+            }
             placeholder="Nombre"
             className={cn(
               "pr-10",
@@ -258,8 +267,9 @@ export default function RegisterForm() {
             type="text"
             required
             value={lastName}
-            onChange={(e) => handleInputChange(setLastName, e.target.value)}
-            onBlur={() => setLastNameTouched(true)}
+            onChange={(e) =>
+              handleInputChange(setLastName, e.target.value, setLastNameTouched)
+            }
             placeholder="Apellido"
             className={cn(
               "pr-10",
@@ -302,8 +312,9 @@ export default function RegisterForm() {
             autoComplete="tel"
             required
             value={phone}
-            onChange={(e) => handleInputChange(setPhone, e.target.value)}
-            onBlur={() => setPhoneTouched(true)}
+            onChange={(e) =>
+              handleInputChange(setPhone, e.target.value, setPhoneTouched)
+            }
             placeholder="Celular"
             className={cn(
               "pr-10",
@@ -347,10 +358,9 @@ export default function RegisterForm() {
             required
             value={email}
             onChange={(e) => {
-              handleInputChange(setEmail, e.target.value);
+              handleInputChange(setEmail, e.target.value, setEmailTouched);
               setEmailTaken(false);
             }}
-            onBlur={() => setEmailTouched(true)}
             placeholder="Email"
             className={cn(
               "pr-10",
@@ -395,8 +405,9 @@ export default function RegisterForm() {
             autoComplete="new-password"
             required
             value={password}
-            onChange={(e) => handleInputChange(setPassword, e.target.value)}
-            onFocus={() => setPasswordTouched(true)}
+            onChange={(e) =>
+              handleInputChange(setPassword, e.target.value, setPasswordTouched)
+            }
             className={cn(
               "pr-10",
               passwordStatus === "valid"
@@ -450,9 +461,12 @@ export default function RegisterForm() {
             required
             value={confirmPassword}
             onChange={(e) =>
-              handleInputChange(setConfirmPassword, e.target.value)
+              handleInputChange(
+                setConfirmPassword,
+                e.target.value,
+                setConfirmPasswordTouched
+              )
             }
-            onFocus={() => setConfirmPasswordTouched(true)}
             className={cn(
               "pr-10",
               confirmPasswordStatus === "valid"
@@ -516,8 +530,9 @@ export default function RegisterForm() {
         <div className="space-y-2 relative">
           <AddressAutocomplete
             value={address1}
-            onChange={(val) => handleInputChange(setAddress1, val)}
-            onBlur={() => setAddress1Touched(true)}
+            onChange={(val) =>
+              handleInputChange(setAddress1, val, setAddress1Touched)
+            }
             placeholder="Dirección"
             className={cn(
               "pr-10",
@@ -580,8 +595,9 @@ export default function RegisterForm() {
             name="province"
             type="text"
             value={province}
-            onChange={(e) => handleInputChange(setProvince, e.target.value)}
-            onBlur={() => setProvinceTouched(true)}
+            onChange={(e) =>
+              handleInputChange(setProvince, e.target.value, setProvinceTouched)
+            }
             placeholder="Provincia"
             className={cn(
               "pr-10",
@@ -623,8 +639,9 @@ export default function RegisterForm() {
             name="city"
             type="text"
             value={city}
-            onChange={(e) => handleInputChange(setCity, e.target.value)}
-            onBlur={() => setCityTouched(true)}
+            onChange={(e) =>
+              handleInputChange(setCity, e.target.value, setCityTouched)
+            }
             placeholder="Ciudad"
             className={cn(
               "pr-10",
@@ -666,8 +683,9 @@ export default function RegisterForm() {
             name="zip"
             type="text"
             value={zip}
-            onChange={(e) => handleInputChange(setZip, e.target.value)}
-            onBlur={() => setZipTouched(true)}
+            onChange={(e) =>
+              handleInputChange(setZip, e.target.value, setZipTouched)
+            }
             placeholder="Código Postal"
             className={cn(
               "pr-10",
@@ -709,8 +727,9 @@ export default function RegisterForm() {
             name="country"
             type="text"
             value={country}
-            onChange={(e) => handleInputChange(setCountry, e.target.value)}
-            onBlur={() => setCountryTouched(true)}
+            onChange={(e) =>
+              handleInputChange(setCountry, e.target.value, setCountryTouched)
+            }
             placeholder="País"
             className={cn(
               "pr-10",
