@@ -10,15 +10,18 @@ export default function LegalPage() {
   const router = useRouter();
   const [analysis, setAnalysis] = useState(false);
   const [ads, setAds] = useState(false);
+  const [personalization, setPersonalization] = useState(false);
 
   useEffect(() => {
     const consent = localStorage.getItem("cookie-consent");
     if (consent === "accepted") {
       setAnalysis(true);
       setAds(true);
+      setPersonalization(true);
     } else if (consent === "rejected") {
       setAnalysis(false);
       setAds(false);
+      setPersonalization(false);
     }
   }, []);
 
@@ -102,11 +105,19 @@ export default function LegalPage() {
             <span className="body-02-medium">COOKIES DE PERSONALIZACIÓN</span>
             <div className="flex items-center gap-2">
               <Switch
-                checked
-                disabled
-                className="relative inline-flex h-6 w-10 items-center rounded-full bg-background-fill-neutral-tertiary"
+                checked={personalization}
+                onChange={setPersonalization}
+                className={`${
+                  personalization
+                    ? "bg-background-fill-neutral-default"
+                    : "bg-background-fill-neutral-tertiary"
+                } relative inline-flex h-6 w-10 items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
               >
-                <span className="inline-block h-4 w-4 translate-x-1 rounded-full bg-background-primary-default transition" />
+                <span
+                  className={`${
+                    personalization ? "translate-x-5" : "translate-x-1"
+                  } inline-block h-4 w-4 transform rounded-full bg-background-primary-default transition-transform`}
+                />{" "}
               </Switch>
             </div>
           </div>
