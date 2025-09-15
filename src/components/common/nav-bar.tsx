@@ -61,15 +61,17 @@ export function Navbar({
     onNavigate?.();
     if (searchMode) return;
     if (isProduct) {
-      let hasBrowserHistory = false;
+      let canNavigateBack = false;
       if (typeof window !== "undefined") {
         const historyLength = window.history.length;
-        const hasReferrer =
-          typeof document !== "undefined" && document.referrer !== "";
-        hasBrowserHistory = historyLength > 1 || hasReferrer;
+        const referrer =
+          typeof document !== "undefined" ? document.referrer : "";
+        const isInternalReferrer =
+          referrer !== "" && referrer.startsWith(window.location.origin);
+        canNavigateBack = historyLength > 1 || isInternalReferrer;
       }
 
-      if (hasBrowserHistory) {
+      if (canNavigateBack) {
         router.back();
       } else {
         router.push("/");
