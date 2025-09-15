@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
+const styleHeaders = [
+  {
+    key: "Access-Control-Allow-Origin",
+    value: "*",
+  },
+];
 const nextConfig = {
   // Añadimos esta configuración para las imágenes
   images: {
@@ -29,6 +35,18 @@ const nextConfig = {
     });
 
     return config;
+  },
+  async headers() {
+    return [
+      {
+        source: "/_next/static/:path*",
+        headers: styleHeaders,
+      },
+      {
+        source: "/:path*.css",
+        headers: styleHeaders,
+      },
+    ];
   },
 };
 
