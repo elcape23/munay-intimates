@@ -47,7 +47,7 @@ export function CookieBanner() {
             size="sm"
             className="body-03-regular text-text-secondary-default px-0 mt-2"
           >
-            <a href="/politica-de-cookies">Política de Cookies</a>
+            <a href="/legal">Políticas de Cookies</a>
           </Button>
         </div>
         <div className="flex justify-end gap-2">
