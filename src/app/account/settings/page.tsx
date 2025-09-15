@@ -17,7 +17,11 @@ export default function AccountSettingsPage() {
       </div>
       <div className="flex flex-col space-y-5">
         {" "}
-        <Link href="#" className="flex items-center justify-between px-1 py-2">
+        <Link
+          href="/newsletter"
+          className="flex items-center justify-between px-1 py-2"
+        >
+          {" "}
           <span className="body-02-medium">Newsletter</span>
           <ChevronRightIcon className="w-5 h-5" />
         </Link>
