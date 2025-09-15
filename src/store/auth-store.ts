@@ -166,7 +166,7 @@ export const useAuthStore = create(
           let errorMessage =
             userError?.message || "No se pudo crear la cuenta.";
           if (userError?.code === "TAKEN") {
-            errorMessage = "El email ya está registrado.";
+            errorMessage = "Email ya registrado";
           }
           set({ error: errorMessage });
           return false;

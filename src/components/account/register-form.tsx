@@ -81,6 +81,8 @@ export default function RegisterForm() {
     ? null
     : email.length === 0
     ? "empty"
+    : emailTaken
+    ? "taken"
     : isEmailValid
     ? "valid"
     : "invalid";
@@ -182,7 +184,7 @@ export default function RegisterForm() {
       const message =
         useAuthStore.getState().error || "No se pudo crear la cuenta.";
       setError(message);
-      setEmailTaken(message === "El email ya está registrado.");
+      setEmailTaken(message.includes("Email ya registrado"));
       return;
     }
 
@@ -364,17 +366,17 @@ export default function RegisterForm() {
             placeholder="Email"
             className={cn(
               "pr-10",
-              emailStatus === "valid" && !emailTaken
+              emailStatus === "valid"
                 ? "text-text-success-default"
-                : emailStatus === "invalid" || emailTaken
+                : emailStatus === "invalid" || emailStatus === "taken"
                 ? "text-text-danger-default"
                 : ""
             )}
           />{" "}
-          {emailStatus === "valid" && !emailTaken && (
+          {emailStatus === "valid" && (
             <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
           )}
-          {(emailStatus === "invalid" || emailTaken) && (
+          {(emailStatus === "invalid" || emailStatus === "taken") && (
             <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
           )}
           <p
@@ -390,10 +392,10 @@ export default function RegisterForm() {
             {emailTouched &&
               (emailStatus === "empty"
                 ? "Requerido"
-                : emailStatus === "valid" && !emailTaken
+                : emailStatus === "valid"
                 ? "Bien hecho!"
-                : emailTaken
-                ? "Este email ya está registrado"
+                : emailStatus === "taken"
+                ? "Email ya registrado"
                 : "Incorrecto")}
           </p>
         </div>
