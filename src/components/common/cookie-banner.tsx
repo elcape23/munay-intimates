@@ -17,6 +17,17 @@ export function CookieBanner() {
     }
   }, []);
 
+  useEffect(() => {
+    if (visible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [visible]);
+
   const accept = () => {
     localStorage.setItem("cookie-consent", "accepted");
     setVisible(false);
@@ -37,7 +48,7 @@ export function CookieBanner() {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-end"
         >
-          <div className="absolute inset-0 bg-black/50" onClick={reject} />
+          <div className="absolute inset-0 bg-black/50" />{" "}
           <motion.div
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
