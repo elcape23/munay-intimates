@@ -4,6 +4,7 @@ import { ExploreSection } from "@/components/home/explore-section";
 import { ProductCarousel } from "@/components/home/product-carousel";
 import { NoClipSection } from "@/components/home/noclip-section";
 import { Footer } from "@/components/common/footer";
+import { CookieBanner } from "@/components/common/cookie-banner";
 import {
   getSaleProducts,
   getNewProducts,
@@ -58,6 +59,7 @@ export default async function HomePage() {
       <footer className="px-4">
         <Footer />
       </footer>
+      <CookieBanner />
     </section>
   );
 }

@@ -9,6 +9,7 @@ import { IntroLogo } from "@/components/intro-logo";
 import { Toaster } from "@/components/ui/toaster";
 import { useIntroStore } from "@/store/intro-store";
 import { TopBanner } from "@/components/common/top-banner";
+import { Clarity } from "@/components/common/clarity";
 
 export function LayoutClient({ children }: { children: React.ReactNode }) {
   const [introLoaded, setIntroLoaded] = useState(false);
@@ -49,6 +50,7 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <Clarity />
       {!introShown && <IntroLogo onComplete={handleIntroComplete} />}
       {introLoaded && <TopBanner />}
       {introLoaded && <Navbar />}
