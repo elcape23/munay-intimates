@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Switch } from "@headlessui/react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,17 @@ export default function LegalPage() {
   const router = useRouter();
   const [analysis, setAnalysis] = useState(false);
   const [ads, setAds] = useState(false);
+
+  useEffect(() => {
+    const consent = localStorage.getItem("cookie-consent");
+    if (consent === "accepted") {
+      setAnalysis(true);
+      setAds(true);
+    } else if (consent === "rejected") {
+      setAnalysis(false);
+      setAds(false);
+    }
+  }, []);
 
   return (
     <div className="container mx-auto px-6 pt-[55px] pb-10 space-y-8">
@@ -65,12 +76,12 @@ export default function LegalPage() {
                   analysis
                     ? "bg-background-fill-neutral-default"
                     : "bg-background-fill-neutral-tertiary"
-                } relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
+                } relative inline-flex h-6 w-10 items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
               >
                 <span
                   className={`${
-                    analysis ? "translate-x-4" : "translate-x-1"
-                  } inline-block h-3 w-3 transform rounded-full bg-background-primary-default transition-transform`}
+                    analysis ? "translate-x-5" : "translate-x-1"
+                  } inline-block h-4 w-4 transform rounded-full bg-background-primary-default transition-transform`}
                 />
               </Switch>
             </div>
@@ -93,9 +104,9 @@ export default function LegalPage() {
               <Switch
                 checked
                 disabled
-                className="relative inline-flex h-5 w-9 items-center rounded-full bg-background-fill-neutral-tertiary"
+                className="relative inline-flex h-6 w-10 items-center rounded-full bg-background-fill-neutral-tertiary"
               >
-                <span className="inline-block h-3 w-3 translate-x-1 rounded-full bg-background-primary-default transition" />
+                <span className="inline-block h-4 w-4 translate-x-1 rounded-full bg-background-primary-default transition" />
               </Switch>
             </div>
           </div>
@@ -124,12 +135,12 @@ export default function LegalPage() {
                   ads
                     ? "bg-background-fill-neutral-default"
                     : "bg-background-fill-neutral-tertiary"
-                } relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
+                } relative inline-flex h-6 w-10 items-center rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
               >
                 <span
                   className={`${
-                    ads ? "translate-x-4" : "translate-x-1"
-                  } inline-block h-3 w-3 transform rounded-full bg-background-primary-default transition-transform`}
+                    ads ? "translate-x-5" : "translate-x-1"
+                  } inline-block h-4 w-4 transform rounded-full bg-background-primary-default transition-transform`}
                 />
               </Switch>
             </div>

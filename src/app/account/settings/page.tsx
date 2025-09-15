@@ -21,7 +21,10 @@ export default function AccountSettingsPage() {
           <span className="body-02-medium">Newsletter</span>
           <ChevronRightIcon className="w-5 h-5" />
         </Link>
-        <Link href="#" className="flex items-center justify-between px-1 py-2">
+        <Link
+          href="/legal"
+          className="flex items-center justify-between px-1 py-2"
+        >
           <span className="body-02-medium">Configuración de Cookies</span>
           <ChevronRightIcon className="w-5 h-5" />
         </Link>
