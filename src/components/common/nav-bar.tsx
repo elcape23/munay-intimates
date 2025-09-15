@@ -61,7 +61,19 @@ export function Navbar({
     onNavigate?.();
     if (searchMode) return;
     if (isProduct) {
-      router.back();
+      let hasBrowserHistory = false;
+      if (typeof window !== "undefined") {
+        const historyLength = window.history.length;
+        const hasReferrer =
+          typeof document !== "undefined" && document.referrer !== "";
+        hasBrowserHistory = historyLength > 1 || hasReferrer;
+      }
+
+      if (hasBrowserHistory) {
+        router.back();
+      } else {
+        router.push("/");
+      }
     } else {
       toggleMenu();
     }
