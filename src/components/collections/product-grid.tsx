@@ -352,11 +352,16 @@ export function ProductGrid({
       minPriceFilter !== minPrice ||
       maxPriceFilter !== maxPrice;
 
-    let filtered = isFiltering
-      ? items.filter((product) => product.availableForSale)
-      : [...items];
+    let filtered = [...items];
 
     if (isFiltering) {
+      const availableProducts = filtered.filter(
+        (product) => product.availableForSale
+      );
+      if (availableProducts.length > 0) {
+        filtered = availableProducts;
+      }
+
       const activeGroups: Record<string, string[]> = {};
       activeFilters.forEach((filter) => {
         const key = filter.split(":")[0].trim();
