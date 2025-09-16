@@ -1,7 +1,7 @@
 // src/components/home/hero-section.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -64,6 +64,7 @@ export function HeroSection({
   intervalMs = 3000,
 }: HeroSectionProps) {
   const [current, setCurrent] = useState(0);
+  const [progress, setProgress] = useState(0);
   const router = useRouter();
   const introDone = useIntroStore((state) => state.done);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -92,6 +93,20 @@ export function HeroSection({
     };
   }, []);
 
+  const goToSlide = useCallback((index: number) => {
+    const slider = sliderRef.current;
+
+    if (slider) {
+      slider.scrollTo({
+        left: index * slider.clientWidth,
+        behavior: "smooth",
+      });
+    }
+
+    setCurrent(index);
+    setProgress(0);
+  }, []);
+
   useEffect(() => {
     if (!autoPlay || !inView) {
       if (timeoutRef.current) {
@@ -105,15 +120,8 @@ export function HeroSection({
     }
 
     timeoutRef.current = setTimeout(() => {
-      const slider = sliderRef.current;
-      if (slider) {
-        const nextIndex = (current + 1) % SLIDES.length;
-        slider.scrollTo({
-          left: nextIndex * slider.clientWidth,
-          behavior: "smooth",
-        });
-        setCurrent(nextIndex);
-      }
+      const nextIndex = (current + 1) % SLIDES.length;
+      goToSlide(nextIndex);
     }, intervalMs);
 
     return () => {
@@ -121,11 +129,46 @@ export function HeroSection({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [current, autoPlay, intervalMs, inView]);
+  }, [current, autoPlay, intervalMs, inView, goToSlide]);
 
-  const prev = () => setCurrent((c) => (c - 1 + SLIDES.length) % SLIDES.length);
-  const next = () => setCurrent((c) => (c + 1) % SLIDES.length);
   const allLoaded = loaded.every(Boolean);
+  useEffect(() => {
+    let frameId: number | null = null;
+    let startTime: number | null = null;
+
+    if (!autoPlay || !inView) {
+      setProgress(0);
+      return;
+    }
+
+    if (intervalMs <= 0) {
+      setProgress(1);
+      return;
+    }
+
+    const step = (timestamp: number) => {
+      if (startTime === null) {
+        startTime = timestamp;
+      }
+
+      const elapsed = timestamp - startTime;
+      const nextProgress = Math.min(elapsed / intervalMs, 1);
+      setProgress(nextProgress);
+
+      if (nextProgress < 1) {
+        frameId = window.requestAnimationFrame(step);
+      }
+    };
+
+    setProgress(0);
+    frameId = window.requestAnimationFrame(step);
+
+    return () => {
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [current, autoPlay, inView, intervalMs]);
 
   useEffect(() => {
     const slider = sliderRef.current;
@@ -235,12 +278,28 @@ export function HeroSection({
           : SLIDES.map((_, idx) => (
               <button
                 key={idx}
-                onClick={() => setCurrent(idx)}
+                type="button"
+                onClick={() => goToSlide(idx)}
+                aria-pressed={idx === current}
                 aria-label={`Slide ${idx + 1}`}
-                className={`h-2 w-2 rounded-full transition-colors ${
-                  idx === current ? "bg-white" : "bg-white/50"
-                }`}
-              />
+                className={cn(
+                  "relative h-2 overflow-hidden rounded-full bg-white/40 transition-all duration-300",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
+                  idx === current ? "w-8" : "w-2"
+                )}
+              >
+                <span className="absolute inset-0 rounded-full bg-background-fill-neutral-invert/20" />
+                <span
+                  className="absolute inset-y-0 left-0 rounded-full bg-background-fill-neutral-invert"
+                  style={{
+                    width:
+                      idx === current
+                        ? `${Math.min(progress, 1) * 100}%`
+                        : "0%",
+                    transition: idx === current ? undefined : "width 0.2s ease",
+                  }}
+                />
+              </button>
             ))}
       </div>
     </section>
