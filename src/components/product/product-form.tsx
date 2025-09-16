@@ -62,6 +62,19 @@ export function ProductForm({ product }: ProductFormProps) {
     return !!opt && opt.values.length === 1 && isOneSizeValue(opt.values[0]);
   }, [productOptions]);
 
+  const displayOptions = useMemo(() => {
+    const getPriority = (name: string) => {
+      const normalized = name.toLowerCase();
+      if (["talle", "talla", "size"].includes(normalized)) return 0;
+      if (normalized === "color") return 1;
+      return 2;
+    };
+
+    return [...productOptions].sort(
+      (a, b) => getPriority(a.name) - getPriority(b.name)
+    );
+  }, [productOptions]);
+
   const firstAvailableVariant = useMemo(() => {
     return (
       product.variants?.edges.find(
@@ -201,15 +214,16 @@ export function ProductForm({ product }: ProductFormProps) {
     }
   };
 
-  const isSelectedVariantOutOfStock =
-    !!selectedVariant &&
-    (!selectedVariant.availableForSale ||
-      (selectedVariant.quantityAvailable ?? 0) <= 0);
-
   const isAddButtonDisabled =
-    !selectedVariant || isSelectedVariantOutOfStock || loadingButton === "add";
+    !selectedVariant ||
+    !selectedVariant.availableForSale ||
+    (selectedVariant.quantityAvailable ?? 0) <= 0 ||
+    loadingButton === "add";
   const isBuyButtonDisabled =
-    !selectedVariant || isSelectedVariantOutOfStock || loadingButton === "buy";
+    !selectedVariant ||
+    !selectedVariant.availableForSale ||
+    (selectedVariant.quantityAvailable ?? 0) <= 0 ||
+    loadingButton === "buy";
 
   if (!product.variants || product.variants.edges.length === 0) {
     return (
@@ -225,7 +239,7 @@ export function ProductForm({ product }: ProductFormProps) {
     <div className="space-y-6">
       {/* Selectores de variantes */}
       <div className="space-y-4">
-        {productOptions
+        {displayOptions
           .filter((option) => {
             const name = option.name.toLowerCase();
             return (
@@ -425,8 +439,8 @@ export function ProductForm({ product }: ProductFormProps) {
         >
           {loadingButton === "add"
             ? "Añadiendo..."
-            : isSelectedVariantOutOfStock
-            ? "Sin Stock"
+            : selectedVariant?.availableForSale
+            ? "Añadir"
             : "Añadir"}
         </Button>
         <Button
@@ -444,8 +458,8 @@ export function ProductForm({ product }: ProductFormProps) {
         >
           {loadingButton === "buy"
             ? "Añadiendo..."
-            : isSelectedVariantOutOfStock
-            ? "Sin Stock"
+            : selectedVariant?.availableForSale
+            ? "Comprar"
             : "Comprar"}
         </Button>
       </div>
@@ -473,8 +487,8 @@ export function ProductForm({ product }: ProductFormProps) {
             >
               {loadingButton === "add"
                 ? "Añadiendo..."
-                : isSelectedVariantOutOfStock
-                ? "Sin Stock"
+                : selectedVariant?.availableForSale
+                ? "Añadir"
                 : "Añadir"}
             </Button>
             <div className="w-full flex flex-col items-end gap-2">
