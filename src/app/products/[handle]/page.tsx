@@ -29,7 +29,7 @@ export default async function ProductDetailPage({
   // 2️⃣ Averigua el handle de su primera colección (o la que prefieras)
   const firstCollectionHandle = product.collections?.edges?.[0]?.node.handle;
 
-  const relatedProducts = await getRecommendedProducts(product.id, 4);
+  const relatedProducts = await getRecommendedProducts(product.id, 10);
 
   return (
     <SlideUpSection className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar mb-24">
