@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { loadClarity } from "@/components/common/clarity";
+import { loadClarity, notifyClarityConsentGranted } from "@/lib/clarity";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -31,7 +31,7 @@ export function CookieBanner() {
   const accept = () => {
     localStorage.setItem("cookie-consent", "accepted");
     setVisible(false);
-    loadClarity();
+    notifyClarityConsentGranted();
   };
 
   const reject = () => {

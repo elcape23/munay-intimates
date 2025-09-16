@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { LoadingSpinner } from "@/components/common/loading-spinner";
 import { trackPurchase } from "@/lib/analytics";
+import { trackClarityEvent } from "@/lib/clarity";
 
 export default function CheckoutCashPage() {
   const router = useRouter();
@@ -94,6 +95,12 @@ export default function CheckoutCashPage() {
             cart.cost.totalAmount.currencyCode,
             items
           );
+          trackClarityEvent("purchase_completed", {
+            order_id: data.id,
+            value: parseFloat(cart.cost.totalAmount.amount),
+            currency: cart.cost.totalAmount.currencyCode,
+            payment_method: "Efectivo",
+          });
         }
         clearCart();
       } catch (e) {

@@ -26,6 +26,7 @@ import {
   updateCartBuyerIdentity,
 } from "@/lib/shopify";
 import { DeliveryDateModal } from "@/components/checkout/delivery-date-modal";
+import { trackClarityEvent } from "@/lib/clarity";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
@@ -111,7 +112,12 @@ export default function CheckoutOptionsPage() {
   };
 
   const handleContinue = async () => {
-    if (!selectedMethod) return;
+    if (!selectedMethod || !cart) return;
+    trackClarityEvent("payment_attempted", {
+      method: selectedMethod,
+      total: parseFloat(cart.cost.totalAmount.amount),
+      shipping_method: shippingMethod,
+    });
     if (typeof window !== "undefined") {
       const cost = shippingMethod === "Retiro de Tienda" ? 0 : shippingCost;
       sessionStorage.setItem("shippingMethod", shippingMethod);

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState, FormEvent } from "react";
+import { Fragment, useEffect, useState, FormEvent, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Dialog, Transition } from "@headlessui/react";
 import { Navbar } from "@/components/common/nav-bar";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import RelatedProductsCarousel from "@/components/product/related-products-carousel";
 import { useUiStore } from "@/store/ui-store";
 import type { ShopifyProduct, FeaturedProduct } from "@/lib/shopify";
+import { trackClarityEvent } from "@/lib/clarity";
 
 export function SearchModal() {
   const { isSearchOpen, closeSearch, openMenu } = useUiStore();
@@ -17,9 +18,14 @@ export function SearchModal() {
     (ShopifyProduct | FeaturedProduct)[]
   >([]);
   const [showInput, setShowInput] = useState(false);
+  const lastTrackedQuery = useRef<string | null>(null);
 
   useEffect(() => {
     if (!isSearchOpen) return;
+    if (query.length >= 3 && lastTrackedQuery.current !== query) {
+      trackClarityEvent("search_used", { query });
+      lastTrackedQuery.current = query;
+    }
     const handler = setTimeout(async () => {
       try {
         if (!query) {
@@ -51,6 +57,7 @@ export function SearchModal() {
       setShowInput(true);
     } else {
       setShowInput(false);
+      lastTrackedQuery.current = null;
     }
   }, [isSearchOpen]);
 

@@ -23,6 +23,7 @@ import {
 } from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
 import { slugify } from "@/lib/utils";
+import { trackClarityEvent } from "@/lib/clarity";
 import { useRouter } from "next/navigation";
 import { useCollectionStore } from "@/store/collection-store";
 
@@ -332,9 +333,14 @@ export function ProductGrid({
   }, [pagination, loadingMore, handle]);
 
   const handleFilterToggle = (tag: string) => {
-    setActiveFilters((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
+    setActiveFilters((prev) => {
+      const isActive = prev.includes(tag);
+      trackClarityEvent("filter_applied", {
+        filter: tag,
+        action: isActive ? "removed" : "applied",
+      });
+      return isActive ? prev.filter((t) => t !== tag) : [...prev, tag];
+    });
   };
 
   const activeSeason = useMemo(() => {
@@ -349,7 +355,12 @@ export function ProductGrid({
     const season = value === "all" ? "" : value;
     setActiveFilters((prev) => {
       const other = prev.filter((f) => !f.startsWith(prefix));
-      return season ? [...other, `${prefix}${season}`] : other;
+      const next = season ? [...other, `${prefix}${season}`] : other;
+      trackClarityEvent("filter_applied", {
+        filter: season ? `${prefix}${season}` : `${prefix}all`,
+        action: season ? "applied" : "removed",
+      });
+      return next;
     });
   };
 

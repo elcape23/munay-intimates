@@ -9,6 +9,7 @@ import { COLOR_MAP } from "@/lib/color-map";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { trackAddToCart } from "@/lib/analytics";
+import { trackClarityEvent } from "@/lib/clarity";
 
 type ProductFormProps = {
   product: ShopifyProduct;
@@ -170,6 +171,13 @@ export function ProductForm({ product }: ProductFormProps) {
         price: parseFloat(selectedVariant.price.amount),
         quantity: 1,
       });
+      trackClarityEvent("add_to_cart", {
+        product_handle: product.handle,
+        product_title: product.title,
+        variant_id: selectedVariant.id,
+        variant_title: selectedVariant.title,
+        price: parseFloat(selectedVariant.price.amount),
+      });
       toast({ title: "¡Producto añadido al carrito!" });
     } catch (error) {
       toast({ title: "Hubo un error al añadir el producto." });
@@ -200,6 +208,13 @@ export function ProductForm({ product }: ProductFormProps) {
         item_id: selectedVariant.sku || selectedVariant.id,
         price: parseFloat(selectedVariant.price.amount),
         quantity: 1,
+      });
+      trackClarityEvent("add_to_cart", {
+        product_handle: product.handle,
+        product_title: product.title,
+        variant_id: selectedVariant.id,
+        variant_title: selectedVariant.title,
+        price: parseFloat(selectedVariant.price.amount),
       });
       const { cart } = useCartStore.getState();
       if (!cart?.checkoutUrl) {

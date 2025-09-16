@@ -12,6 +12,7 @@ import { useFavoritesStore } from "@/store/favorites-store";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { trackClarityEvent } from "@/lib/clarity";
 
 type CartLine = ShopifyCart["lines"]["edges"][number]["node"];
 
@@ -70,7 +71,18 @@ export function CartItem({ line }: CartItemProps) {
       toast({ title: "¡Producto añadido a favoritos!" });
     }
   };
-  const handleDelete = () => removeItem(line.id);
+
+  const handleDelete = () => {
+    trackClarityEvent("remove_from_cart", {
+      line_id: line.id,
+      product_handle: line.merchandise.product.handle,
+      product_title: line.merchandise.product.title,
+      variant_id: line.merchandise.id,
+      quantity: line.quantity,
+      price: parseFloat(line.merchandise.price.amount),
+    });
+    removeItem(line.id);
+  };
   const handleDecrease = () => {
     if (line.quantity > 1) {
       updateQuantity(line.id, line.quantity - 1);

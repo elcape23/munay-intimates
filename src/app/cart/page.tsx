@@ -15,6 +15,7 @@ import { Footer } from "@/components/common/footer";
 import { LoadingSpinner } from "@/components/common/loading-spinner";
 import Image from "next/image";
 import { trackBeginCheckout } from "@/lib/analytics";
+import { trackClarityEvent } from "@/lib/clarity";
 
 export default function CartPage() {
   // Obtenemos todo el estado directamente desde nuestro store de Zustand.
@@ -38,6 +39,10 @@ export default function CartPage() {
       quantity: node.quantity,
     }));
     trackBeginCheckout(items);
+    trackClarityEvent("checkout_started", {
+      total_items: cart.totalQuantity,
+      value: parseFloat(cart.cost.totalAmount.amount),
+    });
     if (isLoggedIn) {
       router.push("/checkout");
     } else {

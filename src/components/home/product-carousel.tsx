@@ -52,7 +52,7 @@ export function ProductCarousel({ title, data }: Props) {
   return (
     <motion.section
       ref={sectionRef}
-      className="mt-6"
+      className="mt-6 lg:px-32"
       initial={{ opacity: 0, y: 50 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, ease: "easeOut" }}

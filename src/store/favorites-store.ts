@@ -7,6 +7,8 @@ import {
   createJSONStorage,
 } from "zustand/middleware";
 import { getProductByHandle, ShopifyProduct } from "@/lib/shopify";
+import { trackClarityEvent } from "@/lib/clarity";
+
 interface FavoritesState {
   favoriteHandles: string[];
   favoriteProducts: ShopifyProduct[];
@@ -48,6 +50,11 @@ export const useFavoritesStore = create(
             : [...favoriteHandles, handle];
 
           set({ favoriteHandles: newFavoriteHandles });
+          if (!isAlreadyFavorite) {
+            trackClarityEvent("wishlist_added", {
+              product_handle: handle,
+            });
+          }
           // Después de cambiar la lista, volvemos a buscar los productos para mantener todo sincronizado.
           get().fetchFavoriteProducts();
         },

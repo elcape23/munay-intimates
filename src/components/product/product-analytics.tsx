@@ -4,6 +4,7 @@
 import { useEffect } from "react";
 import { ShopifyProduct } from "@/lib/shopify";
 import { trackViewItem } from "@/lib/analytics";
+import { trackClarityEvent } from "@/lib/clarity";
 
 export function ProductAnalytics({ product }: { product: ShopifyProduct }) {
   useEffect(() => {
@@ -14,6 +15,12 @@ export function ProductAnalytics({ product }: { product: ShopifyProduct }) {
       item_id: variant.sku || variant.id,
       price: parseFloat(variant.price.amount),
       quantity: 1,
+    });
+    trackClarityEvent("view_product", {
+      product_handle: product.handle,
+      product_title: product.title,
+      variant_id: variant.id,
+      price: parseFloat(variant.price.amount),
     });
   }, [product]);
 
