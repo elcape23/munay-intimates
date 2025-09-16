@@ -1,4 +1,5 @@
 import { getCollectionByHandle, ShopifyProduct } from "@/lib/shopify";
+import { sortProductsByAvailability } from "@/lib/product-helpers";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -19,8 +20,8 @@ export async function GET(
       { status: 404 }
     );
   }
-  const products: ShopifyProduct[] = collection.products.edges.map(
-    (e) => e.node
+  const products: ShopifyProduct[] = sortProductsByAvailability(
+    collection.products.edges.map((e) => e.node)
   );
   return NextResponse.json({
     products,

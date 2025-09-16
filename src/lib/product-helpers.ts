@@ -45,3 +45,21 @@ export function extractColorVariants(product: ShopifyProduct): string[] {
 
   return colorVariants;
 }
+
+export function sortProductsByAvailability(
+  products: ShopifyProduct[]
+): ShopifyProduct[] {
+  return products
+    .map((product, index) => ({ product, index }))
+    .sort((a, b) => {
+      const aAvailable = Boolean(a.product.availableForSale);
+      const bAvailable = Boolean(b.product.availableForSale);
+
+      if (aAvailable === bAvailable) {
+        return a.index - b.index;
+      }
+
+      return aAvailable ? -1 : 1;
+    })
+    .map(({ product }) => product);
+}

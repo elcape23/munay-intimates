@@ -17,7 +17,10 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProductCard } from "@/components/common/product-card";
-import { extractColorVariants } from "@/lib/product-helpers";
+import {
+  extractColorVariants,
+  sortProductsByAvailability,
+} from "@/lib/product-helpers";
 import { COLOR_MAP } from "@/lib/color-map";
 import { slugify } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -53,7 +56,9 @@ export function ProductGrid({
   pageInfo,
   handle,
 }: ProductGridProps) {
-  const [items, setItems] = useState<ShopifyProduct[]>(products);
+  const [items, setItems] = useState<ShopifyProduct[]>(() =>
+    sortProductsByAvailability(products)
+  );
   const [pagination, setPagination] = useState(pageInfo);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [sortMethod, setSortMethod] = useState("default");
@@ -73,7 +78,7 @@ export function ProductGrid({
     if (!handle) return;
     const saved = collectionStore.get(handle);
     if (saved) {
-      setItems(saved.items);
+      setItems(sortProductsByAvailability(saved.items));
       setPagination(saved.pageInfo);
       setTimeout(() => {
         window.scrollTo(0, saved.scrollY);
@@ -309,7 +314,9 @@ export function ProductGrid({
             .then((res) => res.ok && res.json())
             .then((data) => {
               if (data) {
-                setItems((prev) => [...prev, ...data.products]);
+                setItems((prev) =>
+                  sortProductsByAvailability([...prev, ...data.products])
+                );
                 setPagination(data.pageInfo);
               }
             })

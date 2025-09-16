@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ProductGrid } from "@/components/collections/product-grid";
 import { Footer } from "@/components/common/footer";
 import { EmptyCollection } from "@/components/collections/empty-collection";
+import { sortProductsByAvailability } from "@/lib/product-helpers";
 
 export default async function CollectionPage({
   params,
@@ -17,7 +18,9 @@ export default async function CollectionPage({
     notFound();
   }
 
-  const products = collection.products.edges.map((edge) => edge.node);
+  const products = sortProductsByAvailability(
+    collection.products.edges.map((edge) => edge.node)
+  );
   const pageInfo = collection.products.pageInfo;
 
   if (products.length === 0) {
