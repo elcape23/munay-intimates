@@ -45,7 +45,13 @@ export default function AccountEditPage() {
       {" "}
       <div>
         <div className="flex flex-row items-center justify-between">
-          <Button onClick={() => router.back()} variant="ghost" size="icon">
+          <Button
+            onClick={() => router.back()}
+            variant="ghost"
+            size="icon"
+            data-clarity-label="Volver desde edición de perfil"
+          >
+            {" "}
             <ChevronLeftIcon className="w-6 h-6" />
           </Button>
           <h1 className="body-01-medium uppercase justify-between">
@@ -90,6 +96,7 @@ export default function AccountEditPage() {
           size="md"
           className="w-full"
           disabled={isSigningOut}
+          data-clarity-label="Cerrar sesión desde edición"
         >
           <ArrowLeftStartOnRectangleIcon className="w-6 h-6 mr-2" />
           {isSigningOut ? "Saliendo..." : "Salir"}

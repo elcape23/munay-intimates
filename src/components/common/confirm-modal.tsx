@@ -50,11 +50,17 @@ export function ConfirmModal({
                   variant="outline"
                   size="md"
                   onClick={onCancel}
+                  data-clarity-label="Cancelar confirmación"
                 >
                   {" "}
                   Cancelar
                 </Button>
-                <Button className="flex-1" size="md" onClick={onConfirm}>
+                <Button
+                  className="flex-1"
+                  size="md"
+                  onClick={onConfirm}
+                  data-clarity-label="Confirmar acción"
+                >
                   {" "}
                   Salir
                 </Button>

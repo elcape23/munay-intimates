@@ -73,7 +73,13 @@ export function DeliveryDateModal({
         }`}
       >
         <div className="flex justify-end">
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            data-clarity-label="Cerrar selector de fecha de envío"
+          >
+            {" "}
             <XMarkIcon className="h-6 w-6" />
           </Button>
         </div>
@@ -91,6 +97,7 @@ export function DeliveryDateModal({
                       ? "ring-2 ring-border-primary-default"
                       : "border-border-secondary-default"
                   }`}
+                  data-clarity-label={`Seleccionar fecha ${d.label}`}
                 >
                   <p className="body-01-bold">{d.formattedDate}</p>
                   <p className="body-02-regular text-text-secondary-default capitalize">
@@ -123,7 +130,13 @@ export function DeliveryDateModal({
           </div>
         </div>
         <div className="pt-9">
-          <Button onClick={handleConfirm} size="lg" className="w-full">
+          <Button
+            onClick={handleConfirm}
+            size="lg"
+            className="w-full"
+            data-clarity-label="Confirmar fecha de envío"
+          >
+            {" "}
             Confirmar
           </Button>
         </div>

@@ -11,7 +11,13 @@ export default function LocalesPage() {
   return (
     <div className="container mx-auto px-6 pt-[55px] min-h-screen flex flex-col justify-between space-y-4">
       <div className="flex justify-between">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
+        <Button
+          onClick={() => router.back()}
+          variant="ghost"
+          size="icon"
+          data-clarity-label="Volver desde locales"
+        >
+          {" "}
           <ChevronLeftIcon className="w-6 h-6" />
         </Button>
         <h1 className="body-01-medium text-text-primary-default uppercase">

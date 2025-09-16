@@ -18,7 +18,13 @@ export default function NewsletterPage() {
   return (
     <div className="container mx-auto px-6 pt-[55px] space-y-6">
       <div className="flex items-center justify-between">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
+        <Button
+          onClick={() => router.back()}
+          variant="ghost"
+          size="icon"
+          data-clarity-label="Volver desde newsletter"
+        >
+          {" "}
           <ChevronLeftIcon className="w-6 h-6" />
         </Button>
         <h1 className="body-01-medium uppercase">Newsletter</h1>
@@ -55,7 +61,13 @@ export default function NewsletterPage() {
           través de email.
         </label>
       </div>
-      <Button className="w-full py-3" variant="outline" size="md">
+      <Button
+        className="w-full py-3"
+        variant="outline"
+        size="md"
+        data-clarity-label="Guardar preferencias de newsletter"
+      >
+        {" "}
         Guardar
       </Button>
     </div>

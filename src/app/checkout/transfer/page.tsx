@@ -180,7 +180,13 @@ export default function CheckoutTransferPage() {
         )}
       </div>
       <div className="mb-16 space-y-2">
-        <Button asChild size="lg" className="w-full">
+        <Button
+          onClick={() => router.back()}
+          variant="ghost"
+          size="icon"
+          data-clarity-label="Volver desde favoritos"
+        >
+          {" "}
           <a
             href="https://wa.me/5493813638914"
             target="_blank"
@@ -196,6 +202,7 @@ export default function CheckoutTransferPage() {
           size="lg"
           className="w-full"
           onClick={() => router.push("/")}
+          data-clarity-label="Volver a comprar"
         >
           Seguir Comprando
         </Button>

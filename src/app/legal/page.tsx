@@ -28,7 +28,13 @@ export default function LegalPage() {
   return (
     <div className="container mx-auto px-6 pt-[55px] pb-10 space-y-8">
       <div className="flex items-center gap-2">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
+        <Button
+          onClick={() => router.back()}
+          variant="ghost"
+          size="icon"
+          data-clarity-label="Volver desde configuración de cookies"
+        >
+          {" "}
           <ChevronLeftIcon className="w-6 h-6" />
         </Button>
         <h1 className="body-01-medium flex-1 text-right uppercase">
@@ -167,7 +173,12 @@ export default function LegalPage() {
       </div>
 
       <div className="pt-4">
-        <Button variant="outline" className="w-full">
+        <Button
+          variant="outline"
+          className="w-full"
+          data-clarity-label="Confirmar preferencias de cookies"
+        >
+          {" "}
           Confirmar Preferencias
         </Button>
       </div>

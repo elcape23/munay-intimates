@@ -23,7 +23,13 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="space-y-8">
           <div className="flex flex-row justify-between">
-            <Button onClick={() => router.back()} variant="ghost" size="icon">
+            <Button
+              onClick={() => router.back()}
+              variant="ghost"
+              size="icon"
+              data-clarity-label="Volver desde registro"
+            >
+              {" "}
               <ChevronLeftIcon className="w-6 h-6" />
             </Button>
             <h1 className="body-01-medium text-text-primary-default uppercase">

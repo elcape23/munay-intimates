@@ -252,6 +252,7 @@ export function HeroSection({
                       variant="link"
                       size="lg"
                       className="flex justify-start px-0 text-text-primary-invert body-01-medium underline-offset-[4px]"
+                      data-clarity-label={slide.ButtonText ?? "Ver más"}
                     >
                       <Link
                         href={slide.href ?? "#"}
@@ -287,6 +288,7 @@ export function HeroSection({
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
                   idx === current ? "w-8" : "w-2"
                 )}
+                data-clarity-label={`Ir al slide ${idx + 1}`}
               >
                 <span className="absolute inset-0 rounded-full bg-background-fill-neutral-invert/20" />
                 <span

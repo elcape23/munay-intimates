@@ -514,6 +514,7 @@ export function ProductGrid({
               className="body-02-regular text-text-secondary-default uppercase hover:underline"
               variant="ghost"
               size="text"
+              data-clarity-label="Limpiar filtros"
             >
               Limpiar filtros
             </Button>
@@ -521,6 +522,7 @@ export function ProductGrid({
               onClick={() => setIsFilterModalOpen(false)}
               variant="ghost"
               size="icon"
+              data-clarity-label="Cerrar filtros"
             >
               <XMarkIcon className="h-6 w-6" />
             </Button>
@@ -556,6 +558,7 @@ export function ProductGrid({
                             style={{ backgroundColor: bgColor }}
                             variant="ghost"
                             size="icon"
+                            data-clarity-label={`Filtrar por color ${value}`}
                           />
                         );
                       })}
@@ -587,6 +590,7 @@ export function ProductGrid({
                               }`}
                               variant="ghost"
                               size="text"
+                              data-clarity-label={`Filtrar por talle ${label}`}
                             >
                               {label}{" "}
                             </Button>
@@ -642,6 +646,9 @@ export function ProductGrid({
                           }`}
                           variant="ghost"
                           size="icon"
+                          data-clarity-label={`Filtrar por ${filterString
+                            .split(":")[1]
+                            .trim()}`}
                         >
                           {filterString.split(":")[1].trim()}
                         </Button>
@@ -694,6 +701,7 @@ export function ProductGrid({
               className="w-full hover:bg-background-fill-neutral-hover transition-colors"
               variant="outline"
               size="lg"
+              data-clarity-label="Aplicar filtros"
             >
               Ver {filteredAndSortedProducts.length} productos
             </Button>
@@ -715,6 +723,7 @@ export function ProductGrid({
                   aria-label="Volver atrás"
                   variant="ghost"
                   size="icon"
+                  data-clarity-label="Volver desde colecciones"
                 >
                   <ChevronLeftIcon className="h-6 w-6 text-icon-primary-default" />
                 </Button>
@@ -736,6 +745,7 @@ export function ProductGrid({
                 className="flex items-center gap-1 body-02-regular uppercase text-text-primary-default hover:bg-gray-50"
                 variant="ghost"
                 size="text"
+                data-clarity-label="Abrir filtros"
               >
                 {activeFilterCount > 0 && (
                   <span className="ml-1 bg-background-fill-neutral-default body-03-semibold text-text-primary-invert rounded-full h-4 w-4 flex items-center justify-center">
@@ -776,6 +786,9 @@ export function ProductGrid({
                           }`}
                           variant="outline"
                           size="lg"
+                          data-clarity-label={`Filtrar por ${tag
+                            .split(":")[1]
+                            .trim()}`}
                         >
                           {tag.split(":")[1].trim()}
                         </Button>

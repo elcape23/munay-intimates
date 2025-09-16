@@ -151,6 +151,11 @@ export function CartItem({ line }: CartItemProps) {
                 : "bg-background-fill-neutral-default text-text-primary-invert"
             )}
             variant="ghost"
+            data-clarity-label={
+              isAlreadyFavorite
+                ? "Guardar producto en favoritos (ya guardado)"
+                : "Guardar producto en favoritos"
+            }
           >
             {isAlreadyFavorite ? "Guardado" : "Guardar"}{" "}
           </Button>
@@ -158,6 +163,7 @@ export function CartItem({ line }: CartItemProps) {
             onClick={handleDelete}
             className="w-max px-8 body-02-semibold bg-background-fill-danger-default text-text-primary-invert"
             variant="ghost"
+            data-clarity-label="Eliminar producto del carrito"
           >
             Eliminar
           </Button>
@@ -228,6 +234,7 @@ export function CartItem({ line }: CartItemProps) {
                 aria-label="disminuir cantidad"
                 variant="ghost"
                 size="icon"
+                data-clarity-label="Disminuir cantidad"
                 disabled={line.quantity <= 1}
               >
                 <MinusIcon className="w-5 h-5 p-1 text-icon-primary-default" />
@@ -241,6 +248,7 @@ export function CartItem({ line }: CartItemProps) {
                 aria-label="incrementar cantidad"
                 variant="ghost"
                 size="icon"
+                data-clarity-label="Aumentar cantidad"
                 disabled={
                   line.merchandise.quantityAvailable !== undefined &&
                   line.quantity >= line.merchandise.quantityAvailable
@@ -254,6 +262,7 @@ export function CartItem({ line }: CartItemProps) {
               className="my-2 mr-2 body-02-regular text-text-secondary-default hover:text-text-secondary-hover transition-colors"
               variant="ghost"
               size="text"
+              data-clarity-label="Eliminar producto del carrito"
             >
               Eliminar
             </Button>

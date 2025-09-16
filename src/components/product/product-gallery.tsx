@@ -87,6 +87,7 @@ export default function ProductGallery({ images, productHandle }: Props) {
             key={i}
             onClick={() => emblaApi?.scrollTo(i)}
             aria-label={`Imagen ${i + 1}`}
+            data-clarity-label={`Imagen ${i + 1}`}
             className={cn(
               "h-2 w-2 rounded-full transition-opacity mix-blend-difference",
               selected === i ? "bg-white opacity-100" : "bg-white/60 opacity-40"

@@ -71,6 +71,7 @@ export function CookieBanner() {
                   variant="link"
                   size="sm"
                   className="body-03-regular text-text-secondary-default px-0 mt-2"
+                  data-clarity-label="Ver políticas de cookies"
                 >
                   <a href="/legal">Políticas de Cookies</a>
                 </Button>
@@ -80,10 +81,16 @@ export function CookieBanner() {
                   variant="outline"
                   className="body-02-regular w-[100px]"
                   onClick={reject}
+                  data-clarity-label="Rechazar cookies"
                 >
                   Rechazar
                 </Button>
-                <Button onClick={accept} className="w-[100px]">
+                <Button
+                  onClick={accept}
+                  className="w-[100px]"
+                  data-clarity-label="Aceptar cookies"
+                >
+                  {" "}
                   Aceptar
                 </Button>
               </div>

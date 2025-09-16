@@ -112,6 +112,9 @@ export default function LoginForm({
             type="button"
             onClick={() => setShowPassword((p) => !p)}
             className="absolute inset-y-0 right-0 flex items-center px-3 text-icon-primary-default"
+            data-clarity-label={
+              showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+            }
           >
             {showPassword ? (
               <EyeSlashIcon className="h-5 w-5" />
@@ -137,6 +140,7 @@ export default function LoginForm({
           variant="outline"
           size="md"
           className="w-full py-3"
+          data-clarity-label="Ir a registro"
         >
           Registrarse
         </Button>
@@ -146,6 +150,7 @@ export default function LoginForm({
           className="w-full py-3 text-text-primary-invert"
           variant="primary"
           size="md"
+          data-clarity-label="Enviar formulario de inicio de sesión"
         >
           {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
         </Button>

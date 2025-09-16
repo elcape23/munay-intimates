@@ -80,12 +80,12 @@ export default function CartPage() {
           </div>
         )}
         <section className="container mx-auto px-6 pt-[55px] justify-between min-h-screen flex flex-col">
-          {" "}
           <div className="flex items-center justify-between">
             <Button
               onClick={() => window.history.back()}
               variant="ghost"
               size="icon"
+              data-clarity-label="Volver desde carrito vacío"
             >
               <ChevronLeftIcon className="w-6 h-6 text-black" />
             </Button>
@@ -112,7 +112,13 @@ export default function CartPage() {
             <h1 className="heading-06-regular text-text-primary-default mb-6 text-center">
               Tu carrito está vacío
             </h1>
-            <Button asChild variant="link" size="text">
+            <Button
+              asChild
+              variant="link"
+              size="text"
+              data-clarity-label="Seguir comprando"
+            >
+              {" "}
               <Link
                 href="/"
                 onClick={handleContinueShopping}
@@ -162,6 +168,7 @@ export default function CartPage() {
             onClick={() => window.history.back()}
             variant="ghost"
             size="icon"
+            data-clarity-label="Volver desde carrito"
           >
             <ChevronLeftIcon className="w-6 h-6 text-black" />
           </Button>
@@ -195,7 +202,13 @@ export default function CartPage() {
                 <span>{formatPrice(shipping)}</span>
               </div>
               {/* Botón fijo "Continuar" según diseño */}
-              <Button onClick={handleContinue} value="primary" size="lg">
+              <Button
+                onClick={handleContinue}
+                value="primary"
+                size="lg"
+                data-clarity-label="Continuar con la compra"
+              >
+                {" "}
                 Continuar - {formatPrice(grandTotal)}
               </Button>
             </div>
@@ -208,6 +221,7 @@ export default function CartPage() {
           value="primary"
           size="lg"
           className="w-1/2"
+          data-clarity-label="Continuar con el pago"
         >
           Continuar
         </Button>

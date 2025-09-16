@@ -143,6 +143,7 @@ export function SideMenu() {
                   className="hover:text-brand-primary"
                   variant="ghost"
                   size="icon"
+                  data-clarity-label="Abrir buscador"
                 >
                   <MagnifyingGlassIcon className="h-6 w-6" />
                 </Button>
@@ -152,6 +153,7 @@ export function SideMenu() {
                   className="hover:text-brand-primary"
                   variant="ghost"
                   size="icon"
+                  data-clarity-label="Cerrar menú lateral"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </Button>
@@ -172,6 +174,13 @@ export function SideMenu() {
                     }`}
                     variant="ghost"
                     size="text"
+                    data-clarity-label={
+                      t === "categories"
+                        ? "Ver categorías"
+                        : t === "new"
+                        ? "Ver novedades"
+                        : "Ver colecciones"
+                    }
                   >
                     {t === "categories"
                       ? "CATEGORIAS"
@@ -196,6 +205,11 @@ export function SideMenu() {
                                 setIsInnerwearOpen((prev) => !prev)
                               }
                               className="flex items-topline uppercase body-01-regular tracking-wide hover:text-brand-primary text-text-secondary-default w-full text-left"
+                              data-clarity-label={
+                                isInnerwearOpen
+                                  ? "Cerrar subcategorías de ropa interior"
+                                  : "Abrir subcategorías de ropa interior"
+                              }
                             >
                               <span className="body-01-regular">
                                 {item.title}

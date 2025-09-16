@@ -40,7 +40,13 @@ export default function EditEmailPage() {
   return (
     <div className="container mx-auto px-6 pt-[55px] space-y-6">
       <div className="flex flex-row items-center justify-between">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
+        <Button
+          onClick={() => router.back()}
+          variant="ghost"
+          size="icon"
+          data-clarity-label="Volver desde edición de email"
+        >
+          {" "}
           <ChevronLeftIcon className="w-6 h-6" />
         </Button>
         <h1 className="body-01-medium ml-2 uppercase">Email</h1>
@@ -86,7 +92,12 @@ export default function EditEmailPage() {
                 : "Incorrecto")}
           </p>
         </div>
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          data-clarity-label="Guardar email"
+        >
+          {" "}
           Guardar
         </Button>
       </form>

@@ -149,7 +149,13 @@ export default function CheckoutCashPage() {
         )}
       </div>
       <div className="mb-12 space-y-2">
-        <Button asChild size="lg" className="w-full">
+        <Button
+          asChild
+          size="lg"
+          className="w-full"
+          data-clarity-label="Enviar WhatsApp para pago en efectivo"
+        >
+          {" "}
           <a
             href="https://wa.me/5493813638914"
             target="_blank"
@@ -165,6 +171,7 @@ export default function CheckoutCashPage() {
           size="lg"
           className="w-full"
           onClick={() => router.push("/")}
+          data-clarity-label="Volver a comprar"
         >
           Seguir Comprando
         </Button>

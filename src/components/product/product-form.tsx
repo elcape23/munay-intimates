@@ -291,6 +291,7 @@ export function ProductForm({ product }: ProductFormProps) {
                           style={{ backgroundColor: hex }}
                           variant="ghost"
                           size="icon"
+                          data-clarity-label={`Seleccionar color ${value}`}
                         />
                       );
                     })}
@@ -332,6 +333,9 @@ export function ProductForm({ product }: ProductFormProps) {
                           }`}
                           variant="ghost"
                           size="icon"
+                          data-clarity-label={`Seleccionar ${
+                            option.name
+                          } ${formatSizeLabel(value)}`}
                         >
                           {formatSizeLabel(value)}
                           <AnimatePresence>
@@ -377,6 +381,7 @@ export function ProductForm({ product }: ProductFormProps) {
                         }`}
                         variant="ghost"
                         size="icon"
+                        data-clarity-label={`Seleccionar ${option.name} ${value}`}
                       >
                         {option.name.toLowerCase() === "color" && (
                           <span
@@ -436,6 +441,7 @@ export function ProductForm({ product }: ProductFormProps) {
               }`}
           variant="primary"
           size="lg"
+          data-clarity-label="Agregar producto al carrito"
         >
           {loadingButton === "add"
             ? "Añadiendo..."
@@ -455,6 +461,7 @@ export function ProductForm({ product }: ProductFormProps) {
               text-text-primary-default hover:text-text-primary-invert`}
           variant="outline"
           size="lg"
+          data-clarity-label="Comprar ahora"
         >
           {loadingButton === "buy"
             ? "Añadiendo..."
@@ -484,6 +491,7 @@ export function ProductForm({ product }: ProductFormProps) {
             }`}
               variant="primary"
               size="lg"
+              data-clarity-label="Agregar producto al carrito (fijo)"
             >
               {loadingButton === "add"
                 ? "Añadiendo..."

@@ -32,7 +32,13 @@ export default function FavoritesPage() {
     return (
       <main className="container mx-auto px-6 pt-[55px] min-h-screen flex flex-col justify-between">
         <div className="flex flex-row items-center justify-between gap-2 mb-4">
-          <Button onClick={() => router.back()} variant="ghost" size="icon">
+          <Button
+            onClick={() => router.back()}
+            variant="ghost"
+            size="icon"
+            data-clarity-label="Volver desde favoritos"
+          >
+            {" "}
             <ChevronLeftIcon className="h-6 w-6 text-icon-primary-default" />
           </Button>
           <h1 className="body-01-medium uppercase tracking-tight text-text-primary-default">

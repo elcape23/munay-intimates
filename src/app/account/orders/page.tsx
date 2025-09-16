@@ -27,6 +27,7 @@ export default function PurchasesPage() {
           ? "body-02-semibold text-text-primary-default border-b-[2px] border-border-primary-default"
           : "body-02-regular text-text-secondary-default hover:text-brand-primary"
       }`}
+      data-clarity-label={`Ver pedidos ${label.toLowerCase()}`}
     >
       {label}
     </Button>
@@ -36,7 +37,13 @@ export default function PurchasesPage() {
     <div className="container mx-auto px-6 pt-[55px] min-h-screen flex flex-col justify-between">
       <div className="space-y-4 flex-grow">
         <div className="flex justify-between">
-          <Button onClick={() => router.back()} variant="ghost" size="icon">
+          <Button
+            onClick={() => router.back()}
+            variant="ghost"
+            size="icon"
+            data-clarity-label="Volver desde compras"
+          >
+            {" "}
             <ChevronLeftIcon className="w-6 h-6" />
           </Button>
           <h1 className="body-01-medium text-text-primary-default uppercase">

@@ -51,6 +51,7 @@ export function ShareButton({ url, title }: ShareButtonProps) {
       className="text-icon-primary-default hover:bg-gray-200 transition-colors"
       variant="ghost"
       size="icon"
+      data-clarity-label="Compartir contenido"
     >
       <ArrowUpTrayIcon className="h-6 w-6 text-icon-primary-default" />
     </Button>

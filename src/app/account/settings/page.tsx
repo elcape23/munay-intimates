@@ -10,7 +10,13 @@ export default function AccountSettingsPage() {
   return (
     <div className="container mx-auto px-6 pt-[55px] space-y-6">
       <div className="flex flex-row items-center justify-between">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
+        <Button
+          onClick={() => router.back()}
+          variant="ghost"
+          size="icon"
+          data-clarity-label="Volver desde ajustes"
+        >
+          {" "}
           <ChevronLeftIcon className="w-6 h-6" />
         </Button>
         <h1 className="body-01-medium uppercase">Ajustes</h1>

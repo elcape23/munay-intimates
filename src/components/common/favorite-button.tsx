@@ -57,6 +57,9 @@ export function FavoriteButton({ productHandle }: FavoriteButtonProps) {
       className="text-icon-primary-default hover:transition-colors"
       variant="ghost"
       size="icon"
+      data-clarity-label={
+        isProductFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
+      }
     >
       <motion.button animate={controls}>
         {isProductFavorite ? (

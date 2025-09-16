@@ -147,6 +147,7 @@ export default function AccountPage() {
         <Button
           onClick={() => signOut({ callbackUrl: "/account" })}
           variant="secondary"
+          data-clarity-label="Volver a iniciar sesión"
         >
           Volver a iniciar sesión
         </Button>
@@ -179,7 +180,13 @@ export default function AccountPage() {
     <div className="container mx-auto px-6 pt-[55px]  justify-between min-h-screen flex flex-col">
       <div className="space-y-3">
         <div className="flex flex-row justify-between">
-          <Button onClick={() => router.back()} variant="ghost" size="icon">
+          <Button
+            onClick={() => router.back()}
+            variant="ghost"
+            size="icon"
+            data-clarity-label="Volver desde cuenta"
+          >
+            {" "}
             <ChevronLeftIcon className="w-6 h-6" />
           </Button>
           <h1 className="body-01-medium text-text-primary-default uppercase">
@@ -220,6 +227,7 @@ export default function AccountPage() {
                 variant="outline"
                 size="lg"
                 className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+                data-clarity-label="Ver compras"
               >
                 <Link href="/account/orders">
                   <ShoppingBagIcon className="h-6 w-6" />
@@ -231,6 +239,7 @@ export default function AccountPage() {
                 variant="outline"
                 size="lg"
                 className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+                data-clarity-label="Ver favoritos"
               >
                 <Link href="/favorites">
                   <HeartIcon className="h-6 w-6" />
@@ -241,6 +250,7 @@ export default function AccountPage() {
                 variant="outline"
                 size="lg"
                 className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+                data-clarity-label="Ver métodos de pago"
               >
                 <CurrencyDollarIcon className="h-6 w-6"></CurrencyDollarIcon>
                 Métodos de Pago
@@ -250,6 +260,7 @@ export default function AccountPage() {
                 variant="outline"
                 size="lg"
                 className="flex flex-col items-start body-01-regular gap-2 px-2 py-2"
+                data-clarity-label="Ver métodos de pago"
               >
                 <Link href="/account/addresses">
                   <HomeIcon className="h-6 w-6" />
@@ -292,6 +303,7 @@ export default function AccountPage() {
               size="md"
               className="w-full"
               disabled={isSigningOut}
+              data-clarity-label="Abrir confirmación de cierre de sesión"
             >
               <ArrowLeftStartOnRectangleIcon className="w-6 h-6 mr-2" />
               {isSigningOut ? "Saliendo..." : "Salir"}

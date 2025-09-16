@@ -175,7 +175,13 @@ export default function CheckoutOptionsPage() {
     <section className="pt-[55px] mx-6 min-h-[calc(100vh-55px)] flex flex-col justify-between">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <Button onClick={() => router.back()} variant="ghost" size="icon">
+          <Button
+            onClick={() => router.back()}
+            variant="ghost"
+            size="icon"
+            data-clarity-label="Volver desde checkout"
+          >
+            {" "}
             <ChevronLeftIcon className="w-6 h-6" />
           </Button>
           <h1 className="body-01-medium">CHECKOUT</h1>
@@ -199,6 +205,7 @@ export default function CheckoutOptionsPage() {
                       selectedMethod === "Efectivo" &&
                         "ring-[1px] ring-offset-[0px] ring-border-primary-default"
                     )}
+                    data-clarity-label="Seleccionar pago en efectivo"
                   >
                     <div className="flex items-center justify-between w-full">
                       <CurrencyDollarIcon className="h-6 w-6" />
@@ -217,6 +224,7 @@ export default function CheckoutOptionsPage() {
                       selectedMethod === "Transferencia" &&
                         "ring-[1px] ring-offset-[0px] ring-border-primary-default"
                     )}
+                    data-clarity-label="Seleccionar pago por transferencia"
                   >
                     <div className="flex items-center justify-between w-full">
                       <BuildingLibraryIcon className="h-6 w-6" />
@@ -235,6 +243,7 @@ export default function CheckoutOptionsPage() {
                       selectedMethod === "Tarjeta de crédito" &&
                         "ring-[1px] ring-offset-[0px] ring-border-primary-default"
                     )}
+                    data-clarity-label="Seleccionar pago con tarjeta"
                   >
                     <CreditCardIcon className="h-6 w-6" />
                     Tarjeta de crédito
@@ -286,7 +295,13 @@ export default function CheckoutOptionsPage() {
                 <div>
                   <div className="flex items-center justify-between">
                     <p className="body-01-semibold">Dirección</p>
-                    <Button variant="link" size="text" onClick={() => {}}>
+                    <Button
+                      variant="link"
+                      size="text"
+                      onClick={() => {}}
+                      data-clarity-label="Cambiar dirección de envío"
+                    >
+                      {" "}
                       Cambiar
                     </Button>
                   </div>
@@ -303,6 +318,7 @@ export default function CheckoutOptionsPage() {
                       variant="link"
                       size="text"
                       onClick={() => setIsDeliveryModalOpen(true)}
+                      data-clarity-label="Cambiar fecha de envío"
                     >
                       {" "}
                       Cambiar
@@ -315,7 +331,13 @@ export default function CheckoutOptionsPage() {
                 <div>
                   <div className="flex items-center justify-between">
                     <p className="body-01-semibold">Instrucciones de envío</p>
-                    <Button variant="link" size="text" onClick={() => {}}>
+                    <Button
+                      variant="link"
+                      size="text"
+                      onClick={() => {}}
+                      data-clarity-label="Cambiar instrucciones de envío"
+                    >
+                      {" "}
                       Cambiar
                     </Button>
                   </div>
@@ -339,6 +361,7 @@ export default function CheckoutOptionsPage() {
           size="lg"
           disabled={!selectedMethod}
           className="w-full mb-10"
+          data-clarity-label="Continuar con el checkout"
         >
           Continuar
         </Button>

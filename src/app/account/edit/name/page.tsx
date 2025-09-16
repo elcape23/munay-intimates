@@ -64,7 +64,13 @@ export default function EditNamePage() {
   return (
     <div className="container mx-auto px-6 pt-[55px] space-y-6">
       <div className="flex flex-row items-center w-full justify-between">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
+        <Button
+          onClick={() => router.back()}
+          variant="ghost"
+          size="icon"
+          data-clarity-label="Volver desde edición de nombre"
+        >
+          {" "}
           <ChevronLeftIcon className="w-6 h-6" />
         </Button>
         <h1 className="body-01-medium ml-2 uppercase">Nombre</h1>
@@ -81,7 +87,13 @@ export default function EditNamePage() {
           onChange={(e) => setLastName(e.target.value)}
         />
       </form>
-      <Button type="submit" className="w-full" disabled={isSaving}>
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isSaving}
+        data-clarity-label="Guardar nombre"
+      >
+        {" "}
         {isSaving ? "Guardando..." : "Guardar"}
       </Button>
     </div>

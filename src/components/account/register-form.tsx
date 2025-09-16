@@ -431,6 +431,9 @@ export default function RegisterForm() {
                 ? "text-icon-danger-default"
                 : "text-icon-primary-default"
             )}
+            data-clarity-label={
+              showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+            }
           >
             {showPassword ? (
               <EyeSlashIcon className="h-5 w-5" />
@@ -490,6 +493,11 @@ export default function RegisterForm() {
                 ? "text-icon-danger-default"
                 : "text-icon-primary-default"
             )}
+            data-clarity-label={
+              showConfirmPassword
+                ? "Ocultar confirmación de contraseña"
+                : "Mostrar confirmación de contraseña"
+            }
           >
             {showConfirmPassword ? (
               <EyeSlashIcon className="h-5 w-5" />
@@ -787,6 +795,7 @@ export default function RegisterForm() {
         className="w-full py-3"
         variant="primary"
         size="lg"
+        data-clarity-label="Enviar formulario de registro"
       >
         {isLoading ? "Registrando..." : "Registrarse"}
       </Button>

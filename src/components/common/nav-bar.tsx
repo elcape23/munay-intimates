@@ -111,6 +111,9 @@ export function Navbar({
           className="rounded-md focus-visible:outline-none focus-visible:ring-0"
           variant="ghost"
           size="icon"
+          data-clarity-label={
+            isProduct || searchMode ? "Cerrar menú o búsqueda" : "Abrir menú"
+          }
         >
           {" "}
           {isProduct || searchMode ? (

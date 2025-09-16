@@ -121,7 +121,13 @@ export default function EditPasswordPage() {
   return (
     <div className="container mx-auto px-6 pt-[55px] space-y-6">
       <div className="flex flex-row items-center justify-between">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
+        <Button
+          onClick={() => router.back()}
+          variant="ghost"
+          size="icon"
+          data-clarity-label="Volver a la cuenta"
+        >
+          {" "}
           <ChevronLeftIcon className="w-6 h-6" />
         </Button>
         <h1 className="body-01-medium ml-2 uppercase">Contraseña</h1>
@@ -157,6 +163,11 @@ export default function EditPasswordPage() {
                 ? "text-icon-danger-default"
                 : "text-icon-primary-default"
             )}
+            data-clarity-label={
+              showCurrentPassword
+                ? "Ocultar contraseña actual"
+                : "Mostrar contraseña actual"
+            }
           >
             {showCurrentPassword ? (
               <EyeSlashIcon className="h-5 w-5" />
@@ -214,6 +225,11 @@ export default function EditPasswordPage() {
                 ? "text-icon-danger-default"
                 : "text-icon-primary-default"
             )}
+            data-clarity-label={
+              showPassword
+                ? "Ocultar nueva contraseña"
+                : "Mostrar nueva contraseña"
+            }
           >
             {showPassword ? (
               <EyeSlashIcon className="h-5 w-5" />
@@ -267,6 +283,11 @@ export default function EditPasswordPage() {
                 ? "text-icon-danger-default"
                 : "text-icon-primary-default"
             )}
+            data-clarity-label={
+              showConfirmPassword
+                ? "Ocultar confirmación de contraseña"
+                : "Mostrar confirmación de contraseña"
+            }
           >
             {showConfirmPassword ? (
               <EyeSlashIcon className="h-5 w-5" />
@@ -295,7 +316,12 @@ export default function EditPasswordPage() {
         {error && (
           <p className="body-03-regular text-text-danger-default">{error}</p>
         )}
-        <Button type="submit" className="w-full" disabled={!isFormValid}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={!isFormValid}
+          data-clarity-label="Guardar nueva contraseña"
+        >
           {" "}
           Guardar
         </Button>
