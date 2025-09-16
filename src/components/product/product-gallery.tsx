@@ -51,7 +51,7 @@ export default function ProductGallery({ images, productHandle }: Props) {
           {images.map(({ node }, i) => (
             <div
               key={i}
-              className="relative min-w-0 flex-[0_0_100%] aspect-[4/5]"
+              className="relative min-w-0 flex-[0_0_100%] aspect-[2/3] overflow-hidden"
             >
               {" "}
               {!loaded[i] && (
@@ -60,8 +60,8 @@ export default function ProductGallery({ images, productHandle }: Props) {
               <Image
                 src={node.url}
                 alt={node.altText ?? ""}
-                width={880}
-                height={1120}
+                fill
+                sizes="(max-width: 768px) 100vw, 880px"
                 className={cn(
                   "w-full object-cover transition-opacity duration-400",
                   loaded[i] ? "opacity-100" : "opacity-0"
