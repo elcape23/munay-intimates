@@ -798,6 +798,7 @@ export function ProductGrid({
                 id={product.id}
                 title={product.title}
                 handle={product.handle}
+                clarityLabel={`collections-product-card-${product.handle}`}
                 imageSrc={
                   product.images.edges[0]?.node.url || "/placeholder.png"
                 }

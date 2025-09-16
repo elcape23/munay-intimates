@@ -24,6 +24,7 @@ export interface ProductCardProps {
   /** If true, image adapts to parent width */
   fill?: boolean;
   onImageLoad?: () => void;
+  clarityLabel?: string;
 }
 
 function parsePrice(value: string): number {
@@ -47,6 +48,7 @@ export function ProductCard({
   size = "default",
   fill = false,
   onImageLoad,
+  clarityLabel,
 }: ProductCardProps) {
   const [loaded, setLoaded] = useState(false);
 
@@ -62,7 +64,8 @@ export function ProductCard({
     : 0;
 
   return (
-    <div className="relative">
+    <div className="relative" data-clarity-label={clarityLabel}>
+      {" "}
       <Link
         href={`/products/${handle}`}
         className={`flex flex-col bg-transparent ${
