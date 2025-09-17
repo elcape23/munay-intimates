@@ -229,16 +229,27 @@ export function ProductForm({ product }: ProductFormProps) {
     }
   };
 
-  const isAddButtonDisabled =
-    !selectedVariant ||
-    !selectedVariant.availableForSale ||
-    (selectedVariant.quantityAvailable ?? 0) <= 0 ||
-    loadingButton === "add";
-  const isBuyButtonDisabled =
-    !selectedVariant ||
-    !selectedVariant.availableForSale ||
-    (selectedVariant.quantityAvailable ?? 0) <= 0 ||
-    loadingButton === "buy";
+  const isVariantAvailable =
+    !!selectedVariant &&
+    selectedVariant.availableForSale &&
+    (selectedVariant.quantityAvailable ?? 0) > 0;
+
+  const isAddButtonDisabled = !isVariantAvailable || loadingButton === "add";
+  const isBuyButtonDisabled = !isVariantAvailable || loadingButton === "buy";
+
+  const addButtonLabel =
+    loadingButton === "add"
+      ? "Añadiendo..."
+      : isVariantAvailable
+      ? "Añadir"
+      : "Sin Stock";
+
+  const buyButtonLabel =
+    loadingButton === "buy"
+      ? "Añadiendo..."
+      : isVariantAvailable
+      ? "Comprar"
+      : "Sin Stock";
 
   if (!product.variants || product.variants.edges.length === 0) {
     return (
@@ -458,11 +469,7 @@ export function ProductForm({ product }: ProductFormProps) {
           size="lg"
           data-clarity-label="Agregar producto al carrito"
         >
-          {loadingButton === "add"
-            ? "Añadiendo..."
-            : selectedVariant?.availableForSale
-            ? "Añadir"
-            : "Añadir"}
+          {addButtonLabel}
         </Button>
         <Button
           onClick={handleBuyNow}
@@ -478,11 +485,7 @@ export function ProductForm({ product }: ProductFormProps) {
           size="lg"
           data-clarity-label="Comprar ahora"
         >
-          {loadingButton === "buy"
-            ? "Añadiendo..."
-            : selectedVariant?.availableForSale
-            ? "Comprar"
-            : "Comprar"}
+          {buyButtonLabel}
         </Button>
       </div>
 
@@ -508,11 +511,7 @@ export function ProductForm({ product }: ProductFormProps) {
               size="lg"
               data-clarity-label="Agregar producto al carrito (fijo)"
             >
-              {loadingButton === "add"
-                ? "Añadiendo..."
-                : selectedVariant?.availableForSale
-                ? "Añadir"
-                : "Añadir"}
+              {addButtonLabel}
             </Button>
             <div className="w-full flex flex-col items-end gap-2">
               <p className="body-01-semibold text-text-primary-default">
