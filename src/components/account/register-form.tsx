@@ -49,6 +49,10 @@ export default function RegisterForm() {
   const [cityTouched, setCityTouched] = useState(false);
   const [zipTouched, setZipTouched] = useState(false);
   const [countryTouched, setCountryTouched] = useState(false);
+  const numericPhone = phone.replace(/\D/g, "");
+  const phoneWithoutCountryPrefix = numericPhone.startsWith("54")
+    ? numericPhone.slice(2)
+    : numericPhone;
   const isFirstNameValid = firstName.trim().length >= 3;
   const firstNameStatus = !firstNameTouched
     ? null
@@ -67,10 +71,10 @@ export default function RegisterForm() {
     ? "valid"
     : "invalid";
 
-  const isPhoneValid = /^\d{10,}$/.test(phone);
+  const isPhoneValid = phoneWithoutCountryPrefix.length >= 10;
   const phoneStatus = !phoneTouched
     ? null
-    : phone.length === 0
+    : numericPhone.length === 0
     ? "empty"
     : isPhoneValid
     ? "valid"

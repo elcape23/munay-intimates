@@ -3,6 +3,7 @@
 "use client";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FireIcon } from "@heroicons/react/24/outline";
 import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
 import { COLOR_MAP } from "@/lib/color-map";
@@ -503,6 +504,7 @@ export function ProductForm({ product }: ProductFormProps) {
     !isVariantAvailable || loadingButton === "add" || quantity < 1;
   const isBuyButtonDisabled =
     !isVariantAvailable || loadingButton === "buy" || quantity < 1;
+  const isLastUnitAvailable = isVariantAvailable && availableQuantity === 1;
 
   const addButtonLabel =
     loadingButton === "add"
@@ -532,6 +534,12 @@ export function ProductForm({ product }: ProductFormProps) {
     <div className="space-y-6">
       {/* Selectores de variantes */}
       <div className="space-y-4">
+        {isLastUnitAvailable && (
+          <div className="flex items-center gap-2 bg-background-surface-warning-default px-4 py-2 text-text-warning-default">
+            <FireIcon className="h-5 w-5" aria-hidden="true" />
+            <span className="body-02-semibold">¡Última unidad disponible!</span>
+          </div>
+        )}
         {sizeVariantOptions.map((option) => renderVariantOption(option))}
         {colorOption && renderVariantOption(colorOption)}
         {/* Cantidad */}
@@ -602,6 +610,7 @@ export function ProductForm({ product }: ProductFormProps) {
           )}
         </div>
       </div>
+
       {/* Botones de acción */}
       <div ref={buttonContainerRef} className="flex flex-row gap-4">
         <Button
