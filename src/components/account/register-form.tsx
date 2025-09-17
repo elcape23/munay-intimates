@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
+import { isValidPhoneNumber, sanitizePhoneInput } from "@/lib/phone";
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -68,7 +69,7 @@ export default function RegisterForm() {
     ? "valid"
     : "invalid";
 
-  const isPhoneValid = /^\d{10,}$/.test(phone);
+  const isPhoneValid = isValidPhoneNumber(phone);
   const phoneStatus = !phoneTouched
     ? null
     : phone.length === 0
@@ -327,7 +328,7 @@ export default function RegisterForm() {
             required
             value={phone}
             onChange={(e) => {
-              const sanitizedValue = e.target.value.replace(/[^0-9]/g, "");
+              const sanitizedValue = sanitizePhoneInput(e.target.value);
               handleInputChange(setPhone, sanitizedValue, setPhoneTouched);
               setPhoneTaken(false);
             }}

@@ -13,6 +13,7 @@ import {
   CustomerAccessToken,
 } from "@/lib/shopify";
 import { useFavoritesStore } from "./favorites-store";
+import { normalizePhoneNumber } from "@/lib/phone";
 
 // Definimos la forma del estado de autenticación
 interface AuthState {
@@ -128,10 +129,7 @@ export const useAuthStore = create(
             useAsBilling,
             ...customerInput
           } = input;
-          const normalizedPhone =
-            typeof customerInput.phone === "string"
-              ? customerInput.phone.replace(/[^0-9]/g, "")
-              : undefined;
+          const normalizedPhone = normalizePhoneNumber(customerInput.phone);
           const shopifyInput = {
             ...customerInput,
             ...(normalizedPhone ? { phone: normalizedPhone } : {}),
