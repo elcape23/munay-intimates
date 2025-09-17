@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 
 interface AddressData {
   formatted_address: string;
+  address_line1: string;
   lat: number;
   lng: number;
   place_id: string;
@@ -61,8 +62,18 @@ export default function AddressAutocomplete({
             const comps = result.address_components;
             const get = (type: string) =>
               comps.find((c: any) => c.types.includes(type))?.long_name || "";
+            const streetNumber = get("street_number");
+            const route = get("route");
+            const premise = get("premise");
+            const primaryAddress = [route || premise, streetNumber]
+              .filter(Boolean)
+              .join(" ")
+              .trim();
+            const addressLine1 =
+              primaryAddress || result.formatted_address.split(",")[0] || "";
             onSelect({
               formatted_address: result.formatted_address,
+              address_line1: addressLine1,
               lat: result.geometry.location.lat,
               lng: result.geometry.location.lng,
               place_id: result.place_id,

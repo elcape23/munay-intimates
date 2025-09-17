@@ -570,7 +570,10 @@ export default function RegisterForm() {
                 : ""
             )}
             onSelect={(data) => {
-              handleInputChange(setAddress1, data.formatted_address);
+              handleInputChange(
+                setAddress1,
+                data.address_line1 || data.formatted_address
+              );
               setProvince(data.province);
               setCity(data.city);
               setZip(data.zip);
