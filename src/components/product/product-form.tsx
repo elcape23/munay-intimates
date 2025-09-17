@@ -544,11 +544,11 @@ export function ProductForm({ product }: ProductFormProps) {
               {availableQuantity ?? "—"}
             </span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <Button
               onClick={handleDecreaseQuantity}
               disabled={!canDecreaseQuantity}
-              className="w-8 h-8 rounded-full body-01-regular leading-none"
+              className="w-10 h-10 heading-05-regular leading-none"
               variant="ghost"
               size="icon"
               aria-label="Disminuir cantidad"
@@ -562,7 +562,7 @@ export function ProductForm({ product }: ProductFormProps) {
             <Button
               onClick={handleIncreaseQuantity}
               disabled={!canIncreaseQuantity}
-              className="w-8 h-8 rounded-full body-01-regular leading-none"
+              className="w-10 h-10 heading-05-regular leading-none"
               variant="ghost"
               size="icon"
               aria-label="Aumentar cantidad"
