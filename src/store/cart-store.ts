@@ -18,7 +18,7 @@ interface CartState {
   /** Identificador incremental para las actualizaciones de cantidad */
   updateVersion: number;
   fetchCart: () => Promise<void>;
-  addItemToCart: (variantId: string) => Promise<void>;
+  addItemToCart: (variantId: string, quantity?: number) => Promise<void>;
   removeItem: (lineId: string) => Promise<void>;
   updateQuantity: (lineId: string, quantity: number) => Promise<void>;
   /** Vacía el carrito y elimina su ID del localStorage */
@@ -73,7 +73,7 @@ export const useCartStore = create<CartState>((set, get) => ({
    * Añade un item al carrito.
    * @param variantId El ID de la variante del producto a añadir.
    */
-  addItemToCart: async (variantId: string) => {
+  addItemToCart: async (variantId: string, quantity = 1) => {
     let cartId = get().cart?.id;
     set({ isLoading: true, error: null });
 
@@ -97,7 +97,7 @@ export const useCartStore = create<CartState>((set, get) => ({
     }
 
     try {
-      const updatedCart = await addToCart(cartId, variantId, 1);
+      const updatedCart = await addToCart(cartId, variantId, quantity);
       set({ cart: updatedCart, isLoading: false });
     } catch (e) {
       const errorMessage =

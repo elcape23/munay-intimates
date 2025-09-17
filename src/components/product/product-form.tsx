@@ -14,6 +14,7 @@ import { trackClarityEvent } from "@/lib/clarity";
 type ProductFormProps = {
   product: ShopifyProduct;
 };
+type ProductOption = ShopifyProduct["options"][number];
 const formatSizeLabel = (value: string) => {
   const normalized = value
     .normalize("NFD")
@@ -31,6 +32,16 @@ const isOneSizeValue = (value: string) => {
     normalized === "talla unica" ||
     normalized === "talle unico" ||
     normalized === "tu"
+  );
+};
+
+const shouldExcludeOption = (name: string) => {
+  const normalized = name.toLowerCase();
+  return (
+    normalized === "tejido" ||
+    normalized === "estacion" ||
+    normalized === "estación" ||
+    normalized === "season"
   );
 };
 
@@ -108,6 +119,7 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const buttonContainerRef = useRef<HTMLDivElement | null>(null);
   const [showSticky, setShowSticky] = useState(false);
+  const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -141,6 +153,45 @@ export function ProductForm({ product }: ProductFormProps) {
     )?.node;
   }, [selectedOptions, product.variants?.edges]);
 
+  useEffect(() => {
+    if (!selectedVariant) {
+      setQuantity(0);
+      return;
+    }
+    const available = selectedVariant.quantityAvailable;
+    setQuantity((prev) => {
+      if (available === null || available === undefined) {
+        return prev;
+      }
+      if (available <= 0) {
+        return 0;
+      }
+      return Math.min(prev, available);
+    });
+  }, [selectedVariant]);
+
+  const availableQuantity = selectedVariant?.quantityAvailable ?? null;
+  const canIncreaseQuantity =
+    availableQuantity === null ? true : quantity < availableQuantity;
+  const canDecreaseQuantity = quantity > 0;
+
+  const handleDecreaseQuantity = () => {
+    if (!canDecreaseQuantity) return;
+    setQuantity((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleIncreaseQuantity = () => {
+    if (!selectedVariant || !selectedVariant.availableForSale) return;
+    const available = selectedVariant.quantityAvailable;
+    if (available !== undefined && available !== null) {
+      if (available <= 0 || quantity >= available) {
+        toast({ title: "No hay más stock disponible." });
+        return;
+      }
+    }
+    setQuantity((prev) => prev + 1);
+  };
+
   const handleOptionChange = (optionName: string, value: string) => {
     setSelectedOptions((prev) => ({
       ...prev,
@@ -162,9 +213,25 @@ export function ProductForm({ product }: ProductFormProps) {
       return;
     }
 
+    if (quantity < 1) {
+      toast({ title: "Seleccioná al menos una unidad." });
+      return;
+    }
+
+    if (
+      selectedVariant.quantityAvailable !== null &&
+      selectedVariant.quantityAvailable !== undefined &&
+      quantity > selectedVariant.quantityAvailable
+    ) {
+      toast({
+        title: `Solo hay ${selectedVariant.quantityAvailable} unidades disponibles.`,
+      });
+      return;
+    }
+
     try {
       setLoadingButton("add");
-      await addItemToCart(selectedVariant.id);
+      await addItemToCart(selectedVariant.id, quantity);
       trackAddToCart({
         item_name: product.title,
         item_id: selectedVariant.sku || selectedVariant.id,
@@ -177,6 +244,7 @@ export function ProductForm({ product }: ProductFormProps) {
         variant_id: selectedVariant.id,
         variant_title: selectedVariant.title,
         price: parseFloat(selectedVariant.price.amount),
+        quantity,
       });
       toast({ title: "¡Producto añadido al carrito!" });
     } catch (error) {
@@ -192,6 +260,22 @@ export function ProductForm({ product }: ProductFormProps) {
       return;
     }
 
+    if (quantity < 1) {
+      toast({ title: "Seleccioná al menos una unidad." });
+      return;
+    }
+
+    if (
+      selectedVariant.quantityAvailable !== null &&
+      selectedVariant.quantityAvailable !== undefined &&
+      quantity > selectedVariant.quantityAvailable
+    ) {
+      toast({
+        title: `Solo hay ${selectedVariant.quantityAvailable} unidades disponibles.`,
+      });
+      return;
+    }
+
     if (
       !selectedVariant.availableForSale ||
       (selectedVariant.quantityAvailable ?? 0) <= 0
@@ -202,12 +286,12 @@ export function ProductForm({ product }: ProductFormProps) {
 
     try {
       setLoadingButton("buy");
-      await addItemToCart(selectedVariant.id);
+      await addItemToCart(selectedVariant.id, quantity);
       trackAddToCart({
         item_name: product.title,
         item_id: selectedVariant.sku || selectedVariant.id,
         price: parseFloat(selectedVariant.price.amount),
-        quantity: 1,
+        quantity,
       });
       trackClarityEvent("add_to_cart", {
         product_handle: product.handle,
@@ -215,6 +299,7 @@ export function ProductForm({ product }: ProductFormProps) {
         variant_id: selectedVariant.id,
         variant_title: selectedVariant.title,
         price: parseFloat(selectedVariant.price.amount),
+        quantity,
       });
       const { cart } = useCartStore.getState();
       if (!cart?.checkoutUrl) {
@@ -229,13 +314,164 @@ export function ProductForm({ product }: ProductFormProps) {
     }
   };
 
+  const renderVariantOption = (option: ProductOption) => {
+    const selectedValue = selectedOptions[option.name];
+    const normalizedName = option.name.toLowerCase();
+
+    if (normalizedName === "color") {
+      return (
+        <div
+          key={option.id}
+          className="flex flex-row justify-between items-center"
+        >
+          <div className="flex items-center gap-2">
+            <label className="body-01-medium text-text-primary-default">
+              {option.name}
+            </label>
+            <span className="body-01-regular text-text-secondary-default">
+              {selectedValue}
+            </span>
+          </div>
+          <div className="flex gap-3 mt-2">
+            {option.values.map((value) => {
+              const hex = COLOR_MAP[value] ?? value;
+              const isActive = selectedValue === value;
+              const isBlack = value.toLowerCase() === "negro";
+              const isWhite = value.toLowerCase() === "blanco";
+              const activeBorderClass = isBlack
+                ? "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default"
+                : "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default";
+              return (
+                <Button
+                  key={value}
+                  aria-label={value}
+                  onClick={() => handleOptionChange(option.name, value)}
+                  className={`w-6 h-6 rounded-full border-[1.5px] ${
+                    isActive ? `p-2 ${activeBorderClass}` : "p-2"
+                  } ${
+                    isWhite
+                      ? "border-border-tertiary-default"
+                      : "border-transparent"
+                  }`}
+                  style={{ backgroundColor: hex }}
+                  variant="ghost"
+                  size="icon"
+                  data-clarity-label={`Seleccionar color ${value}`}
+                />
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    if (["talle", "talla", "size"].includes(normalizedName)) {
+      return (
+        <div
+          key={option.id}
+          className="flex flex-row justify-between items-center"
+        >
+          <div className="flex items-center gap-2">
+            <label className="body-01-medium text-text-primary-default">
+              {option.name}
+            </label>
+            <span className="body-01-regular text-text-secondary-default">
+              {isOneSizeProduct
+                ? "Talle único"
+                : formatSizeLabel(selectedValue)}{" "}
+            </span>
+          </div>
+          <div className="flex flex-row gap-2 items-center">
+            {option.values.map((value) => {
+              const isActive = selectedValue === value;
+              return (
+                <Button
+                  key={value}
+                  onClick={() => handleOptionChange(option.name, value)}
+                  className={`relative p-1 transition-colors ${
+                    isActive
+                      ? "body-01-semibold text-text-primary-default"
+                      : "text-text-secondary-default hover:bg-gray-100"
+                  }`}
+                  variant="ghost"
+                  size="icon"
+                  data-clarity-label={`Seleccionar ${
+                    option.name
+                  } ${formatSizeLabel(value)}`}
+                >
+                  {formatSizeLabel(value)}
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.span
+                        className="absolute left-0 bottom-0 h-[2px] bg-border-primary-default"
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        exit={{ width: 0 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    )}
+                  </AnimatePresence>
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        key={option.id}
+        className="flex flex-row gap-10 justify-between items-center"
+      >
+        <label className="block body-01-medium text-text-primary-default">
+          {option.name}
+        </label>
+        <div className="flex flex-row items-center">
+          {option.values.map((value) => {
+            const isActive = selectedValue === value;
+            return (
+              <Button
+                key={value}
+                onClick={() => handleOptionChange(option.name, value)}
+                className={`m-2 body-01-semibold transition-colors
+                        ${
+                          isActive
+                            ? "text-text-primary-default border-b-[2px] border-border-primary-default"
+                            : "body-01-medium text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
+                        }`}
+                variant="ghost"
+                size="icon"
+                data-clarity-label={`Seleccionar ${option.name} ${value}`}
+              >
+                {value}
+              </Button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const filteredOptions = displayOptions.filter(
+    (option) => !shouldExcludeOption(option.name)
+  );
+  const colorOption = filteredOptions.find(
+    (option) => option.name.toLowerCase() === "color"
+  );
+  const variantOptions = filteredOptions.filter(
+    (option) => option.name.toLowerCase() !== "color"
+  );
+
   const isVariantAvailable =
     !!selectedVariant &&
     selectedVariant.availableForSale &&
     (selectedVariant.quantityAvailable ?? 0) > 0;
 
-  const isAddButtonDisabled = !isVariantAvailable || loadingButton === "add";
-  const isBuyButtonDisabled = !isVariantAvailable || loadingButton === "buy";
+  const isAddButtonDisabled =
+    !isVariantAvailable || loadingButton === "add" || quantity < 1;
+  const isBuyButtonDisabled =
+    !isVariantAvailable || loadingButton === "buy" || quantity < 1;
 
   const addButtonLabel =
     loadingButton === "add"
@@ -265,166 +501,50 @@ export function ProductForm({ product }: ProductFormProps) {
     <div className="space-y-6">
       {/* Selectores de variantes */}
       <div className="space-y-4">
-        {displayOptions
-          .filter((option) => {
-            const name = option.name.toLowerCase();
-            return (
-              name !== "tejido" &&
-              name !== "estacion" &&
-              name !== "estación" &&
-              name !== "season"
-            );
-          })
-          .map((option) => {
-            const selectedValue = selectedOptions[option.name];
-
-            // ── PERSONALIZADO para “Color”
-            if (option.name.toLowerCase() === "color") {
-              return (
-                <div
-                  key={option.id}
-                  className="flex flex-row justify-between items-center"
-                >
-                  <div className="flex items-center gap-2">
-                    <label className="body-01-medium text-text-primary-default">
-                      {option.name}
-                    </label>
-                    <span className="body-01-regular text-text-secondary-default">
-                      {selectedValue}
-                    </span>
-                  </div>
-                  <div className="flex gap-3 mt-2">
-                    {option.values.map((value) => {
-                      const hex = COLOR_MAP[value] ?? value;
-                      const isActive = selectedValue === value;
-                      const isBlack = value.toLowerCase() === "negro";
-                      const isWhite = value.toLowerCase() === "blanco";
-                      const activeBorderClass = isBlack
-                        ? "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default"
-                        : "ring-[1.5px] ring-offset-[0.5px] ring-border-primary-default";
-                      return (
-                        <Button
-                          key={value}
-                          aria-label={value}
-                          onClick={() => handleOptionChange(option.name, value)}
-                          className={`w-6 h-6 rounded-full border-[1.5px] ${
-                            isActive ? `p-2 ${activeBorderClass}` : "p-2"
-                          } ${
-                            isWhite
-                              ? "border-border-tertiary-default"
-                              : "border-transparent"
-                          }`}
-                          style={{ backgroundColor: hex }}
-                          variant="ghost"
-                          size="icon"
-                          data-clarity-label={`Seleccionar color ${value}`}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            }
-
-            // Caso “Talle”: mostrar el valor activo junto al label
-            if (
-              ["talle", "talla", "size"].includes(option.name.toLowerCase())
-            ) {
-              return (
-                <div
-                  key={option.id}
-                  className="flex flex-row justify-between items-center"
-                >
-                  <div className="flex items-center gap-2">
-                    <label className="body-01-medium text-text-primary-default">
-                      {option.name}
-                    </label>
-                    <span className="body-01-regular text-text-secondary-default">
-                      {isOneSizeProduct
-                        ? "Talle único"
-                        : formatSizeLabel(selectedValue)}{" "}
-                    </span>
-                  </div>
-                  <div className="flex flex-row gap-2 items-center">
-                    {option.values.map((value) => {
-                      const isActive = selectedValue === value;
-                      return (
-                        <Button
-                          key={value}
-                          onClick={() => handleOptionChange(option.name, value)}
-                          className={`relative p-1 transition-colors ${
-                            isActive
-                              ? "body-01-semibold text-text-primary-default"
-                              : "text-text-secondary-default hover:bg-gray-100"
-                          }`}
-                          variant="ghost"
-                          size="icon"
-                          data-clarity-label={`Seleccionar ${
-                            option.name
-                          } ${formatSizeLabel(value)}`}
-                        >
-                          {formatSizeLabel(value)}
-                          <AnimatePresence>
-                            {isActive && (
-                              <motion.span
-                                className="absolute left-0 bottom-0 h-[2px] bg-border-primary-default"
-                                initial={{ width: 0 }}
-                                animate={{ width: "100%" }}
-                                exit={{ width: 0 }}
-                                transition={{ duration: 0.3 }}
-                              />
-                            )}
-                          </AnimatePresence>
-                        </Button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            }
-
-            // Resto de opciones (incluyendo “Color”)
-            return (
-              <div
-                key={option.id}
-                className="flex flex-row gap-10 justify-between items-center"
-              >
-                <label className="block body-01-medium text-text-primary-default">
-                  {option.name}
-                </label>
-                <div className="flex flex-row items-center">
-                  {option.values.map((value) => {
-                    const isActive = selectedOptions[option.name] === value;
-                    return (
-                      <Button
-                        key={value}
-                        onClick={() => handleOptionChange(option.name, value)}
-                        className={`m-2 body-01-semibold transition-colors 
-                        ${
-                          isActive
-                            ? "text-text-primary-default border-b-[2px] border-border-primary-default"
-                            : "body-01-medium text-text-secondary-default border-b-[2px] border-transparent hover:bg-gray-100"
-                        }`}
-                        variant="ghost"
-                        size="icon"
-                        data-clarity-label={`Seleccionar ${option.name} ${value}`}
-                      >
-                        {option.name.toLowerCase() === "color" && (
-                          <span
-                            className="inline-block w-4 h-4 rounded-full mr-1 border"
-                            style={{
-                              backgroundColor: COLOR_MAP[value] ?? value,
-                            }}
-                          />
-                        )}
-                        {value}
-                      </Button>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+        {variantOptions.map((option) => renderVariantOption(option))}
+        {/* Cantidad */}
+        <div className="flex flex-row justify-between items-center">
+          <div className="flex items-center gap-2">
+            <label className="body-01-medium text-text-primary-default">
+              Cantidad
+            </label>
+            <span className="body-01-regular text-text-secondary-default">
+              {availableQuantity ?? "—"}
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button
+              onClick={handleDecreaseQuantity}
+              disabled={!canDecreaseQuantity}
+              className="w-8 h-8 rounded-full body-01-regular leading-none"
+              variant="ghost"
+              size="icon"
+              aria-label="Disminuir cantidad"
+              data-clarity-label="Disminuir cantidad"
+            >
+              -
+            </Button>
+            <span className="body-01-regular w-6 text-center text-text-primary-default">
+              {quantity}
+            </span>
+            <Button
+              onClick={handleIncreaseQuantity}
+              disabled={
+                !selectedVariant ||
+                !selectedVariant.availableForSale ||
+                !canIncreaseQuantity
+              }
+              className="w-8 h-8 rounded-full body-01-regular leading-none"
+              variant="ghost"
+              size="icon"
+              aria-label="Aumentar cantidad"
+              data-clarity-label="Aumentar cantidad"
+            >
+              +
+            </Button>
+          </div>
+        </div>
+        {colorOption && renderVariantOption(colorOption)}
       </div>
       {/* Precio */}
       <div className="flex flex-row justify-between items-center">
@@ -448,7 +568,7 @@ export function ProductForm({ product }: ProductFormProps) {
                   style: "currency",
                   currency: selectedVariant.price.currencyCode,
                   maximumFractionDigits: 0,
-                }).format(parseFloat(selectedVariant.price.amount))}
+                }).format(parseFloat(selectedVariant.price.amount))}{" "}
               </span>
             </>
           )}
