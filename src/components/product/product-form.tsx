@@ -505,6 +505,12 @@ export function ProductForm({ product }: ProductFormProps) {
   const isBuyButtonDisabled =
     !isVariantAvailable || loadingButton === "buy" || quantity < 1;
   const isLastUnitAvailable = isVariantAvailable && availableQuantity === 1;
+  const availabilityLabel =
+    typeof availableQuantity === "number"
+      ? `${availableQuantity} ${
+          availableQuantity === 1 ? "Disponible" : "Disponibles"
+        }`
+      : "—";
 
   const addButtonLabel =
     loadingButton === "add"
@@ -549,7 +555,7 @@ export function ProductForm({ product }: ProductFormProps) {
               Cantidad
             </label>
             <span className="body-01-regular text-text-secondary-default">
-              {availableQuantity ?? "—"}
+              {availabilityLabel}{" "}
             </span>
           </div>
           <div className="flex items-center gap-2">
