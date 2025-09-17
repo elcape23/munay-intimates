@@ -119,8 +119,17 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const buttonContainerRef = useRef<HTMLDivElement | null>(null);
   const [showSticky, setShowSticky] = useState(false);
-  const [quantity, setQuantity] = useState(0);
+  const initialQuantity = useMemo(() => {
+    if (!firstAvailableVariant) return 0;
 
+    const available = firstAvailableVariant.quantityAvailable;
+    const hasStock =
+      firstAvailableVariant.availableForSale &&
+      (available === null || available === undefined || available > 0);
+
+    return hasStock ? 1 : 0;
+  }, [firstAvailableVariant]);
+  const [quantity, setQuantity] = useState(initialQuantity);
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -151,33 +160,50 @@ export function ProductForm({ product }: ProductFormProps) {
         node.title.includes(value)
       )
     )?.node;
-  }, [selectedOptions, product.variants?.edges]);
-
+  }, [selectedOptions, product.variants]);
   useEffect(() => {
-    if (!selectedVariant) {
+    if (!selectedVariant || !selectedVariant.availableForSale) {
       setQuantity(0);
       return;
     }
+
     const available = selectedVariant.quantityAvailable;
+
+    if (available === null || available === undefined) {
+      setQuantity((prev) => (prev < 1 ? 1 : prev));
+      return;
+    }
+
+    if (available <= 0) {
+      setQuantity(0);
+      return;
+    }
+
     setQuantity((prev) => {
-      if (available === null || available === undefined) {
-        return prev;
-      }
-      if (available <= 0) {
-        return 0;
-      }
-      return Math.min(prev, available);
+      const ensuredMinimum = prev < 1 ? 1 : prev;
+      return Math.min(ensuredMinimum, available);
     });
   }, [selectedVariant]);
 
-  const availableQuantity = selectedVariant?.quantityAvailable ?? null;
+  const rawAvailableQuantity = selectedVariant?.quantityAvailable;
+  const availableQuantity =
+    rawAvailableQuantity === undefined ? null : rawAvailableQuantity;
+  const hasUnlimitedStock =
+    rawAvailableQuantity === null || rawAvailableQuantity === undefined;
+  const isVariantAvailable =
+    !!selectedVariant &&
+    selectedVariant.availableForSale &&
+    (hasUnlimitedStock || (rawAvailableQuantity ?? 0) > 0);
+  const minimumQuantity = isVariantAvailable ? 1 : 0;
   const canIncreaseQuantity =
-    availableQuantity === null ? true : quantity < availableQuantity;
-  const canDecreaseQuantity = quantity > 0;
+    !!selectedVariant &&
+    selectedVariant.availableForSale &&
+    (hasUnlimitedStock || quantity < (rawAvailableQuantity ?? 0));
+  const canDecreaseQuantity = quantity > minimumQuantity;
 
   const handleDecreaseQuantity = () => {
     if (!canDecreaseQuantity) return;
-    setQuantity((prev) => Math.max(prev - 1, 0));
+    setQuantity((prev) => Math.max(prev - 1, minimumQuantity));
   };
 
   const handleIncreaseQuantity = () => {
@@ -189,7 +215,10 @@ export function ProductForm({ product }: ProductFormProps) {
         return;
       }
     }
-    setQuantity((prev) => prev + 1);
+    setQuantity((prev) => {
+      const next = prev + 1;
+      return next < 1 ? 1 : next;
+    });
   };
 
   const handleOptionChange = (optionName: string, value: string) => {
@@ -463,10 +492,12 @@ export function ProductForm({ product }: ProductFormProps) {
     (option) => option.name.toLowerCase() !== "color"
   );
 
-  const isVariantAvailable =
-    !!selectedVariant &&
-    selectedVariant.availableForSale &&
-    (selectedVariant.quantityAvailable ?? 0) > 0;
+  const sizeVariantOptions = variantOptions.filter((option) =>
+    ["talle", "talla", "size"].includes(option.name.toLowerCase())
+  );
+  const otherVariantOptions = variantOptions.filter(
+    (option) => !["talle", "talla", "size"].includes(option.name.toLowerCase())
+  );
 
   const isAddButtonDisabled =
     !isVariantAvailable || loadingButton === "add" || quantity < 1;
@@ -501,7 +532,8 @@ export function ProductForm({ product }: ProductFormProps) {
     <div className="space-y-6">
       {/* Selectores de variantes */}
       <div className="space-y-4">
-        {variantOptions.map((option) => renderVariantOption(option))}
+        {sizeVariantOptions.map((option) => renderVariantOption(option))}
+        {colorOption && renderVariantOption(colorOption)}
         {/* Cantidad */}
         <div className="flex flex-row justify-between items-center">
           <div className="flex items-center gap-2">
@@ -529,11 +561,7 @@ export function ProductForm({ product }: ProductFormProps) {
             </span>
             <Button
               onClick={handleIncreaseQuantity}
-              disabled={
-                !selectedVariant ||
-                !selectedVariant.availableForSale ||
-                !canIncreaseQuantity
-              }
+              disabled={!canIncreaseQuantity}
               className="w-8 h-8 rounded-full body-01-regular leading-none"
               variant="ghost"
               size="icon"
@@ -544,7 +572,7 @@ export function ProductForm({ product }: ProductFormProps) {
             </Button>
           </div>
         </div>
-        {colorOption && renderVariantOption(colorOption)}
+        {otherVariantOptions.map((option) => renderVariantOption(option))}{" "}
       </div>
       {/* Precio */}
       <div className="flex flex-row justify-between items-center">
