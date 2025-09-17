@@ -43,6 +43,55 @@ const shopifyApiEndpoint = `https://${storeDomain}/api/2024-04/graphql.json`;
 
 const defaultRevalidate = 60; // seconds
 
+const SHOPIFY_ERROR_FALLBACK =
+  "Tuvimos un inconveniente al comunicarnos con Shopify. Intentá nuevamente en unos minutos.";
+
+function extractShopifyErrorMessage(raw: unknown): string {
+  if (!raw) return "";
+  if (typeof raw === "string") return raw;
+  if (raw instanceof Error && raw.message) return raw.message;
+  if (typeof raw === "object" && "message" in raw) {
+    const maybeMessage = (raw as { message?: unknown }).message;
+    if (typeof maybeMessage === "string") {
+      return maybeMessage;
+    }
+  }
+  try {
+    return JSON.stringify(raw);
+  } catch {
+    return String(raw);
+  }
+}
+
+function normalizeShopifyErrorMessage(raw: unknown): string {
+  const extracted = extractShopifyErrorMessage(raw);
+  const message = extracted.replace(/^Shopify GraphQL failed:\s*/i, "").trim();
+  if (!message) return SHOPIFY_ERROR_FALLBACK;
+
+  const lowerMessage = message.toLowerCase();
+  if (
+    lowerMessage.includes("se superó el límite de creación de pedidos") ||
+    lowerMessage.includes("checkout creation limit") ||
+    lowerMessage.includes("order creation limit") ||
+    (lowerMessage.includes("checkout creation") &&
+      (lowerMessage.includes("limit") || lowerMessage.includes("thrott")))
+  ) {
+    return "Se alcanzó el límite de creación de pedidos en Shopify. Esperá unos minutos e intentá nuevamente.";
+  }
+
+  return message;
+}
+
+function buildShopifyError(raw: unknown): Error {
+  const normalizedMessage = normalizeShopifyErrorMessage(raw);
+  const error = new Error(normalizedMessage || SHOPIFY_ERROR_FALLBACK);
+  const original = extractShopifyErrorMessage(raw);
+  if (original && original !== normalizedMessage) {
+    (error as any).details = original;
+  }
+  return error;
+}
+
 // --- Definiciones de Tipos de Datos (Completas) ---
 export type ShopifyImage = { url: string; altText: string | null };
 export type ShopifyPrice = { amount: string; currencyCode: string };
@@ -236,13 +285,13 @@ export async function shopifyFetch<T>({
       const message = Array.isArray(json.errors)
         ? json.errors.map((e: any) => e.message).join("; ")
         : "Unknown error";
-      throw new Error(`Shopify GraphQL failed: ${message}`);
+      throw buildShopifyError(message);
     }
 
     return json.data as T;
   } catch (error: any) {
     console.error("🚨 Shopify fetch error:", error);
-    throw new Error(`Shopify GraphQL failed: ${error.message}`);
+    throw buildShopifyError(error);
   }
 }
 
