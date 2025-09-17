@@ -21,6 +21,8 @@ interface AuthState {
   isLoggedIn: boolean;
   isLoading: boolean;
   error: string | null;
+  errorCode: string | null;
+  errorField: string | null;
   login: (input: any) => Promise<boolean>;
   signUp: (input: {
     firstName: string;
@@ -50,10 +52,17 @@ export const useAuthStore = create(
       isLoggedIn: false,
       isLoading: true,
       error: null,
+      errorCode: null,
+      errorField: null,
 
       // Acción para iniciar sesión (¡LÓGICA CORREGIDA Y FINAL!)
       login: async (input) => {
-        set({ isLoading: true, error: null });
+        set({
+          isLoading: true,
+          error: null,
+          errorCode: null,
+          errorField: null,
+        });
         try {
           const response = await customerAccessTokenCreate(input);
 
@@ -63,6 +72,8 @@ export const useAuthStore = create(
               customerAccessToken: response.customerAccessToken,
               isLoggedIn: true, // Marcamos como logueado inmediatamente
               error: null,
+              errorCode: null,
+              errorField: null,
             });
             // Al iniciar sesión limpiamos favoritos en localStorage para
             // evitar que se mezclen con los de otra cuenta.
@@ -81,7 +92,7 @@ export const useAuthStore = create(
           if (userError?.code === "UNIDENTIFIED_CUSTOMER") {
             errorMessage = "Este email no está asociado a una cuenta";
           }
-          set({ error: errorMessage });
+          set({ error: errorMessage, errorCode: null, errorField: null });
           return false;
         } catch (e: any) {
           let errorMessage =
@@ -90,7 +101,7 @@ export const useAuthStore = create(
             errorMessage =
               "El correo electrónico ingresado no está asociado a ninguna cuenta.";
           }
-          set({ error: errorMessage });
+          set({ error: errorMessage, errorCode: null, errorField: null });
           return false;
         } finally {
           set({ isLoading: false });
@@ -99,7 +110,12 @@ export const useAuthStore = create(
 
       // Acción para registrar una nueva cuenta
       signUp: async (input) => {
-        set({ isLoading: true, error: null });
+        set({
+          isLoading: true,
+          error: null,
+          errorCode: null,
+          errorField: null,
+        });
         try {
           const {
             subscribeToEmails,
@@ -112,8 +128,16 @@ export const useAuthStore = create(
             useAsBilling,
             ...customerInput
           } = input;
-          const createResponse = await customerCreate({
+          const normalizedPhone =
+            typeof customerInput.phone === "string"
+              ? customerInput.phone.replace(/[^0-9]/g, "")
+              : undefined;
+          const shopifyInput = {
             ...customerInput,
+            ...(normalizedPhone ? { phone: normalizedPhone } : {}),
+          };
+          const createResponse = await customerCreate({
+            ...shopifyInput,
             acceptsMarketing: subscribeToEmails,
           });
 
@@ -147,6 +171,8 @@ export const useAuthStore = create(
                 customer: createResponse.customer,
                 isLoggedIn: true,
                 error: null,
+                errorCode: null,
+                errorField: null,
               });
               // Al crear una nueva cuenta, reiniciamos los favoritos para que
               // no se mezclen con los de un usuario previo.
@@ -158,22 +184,31 @@ export const useAuthStore = create(
             const tokenError =
               tokenResponse.customerUserErrors?.[0]?.message ||
               "El email o la contraseña son incorrectos.";
-            set({ error: tokenError });
+            set({ error: tokenError, errorCode: null, errorField: null });
             return false;
           }
 
           const userError = createResponse.customerUserErrors?.[0];
           let errorMessage =
             userError?.message || "No se pudo crear la cuenta.";
+          const errorCode = userError?.code ?? null;
+          const fieldPath = Array.isArray(userError?.field)
+            ? userError?.field.filter((segment: any) => segment !== "input")
+            : null;
+          const errorField = fieldPath?.[fieldPath.length - 1] ?? null;
           if (userError?.code === "TAKEN") {
-            errorMessage = "Email ya registrado";
+            if (errorField === "email") {
+              errorMessage = "Email ya registrado";
+            } else if (errorField === "phone") {
+              errorMessage = "Celular ya registrado";
+            }
           }
-          set({ error: errorMessage });
+          set({ error: errorMessage, errorCode, errorField });
           return false;
         } catch (e: any) {
           const errorMessage =
             e instanceof Error ? e.message : "Ocurrió un error desconocido.";
-          set({ error: errorMessage });
+          set({ error: errorMessage, errorCode: null, errorField: null });
           return false;
         } finally {
           set({ isLoading: false });
@@ -197,6 +232,8 @@ export const useAuthStore = create(
           isLoggedIn: false,
           isLoading: false,
           error: null,
+          errorCode: null,
+          errorField: null,
         });
       },
 
@@ -211,7 +248,14 @@ export const useAuthStore = create(
         try {
           const customer = await getCustomer(customerAccessToken.accessToken);
           if (customer) {
-            set({ customer, isLoggedIn: true, isLoading: false, error: null });
+            set({
+              customer,
+              isLoggedIn: true,
+              isLoading: false,
+              error: null,
+              errorCode: null,
+              errorField: null,
+            });
           } else {
             await get().logout();
           }

@@ -37,6 +37,7 @@ export default function RegisterForm() {
   const [useAsBilling, setUseAsBilling] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [emailTaken, setEmailTaken] = useState(false);
+  const [phoneTaken, setPhoneTaken] = useState(false);
   const [subscribeToEmails, setSubscribeToEmails] = useState(true);
   const [firstNameTouched, setFirstNameTouched] = useState(false);
   const [lastNameTouched, setLastNameTouched] = useState(false);
@@ -49,10 +50,6 @@ export default function RegisterForm() {
   const [cityTouched, setCityTouched] = useState(false);
   const [zipTouched, setZipTouched] = useState(false);
   const [countryTouched, setCountryTouched] = useState(false);
-  const numericPhone = phone.replace(/\D/g, "");
-  const phoneWithoutCountryPrefix = numericPhone.startsWith("54")
-    ? numericPhone.slice(2)
-    : numericPhone;
   const isFirstNameValid = firstName.trim().length >= 3;
   const firstNameStatus = !firstNameTouched
     ? null
@@ -71,11 +68,13 @@ export default function RegisterForm() {
     ? "valid"
     : "invalid";
 
-  const isPhoneValid = phoneWithoutCountryPrefix.length >= 10;
+  const isPhoneValid = /^\d{10,}$/.test(phone);
   const phoneStatus = !phoneTouched
     ? null
-    : numericPhone.length === 0
+    : phone.length === 0
     ? "empty"
+    : phoneTaken
+    ? "taken"
     : isPhoneValid
     ? "valid"
     : "invalid";
@@ -165,6 +164,7 @@ export default function RegisterForm() {
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
+    setPhoneTaken(false);
     if (password !== confirmPassword) {
       setError("Las contraseñas no coinciden.");
       return;
@@ -185,10 +185,11 @@ export default function RegisterForm() {
       useAsBilling,
     });
     if (!success) {
-      const message =
-        useAuthStore.getState().error || "No se pudo crear la cuenta.";
+      const { error: storeError, errorField } = useAuthStore.getState();
+      const message = storeError || "No se pudo crear la cuenta.";
       setError(message);
-      setEmailTaken(message.includes("Email ya registrado"));
+      setEmailTaken(errorField === "email");
+      setPhoneTaken(errorField === "phone");
       return;
     }
 
@@ -318,15 +319,17 @@ export default function RegisterForm() {
             autoComplete="tel"
             required
             value={phone}
-            onChange={(e) =>
-              handleInputChange(setPhone, e.target.value, setPhoneTouched)
-            }
+            onChange={(e) => {
+              const sanitizedValue = e.target.value.replace(/[^0-9]/g, "");
+              handleInputChange(setPhone, sanitizedValue, setPhoneTouched);
+              setPhoneTaken(false);
+            }}
             placeholder="Celular"
             className={cn(
               "pr-10",
               phoneStatus === "valid"
                 ? "text-text-success-default"
-                : phoneStatus === "invalid"
+                : phoneStatus === "invalid" || phoneStatus === "taken"
                 ? "text-text-danger-default"
                 : ""
             )}
@@ -334,7 +337,7 @@ export default function RegisterForm() {
           {phoneStatus === "valid" && (
             <CheckCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-success-default" />
           )}
-          {phoneStatus === "invalid" && (
+          {(phoneStatus === "invalid" || phoneStatus === "taken") && (
             <XCircleIcon className="pointer-events-none absolute right-3 top-3 h-4 w-4 -translate-y-1/2 text-icon-danger-default" />
           )}
           <p
@@ -342,7 +345,7 @@ export default function RegisterForm() {
               "px-3 body-03-regular min-h-5",
               !phoneTouched && "invisible",
               phoneTouched &&
-                (phoneStatus === "valid"
+                (phoneStatus === "valid" && !phoneTaken
                   ? "text-text-success-default"
                   : "text-text-danger-default")
             )}
@@ -352,6 +355,8 @@ export default function RegisterForm() {
                 ? "Requerido"
                 : phoneStatus === "valid"
                 ? "Bien hecho!"
+                : phoneStatus === "taken"
+                ? "Celular ya registrado"
                 : "Incorrecto")}
           </p>
         </div>
@@ -795,7 +800,7 @@ export default function RegisterForm() {
       </div>
       <Button
         type="submit"
-        disabled={isLoading || !isFormValid || emailTaken}
+        disabled={isLoading || !isFormValid || emailTaken || phoneTaken}
         className="w-full py-3"
         variant="primary"
         size="lg"
