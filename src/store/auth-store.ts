@@ -196,11 +196,13 @@ export const useAuthStore = create(
             ? userError?.field.filter((segment: any) => segment !== "input")
             : null;
           const errorField = fieldPath?.[fieldPath.length - 1] ?? null;
-          if (userError?.code === "TAKEN") {
-            if (errorField === "email") {
-              errorMessage = "Email ya registrado";
-            } else if (errorField === "phone") {
+          if (errorField === "email" && userError?.code === "TAKEN") {
+            errorMessage = "Email ya registrado";
+          } else if (errorField === "phone") {
+            if (userError?.code === "TAKEN") {
               errorMessage = "Celular ya registrado";
+            } else {
+              errorMessage = "El celular ingresado no es válido.";
             }
           }
           set({ error: errorMessage, errorCode, errorField });

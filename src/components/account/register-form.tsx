@@ -185,11 +185,18 @@ export default function RegisterForm() {
       useAsBilling,
     });
     if (!success) {
-      const { error: storeError, errorField } = useAuthStore.getState();
+      const {
+        error: storeError,
+        errorField,
+        errorCode,
+      } = useAuthStore.getState();
       const message = storeError || "No se pudo crear la cuenta.";
       setError(message);
-      setEmailTaken(errorField === "email");
-      setPhoneTaken(errorField === "phone");
+      setEmailTaken(errorField === "email" && errorCode === "TAKEN");
+      setPhoneTaken(errorField === "phone" && errorCode === "TAKEN");
+      if (errorField === "phone" && errorCode !== "TAKEN") {
+        setPhoneTouched(true);
+      }
       return;
     }
 
