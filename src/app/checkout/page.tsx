@@ -151,26 +151,19 @@ export default function CheckoutOptionsPage() {
       // `router.push` trataría esta URL externa como una ruta interna de
       // Next.js y provocaría un 404. Usamos `window.location.assign` para
       // redirigir al checkout de Shopify correctamente.
+      let checkoutUrl = cart.checkoutUrl;
       if (customerAccessToken) {
         try {
           const updatedCart = await updateCartBuyerIdentity(
             cart.id,
             customerAccessToken.accessToken
           );
-          const redirectUrl = getCheckoutRedirectUrl(updatedCart.checkoutUrl);
-          if (!redirectUrl) {
-            console.error(
-              "No se pudo determinar una URL de checkout válida para el carrito actualizado."
-            );
-            return;
-          }
-          window.location.assign(redirectUrl);
-          return;
+          checkoutUrl = updatedCart.checkoutUrl;
         } catch (e) {
           console.error(e);
         }
       }
-      const redirectUrl = getCheckoutRedirectUrl(updatedCart.checkoutUrl);
+      const redirectUrl = getCheckoutRedirectUrl(checkoutUrl);
       if (!redirectUrl) {
         console.error(
           "No se pudo determinar una URL de checkout válida para el carrito actualizado."
