@@ -96,10 +96,22 @@ export function ProductCarousel({ title, data }: Props) {
           className="
             flex overflow-x-auto overflow-y-hidden
             scroll-smooth snap-x snap-mandatory no-scrollbar
+            gap-2 lg:gap-4
           "
         >
           {data.map((item) => (
-            <div key={item.id} className="flex-shrink-0 w-64 snap-center px-1">
+            <div
+              key={item.id}
+              className="
+                flex-shrink-0 snap-center
+                w-64
+                sm:w-72
+                lg:w-auto
+                lg:basis-[calc((100%-3rem)/4)]
+                lg:max-w-[calc((100%-3rem)/4)]
+              "
+            >
+              {" "}
               <ProductCard {...item} />
             </div>
           ))}
