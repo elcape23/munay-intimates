@@ -58,43 +58,44 @@ export const NoClipSection: React.FC<NoClipSectionProps> = ({
     <motion.section
       ref={sectionRef}
       id="noclip-section"
-      className="py-8 space-y-3 bg-background-primary-default"
+      className="w-full py-8 space-y-4 bg-background-primary-default"
       initial={{ opacity: 0, y: 50 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       {/* Título */}
-      <h2 className="heading-06-medium ml-6">Ritmo de Primavera!</h2>
-
+      <h2 className="heading-06-medium px-6 md:px-36">Ritmo de Primavera!</h2>
       {/* Carousel con slides de imagen y slide de "Ver más" */}
-      <div
-        ref={containerRef}
-        className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar space-x-3 scroll-smooth"
-      >
-        {images.map((src, idx) => (
-          <Link
-            key={idx}
-            href={href ?? "#"}
-            className="snap-start flex-shrink-0 w-[300px] h-[300px] overflow-hidden"
-          >
-            <img
-              src={src}
-              alt={`Invierno Slide ${idx + 1}`}
-              className="w-full h-full object-cover"
-            />
-          </Link>
-        ))}
-
-        {/* Slide de "Ver más" al final */}
-        <Link
-          href={href ?? "#"}
-          className="snap-start flex-shrink-0 inline-flex flex-col px-8 h-75 justify-center cursor-pointer space-y-3"
+      <div className="">
+        <div
+          ref={containerRef}
+          className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar space-x-3 scroll-smooth md:grid md:grid-cols-3 md:gap-6 md:space-x-0 md:overflow-visible md:snap-none"
         >
-          <ArrowLongRightIcon className="w-8 h-8 mt-2 text-icon-primary-default" />
-          <span className="heading-05-medium text-primary-default">
-            Ver más
-          </span>
-        </Link>
+          {images.map((src, idx) => (
+            <Link
+              key={idx}
+              href={href ?? "#"}
+              className="snap-start flex-shrink-0 w-[300px] h-[300px] overflow-hidden md:w-full md:h-auto md:aspect-square md:shrink"
+            >
+              <img
+                src={src}
+                alt={`Invierno Slide ${idx + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </Link>
+          ))}
+
+          {/* Slide de "Ver más" al final */}
+          <Link
+            href={href ?? "#"}
+            className="snap-start flex-shrink-0 inline-flex flex-col px-8 h-75 justify-center cursor-pointer space-y-3 md:hidden"
+          >
+            <ArrowLongRightIcon className="w-8 h-8 mt-2 text-icon-primary-default" />
+            <span className="heading-05-medium text-primary-default">
+              Ver más
+            </span>
+          </Link>
+        </div>
       </div>
     </motion.section>
   );
