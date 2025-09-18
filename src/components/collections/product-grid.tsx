@@ -64,8 +64,10 @@ export function ProductGrid({
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [sortMethod, setSortMethod] = useState("default");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [minPriceFilter, setMinPriceFilter] = useState(0);
-  const [maxPriceFilter, setMaxPriceFilter] = useState(0);
+  const [priceFilterRange, setPriceFilterRange] = useState<[number, number]>([
+    0, 0,
+  ]);
+  const [minPriceFilter, maxPriceFilter] = priceFilterRange;
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(0);
@@ -298,8 +300,12 @@ export function ProductGrid({
       };
     }, [items, showSeasonFilters]);
   useEffect(() => {
-    setMinPriceFilter(minPrice);
-    setMaxPriceFilter(maxPrice);
+    setPriceFilterRange((prevRange) => {
+      if (prevRange[0] === minPrice && prevRange[1] === maxPrice) {
+        return prevRange;
+      }
+      return [minPrice, maxPrice];
+    });
   }, [minPrice, maxPrice]);
 
   useEffect(() => {
@@ -681,11 +687,18 @@ export function ProductGrid({
                 min={minPrice}
                 max={maxPrice}
                 step={1}
-                value={[minPriceFilter, maxPriceFilter]}
+                value={priceFilterRange}
                 onValueChange={(val) => {
+                  if (!Array.isArray(val) || val.length < 2) {
+                    return;
+                  }
                   const [min, max] = val as number[];
-                  setMinPriceFilter(min);
-                  setMaxPriceFilter(max);
+                  setPriceFilterRange((prevRange) => {
+                    if (prevRange[0] === min && prevRange[1] === max) {
+                      return prevRange;
+                    }
+                    return [min, max];
+                  });
                 }}
               />
               <div className="flex justify-between body-03-regular pt-2">
