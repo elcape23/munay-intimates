@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FavoriteButton } from "./favorite-button";
 import { COLOR_MAP } from "@/lib/color-map";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -51,10 +51,22 @@ export function ProductCard({
   clarityLabel,
 }: ProductCardProps) {
   const [loaded, setLoaded] = useState(false);
+  const imageRef = useRef<HTMLImageElement | null>(null);
+
+  const handleImageLoaded = useCallback(() => {
+    setLoaded(true);
+    onImageLoad?.();
+  }, [onImageLoad]);
 
   useEffect(() => {
     setLoaded(false);
   }, [imageSrc]);
+  useEffect(() => {
+    const img = imageRef.current;
+    if (img?.complete) {
+      handleImageLoaded();
+    }
+  }, [imageSrc, handleImageLoaded]);
   // calcula % de descuento redondeado
   const priceNum = parsePrice(price);
   const compareNum = parsePrice(compareAtPrice ?? "");
@@ -85,15 +97,14 @@ export function ProductCard({
               src={imageSrc}
               alt={altText ?? title}
               fill
+              ref={imageRef}
               className={cn(
                 "object-cover w-full h-full rounded-[2px] group-hover:scale-105 transition-transform duration-300 transition-opacity",
                 loaded ? "opacity-100" : "opacity-0"
               )}
               priority
-              onLoad={() => {
-                setLoaded(true);
-                onImageLoad?.();
-              }}
+              onLoadingComplete={handleImageLoaded}
+              onError={() => setLoaded(true)}
             />
           ) : (
             <Image
@@ -101,15 +112,14 @@ export function ProductCard({
               alt={altText ?? title}
               width={220}
               height={328}
+              ref={imageRef}
               className={cn(
                 "object-cover w-full h-auto rounded-[2px] group-hover:scale-105 transition-transform duration-300 transition-opacity",
                 loaded ? "opacity-100" : "opacity-0"
               )}
               priority
-              onLoad={() => {
-                setLoaded(true);
-                onImageLoad?.();
-              }}
+              onLoadingComplete={handleImageLoaded}
+              onError={() => setLoaded(true)}
             />
           )}{" "}
           {loaded && !availableForSale && (
