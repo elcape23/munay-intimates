@@ -19,6 +19,23 @@ import { useNavigationStore } from "@/store/navigation-store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
+const POPULAR_NAV_KEYWORDS = [
+  "ROPA INTERIOR",
+  "PIJAMA",
+  "LOUNGE",
+  "SPECIAL PRICES",
+  "DEPORT",
+  "ACCESOR",
+  "BODY",
+  "CONJUNTO",
+  "BOMBACHA",
+  "CORPI",
+  "BÁSICO",
+  "BASICO",
+  "OFERTA",
+  "SALE",
+] as const;
+
 interface NavbarProps {
   alwaysDark?: boolean;
   alwaysLight?: boolean;
@@ -52,6 +69,35 @@ export function Navbar({
       ),
     [menuItems]
   );
+
+  const popularDesktopMenuItems = useMemo(() => {
+    const filtered = menuItems.filter(
+      (item) => item.section !== "collections" && !item.id.startsWith("subcat-")
+    );
+
+    const withPriority = filtered.map((item, index) => {
+      const normalizedTitle = item.title.toUpperCase();
+      const priority = POPULAR_NAV_KEYWORDS.findIndex((keyword) =>
+        normalizedTitle.includes(keyword)
+      );
+
+      return { item, index, priority };
+    });
+
+    withPriority.sort((a, b) => {
+      if (a.priority === -1 && b.priority === -1) {
+        return a.index - b.index;
+      }
+      if (a.priority === -1) return 1;
+      if (b.priority === -1) return -1;
+      if (a.priority === b.priority) {
+        return a.index - b.index;
+      }
+      return a.priority - b.priority;
+    });
+
+    return withPriority.slice(0, 4).map(({ item }) => item);
+  }, [menuItems]);
 
   const useInvertedColors = alwaysDark || (!alwaysLight && isHome && !scrolled);
 
@@ -212,10 +258,10 @@ export function Navbar({
           </div>
         )}
 
-        {!searchMode && desktopMenuItems.length > 0 && (
+        {!searchMode && popularDesktopMenuItems.length > 0 && (
           <div className="hidden lg:flex items-center justify-center gap-8 overflow-x-auto no-scrollbar px-2 lg:col-start-2">
             {" "}
-            {desktopMenuItems.map((item) => {
+            {popularDesktopMenuItems.map((item) => {
               const isActive =
                 item.url === "/"
                   ? path === item.url
@@ -226,7 +272,7 @@ export function Navbar({
                   href={item.url}
                   onClick={onNavigate}
                   className={cn(
-                    "uppercase body-02-regular tracking-[0.32em] transition-all whitespace-nowrap",
+                    "uppercase body-01-regular transition-all whitespace-nowrap",
                     useInvertedColors
                       ? "text-text-primary-invert hover:opacity-80"
                       : "text-text-secondary-default hover:text-brand-primary",
@@ -241,7 +287,7 @@ export function Navbar({
                 >
                   {item.title}
                   {item.isNew && (
-                    <span className="ml-2 body-03-semibold tracking-normal">
+                    <span className="ml-1 body-03-regular tracking-normal">
                       NEW
                     </span>
                   )}
@@ -262,7 +308,7 @@ export function Navbar({
                   openSearch();
                 }}
                 className={cn(
-                  "hidden lg:flex items-center gap-3 pb-1 border-b body-02-regular uppercase tracking-[0.32em] transition-colors",
+                  "hidden lg:flex items-center gap-3 pb-1 border-b body-02-regular uppercase transition-colors px-2",
                   useInvertedColors
                     ? "border-border-primary-invert text-text-primary-invert hover:opacity-80"
                     : "border-border-primary-default text-text-secondary-default hover:text-text-primary-default hover:border-border-primary-hover"
