@@ -97,6 +97,13 @@ export function Navbar({
     }
   };
 
+  const shouldShowLogo = !(
+    isProduct &&
+    !scrolled &&
+    !alwaysDark &&
+    !alwaysLight
+  );
+
   return (
     <motion.nav
       initial={{ y: -50, opacity: 0 }}
@@ -119,7 +126,7 @@ export function Navbar({
         }
       )}
     >
-      <div className="max-w-7xl h-[55px] mx-auto flex items-center justify-between px-6 py-3 lg:h-[72px] lg:px-10 lg:grid lg:grid-cols-[auto,1fr,auto] lg:items-center lg:gap-8">
+      <div className="max-w-7xl h-[55px] mx-auto grid grid-cols-[auto,1fr,auto] items-center px-6 py-3 lg:h-[72px] lg:px-10 lg:grid-cols-[auto,1fr,auto] lg:items-center lg:gap-8">
         <div className="flex items-center gap-3 lg:gap-6">
           {/* Menú hamburguesa */}
           <Button
@@ -157,11 +164,11 @@ export function Navbar({
           </Button>
 
           {/* Logo brand */}
-          {(!isProduct || scrolled || alwaysDark || alwaysLight) && (
+          {shouldShowLogo && (
             <Link
               href="/"
               aria-label="Ir al home"
-              className="flex items-center"
+              className="hidden lg:flex items-center"
               onClick={onNavigate}
             >
               {/* El SVG está en /public/munay-wordmark.svg */}
@@ -181,8 +188,33 @@ export function Navbar({
           )}
         </div>
 
+        {shouldShowLogo && (
+          <div className="col-start-2 flex items-center justify-center lg:hidden">
+            <Link
+              href="/"
+              aria-label="Ir al home"
+              className="flex items-center"
+              onClick={onNavigate}
+            >
+              <img
+                src={
+                  alwaysLight
+                    ? "/munay-wordmark.svg"
+                    : alwaysDark || (isHome && !scrolled)
+                    ? "/munay-wordmark-white.svg"
+                    : "/munay-wordmark.svg"
+                }
+                alt="Logo Munay"
+                className="h-auto w-[106px]"
+                loading="eager"
+              />
+            </Link>
+          </div>
+        )}
+
         {!searchMode && desktopMenuItems.length > 0 && (
-          <div className="hidden lg:flex items-center justify-center gap-8 overflow-x-auto no-scrollbar px-2">
+          <div className="hidden lg:flex items-center justify-center gap-8 overflow-x-auto no-scrollbar px-2 lg:col-start-2">
+            {" "}
             {desktopMenuItems.map((item) => {
               const isActive =
                 item.url === "/"
@@ -219,7 +251,8 @@ export function Navbar({
           </div>
         )}
 
-        <div className="flex items-center gap-2 justify-end lg:gap-5">
+        <div className="col-start-3 flex items-center gap-2 justify-end lg:gap-5">
+          {" "}
           {!searchMode && (
             <>
               <button
@@ -268,7 +301,6 @@ export function Navbar({
               </Link>
             </>
           )}
-
           {/* Icono carrito */}
           <Link
             href="/cart"
