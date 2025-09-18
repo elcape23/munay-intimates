@@ -9,11 +9,16 @@ export function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem("cookie-consent");
-    if (consent === null) {
-      setVisible(true);
-    } else if (consent === "accepted") {
-      loadClarity();
+    try {
+      const consent = localStorage.getItem("cookie-consent");
+      if (consent === null) {
+        setVisible(true);
+      } else if (consent === "accepted") {
+        loadClarity();
+      }
+    } catch (error) {
+      console.error("Failed to read cookie consent from localStorage", error);
+      setVisible(false);
     }
   }, []);
 
@@ -29,13 +34,28 @@ export function CookieBanner() {
   }, [visible]);
 
   const accept = () => {
-    localStorage.setItem("cookie-consent", "accepted");
+    let shouldNotifyClarity = false;
+    try {
+      localStorage.setItem("cookie-consent", "accepted");
+      shouldNotifyClarity = true;
+    } catch (error) {
+      console.error("Failed to persist cookie consent in localStorage", error);
+    }
     setVisible(false);
-    notifyClarityConsentGranted();
+    if (shouldNotifyClarity) {
+      notifyClarityConsentGranted();
+    }
   };
 
   const reject = () => {
-    localStorage.setItem("cookie-consent", "rejected");
+    try {
+      localStorage.setItem("cookie-consent", "rejected");
+    } catch (error) {
+      console.error(
+        "Failed to persist cookie rejection in localStorage",
+        error
+      );
+    }
     setVisible(false);
   };
 
