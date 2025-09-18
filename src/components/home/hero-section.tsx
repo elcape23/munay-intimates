@@ -215,7 +215,7 @@ export function HeroSection({
           return (
             <div
               key={slide.id}
-              className="relative w-full h-screen max-h-[640px] flex-shrink-0 snap-center cursor-pointer"
+              className="relative w-full h-screen max-h-[640px] lg:max-h-none lg:min-h-[90vh] flex-shrink-0 snap-center cursor-pointer"
               onClick={(e) => {
                 if ((e.target as HTMLElement).closest("a")) return;
                 if (slide.href) router.push(slide.href);
@@ -251,7 +251,7 @@ export function HeroSection({
                 />
               </div>
               <div className="absolute inset-0 bg-black/10" />
-              <div className="relative z-10 flex h-full flex-col px-6 justify-end text-left text-text-primary-invert">
+              <div className="relative z-10 flex h-full flex-col justify-end text-left text-text-primary-invert">
                 {!slideLoaded && (
                   <div className="mb-20">
                     <Skeleton className="mb-4 h-10 w-3/5 max-w-[320px]" />
@@ -270,9 +270,9 @@ export function HeroSection({
                         ease: "easeOut",
                         delay: SLIDE_TRANSITION_SEC,
                       }}
-                      className="mb-20"
+                      className="mb-20 lg:mx-32 lg:mb-32"
                     >
-                      <h2 className="text-[70px] heading-02-semibold leading-none mb-4">
+                      <h2 className="text-[70px] heading-02-semibold leading-none mb-4 ">
                         {slide.title}
                       </h2>
                       <Button
