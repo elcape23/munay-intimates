@@ -87,26 +87,13 @@ export function HeroSection({
     new Array(SLIDES.length).fill(false)
   );
 
-  const imageLoadCounts = useRef<number[]>(new Array(SLIDES.length).fill(0));
-
-  useEffect(() => {
-    setLoaded(new Array(SLIDES.length).fill(false));
-    imageLoadCounts.current = new Array(SLIDES.length).fill(0);
-  }, []);
-
   const handleImageLoad = useCallback((index: number) => {
-    const counts = imageLoadCounts.current;
-    counts[index] = Math.min(counts[index] + 1, 2);
-
-    if (counts[index] >= 2) {
-      setLoaded((prev) => {
-        if (prev[index]) return prev;
-
-        const next = [...prev];
-        next[index] = true;
-        return next;
-      });
-    }
+    setLoaded((prev) => {
+      if (prev[index]) return prev;
+      const next = [...prev];
+      next[index] = true;
+      return next;
+    });
   }, []);
 
   useEffect(() => {
