@@ -191,6 +191,11 @@ export function ProductForm({ product }: ProductFormProps) {
     rawAvailableQuantity === undefined ? null : rawAvailableQuantity;
   const hasUnlimitedStock =
     rawAvailableQuantity === null || rawAvailableQuantity === undefined;
+  const hasMultipleVariants = (product.variants?.edges.length ?? 0) > 1;
+  const hasEnoughStockForQuantityControls =
+    hasUnlimitedStock || (rawAvailableQuantity ?? 0) > 1;
+  const shouldShowQuantityControls =
+    hasMultipleVariants && hasEnoughStockForQuantityControls;
   const isVariantAvailable =
     !!selectedVariant &&
     selectedVariant.availableForSale &&
@@ -399,7 +404,7 @@ export function ProductForm({ product }: ProductFormProps) {
       return (
         <div
           key={option.id}
-          className="flex flex-row justify-between items-center"
+          className="flex flex-row justify-between items-center h-8"
         >
           <div className="flex items-center gap-2">
             <label className="body-01-medium text-text-primary-default">
@@ -499,9 +504,6 @@ export function ProductForm({ product }: ProductFormProps) {
   const otherVariantOptions = variantOptions.filter(
     (option) => !["talle", "talla", "size"].includes(option.name.toLowerCase())
   );
-
-  const hasMultipleVariants = (product.variants?.edges.length ?? 0) > 1;
-
   const isAddButtonDisabled =
     !isVariantAvailable || loadingButton === "add" || quantity < 1;
   const isBuyButtonDisabled =
@@ -551,7 +553,7 @@ export function ProductForm({ product }: ProductFormProps) {
         {sizeVariantOptions.map((option) => renderVariantOption(option))}
         {colorOption && renderVariantOption(colorOption)}
         {/* Cantidad */}
-        <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-row justify-between items-center h-8">
           <div className="flex items-center gap-2">
             <label className="body-01-medium text-text-primary-default">
               Cantidad
@@ -561,7 +563,7 @@ export function ProductForm({ product }: ProductFormProps) {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            {hasMultipleVariants && (
+            {shouldShowQuantityControls && (
               <Button
                 onClick={handleDecreaseQuantity}
                 disabled={!canDecreaseQuantity}
@@ -577,7 +579,7 @@ export function ProductForm({ product }: ProductFormProps) {
             <span className="body-01-regular w-6 text-center text-text-primary-default">
               {quantity}
             </span>
-            {hasMultipleVariants && (
+            {shouldShowQuantityControls && (
               <Button
                 onClick={handleIncreaseQuantity}
                 disabled={!canIncreaseQuantity}
@@ -593,33 +595,35 @@ export function ProductForm({ product }: ProductFormProps) {
           </div>
         </div>
         {otherVariantOptions.map((option) => renderVariantOption(option))}{" "}
-      </div>
-      {/* Precio */}
-      <div className="flex flex-row justify-between items-center">
-        <label className="body-01-medium text-text-primary-default">
-          Precio
-        </label>
-        <div className="flex items-center gap-2">
-          {selectedVariant && selectedVariant.price && (
-            <>
-              {selectedVariant.compareAtPrice && (
-                <span className="body-01-semibold line-through text-text-secondary-default">
+        {/* Precio */}
+        <div className="flex flex-row justify-between items-center h-8">
+          <label className="body-01-medium text-text-primary-default">
+            Precio
+          </label>
+          <div className="flex items-center gap-2">
+            {selectedVariant && selectedVariant.price && (
+              <>
+                {selectedVariant.compareAtPrice && (
+                  <span className="body-01-semibold line-through text-text-secondary-default">
+                    {new Intl.NumberFormat("es-AR", {
+                      style: "currency",
+                      currency: selectedVariant.compareAtPrice.currencyCode,
+                      maximumFractionDigits: 0,
+                    }).format(
+                      parseFloat(selectedVariant.compareAtPrice.amount)
+                    )}
+                  </span>
+                )}
+                <span className="body-01-semibold text-text-primary-default">
                   {new Intl.NumberFormat("es-AR", {
                     style: "currency",
-                    currency: selectedVariant.compareAtPrice.currencyCode,
+                    currency: selectedVariant.price.currencyCode,
                     maximumFractionDigits: 0,
-                  }).format(parseFloat(selectedVariant.compareAtPrice.amount))}
+                  }).format(parseFloat(selectedVariant.price.amount))}{" "}
                 </span>
-              )}
-              <span className="body-01-semibold text-text-primary-default">
-                {new Intl.NumberFormat("es-AR", {
-                  style: "currency",
-                  currency: selectedVariant.price.currencyCode,
-                  maximumFractionDigits: 0,
-                }).format(parseFloat(selectedVariant.price.amount))}{" "}
-              </span>
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
       </div>
 
