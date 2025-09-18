@@ -172,7 +172,7 @@ export function Navbar({
         }
       )}
     >
-      <div className="max-w-7xl h-[55px] mx-auto grid grid-cols-[auto,1fr,auto] items-center px-6 py-3 lg:h-[72px] lg:px-10 lg:grid-cols-[auto,1fr,auto] lg:items-center lg:gap-8">
+      <div className="h-[55px] mx-auto grid grid-cols-[auto,1fr,auto] items-center px-6 py-3 lg:px-32 lg:h-[72px] lg:grid-cols-[auto,1fr,auto] lg:items-center lg:gap-8">
         <div className="flex items-center gap-3 lg:gap-6">
           {/* Menú hamburguesa */}
           <Button
@@ -287,7 +287,7 @@ export function Navbar({
                 >
                   {item.title}
                   {item.isNew && (
-                    <span className="ml-1 body-03-regular tracking-normal">
+                    <span className="ml-1 body-03-regular tracking-normal align-super">
                       NEW
                     </span>
                   )}
@@ -297,7 +297,7 @@ export function Navbar({
           </div>
         )}
 
-        <div className="col-start-3 flex items-center gap-2 justify-end lg:gap-5">
+        <div className="col-start-3 flex items-center gap-2 justify-end lg:gap-2">
           {" "}
           {!searchMode && (
             <>
@@ -308,13 +308,12 @@ export function Navbar({
                   openSearch();
                 }}
                 className={cn(
-                  "hidden lg:flex items-center gap-3 pb-1 border-b body-02-regular uppercase transition-colors px-2",
+                  "hidden lg:flex items-center gap-3 pb-1 border-b body-02-regular uppercase transition-colors pl-2 pr-10",
                   useInvertedColors
                     ? "border-border-primary-invert text-text-primary-invert hover:opacity-80"
                     : "border-border-primary-default text-text-secondary-default hover:text-text-primary-default hover:border-border-primary-hover"
                 )}
               >
-                <MagnifyingGlassIcon className="h-5 w-5" />
                 <span>Search</span>
               </button>
 
