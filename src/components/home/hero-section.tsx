@@ -14,7 +14,10 @@ import { useIntroStore } from "@/store/intro-store";
 
 interface HeroSlide {
   id: string;
-  image: string; // Ruta relativa en /public o URL completa
+  image: {
+    mobile: string;
+    desktop: string;
+  };
   title: string;
   subtitle: string;
   ButtonText: string;
@@ -25,7 +28,10 @@ interface HeroSlide {
 const SLIDES: HeroSlide[] = [
   {
     id: "1",
-    image: "/images/hero/slide-2.webp",
+    image: {
+      mobile: "/images/hero/mobile/slide-2.webp",
+      desktop: "/images/hero/desktop/slide-2.webp",
+    },
     title: "Noches con estilo",
     subtitle: "Comodidad absoluta cada día",
     ButtonText: "Descubrir más",
@@ -33,7 +39,10 @@ const SLIDES: HeroSlide[] = [
   },
   {
     id: "2",
-    image: "/images/hero/slide-1.webp",
+    image: {
+      mobile: "/images/hero/mobile/slide-1.webp",
+      desktop: "/images/hero/desktop/slide-1.webp",
+    },
     title: "New Arrivals",
     subtitle: "",
     ButtonText: "Descubrir",
@@ -41,7 +50,10 @@ const SLIDES: HeroSlide[] = [
   },
   {
     id: "3",
-    image: "/images/hero/slide-n3.webp",
+    image: {
+      mobile: "/images/hero/mobile/slide-3.webp",
+      desktop: "/images/hero/desktop/slide-3.webp",
+    },
     title: "Días relajados",
     subtitle: "Lo último en lencería Munay",
     ButtonText: "Explorar novedades",
@@ -75,8 +87,26 @@ export function HeroSection({
     new Array(SLIDES.length).fill(false)
   );
 
+  const imageLoadCounts = useRef<number[]>(new Array(SLIDES.length).fill(0));
+
   useEffect(() => {
     setLoaded(new Array(SLIDES.length).fill(false));
+    imageLoadCounts.current = new Array(SLIDES.length).fill(0);
+  }, []);
+
+  const handleImageLoad = useCallback((index: number) => {
+    const counts = imageLoadCounts.current;
+    counts[index] = Math.min(counts[index] + 1, 2);
+
+    if (counts[index] >= 2) {
+      setLoaded((prev) => {
+        if (prev[index]) return prev;
+
+        const next = [...prev];
+        next[index] = true;
+        return next;
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -192,82 +222,94 @@ export function HeroSection({
         ref={sliderRef}
         className="flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory no-scrollbar"
       >
-        {SLIDES.map((slide, idx) => (
-          <div
-            key={slide.id}
-            className="relative w-full h-screen max-h-[640px] flex-shrink-0 snap-center cursor-pointer"
-            onClick={(e) => {
-              if ((e.target as HTMLElement).closest("a")) return;
-              if (slide.href) router.push(slide.href);
-            }}
-          >
-            {" "}
-            {!loaded[idx] && (
-              <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-300" />
-            )}
-            <Image
-              src={slide.image}
-              alt={slide.title}
-              fill
-              className={cn(
-                "object-cover transition-opacity duration-300",
-                loaded[idx] ? "opacity-100" : "opacity-0"
+        {SLIDES.map((slide, idx) => {
+          const slideLoaded = loaded[idx];
+
+          return (
+            <div
+              key={slide.id}
+              className="relative w-full h-screen max-h-[640px] flex-shrink-0 snap-center cursor-pointer"
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest("a")) return;
+                if (slide.href) router.push(slide.href);
+              }}
+            >
+              {!slideLoaded && (
+                <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-300" />
               )}
-              priority={idx === 0}
-              onLoad={() =>
-                setLoaded((prev) => {
-                  const next = [...prev];
-                  next[idx] = true;
-                  return next;
-                })
-              }
-            />
-            <div className="absolute inset-0 bg-black/10" />
-            <div className="relative z-10 flex h-full flex-col px-6 justify-end text-left text-text-primary-invert">
-              {!loaded[idx] && (
-                <div className="mb-20">
-                  <Skeleton className="mb-4 h-10 w-3/5 max-w-[320px]" />
-                  <Skeleton className="h-8 w-32 max-w-[160px]" />
-                </div>
-              )}
-              <AnimatePresence mode="wait">
-                {current === idx && introDone && loaded[idx] && (
-                  <motion.div
-                    key={slide.id}
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -40 }}
-                    transition={{
-                      duration: 0.6,
-                      ease: "easeOut",
-                      delay: SLIDE_TRANSITION_SEC,
-                    }}
-                    className="mb-20"
-                  >
-                    <h2 className="text-[70px] heading-02-semibold leading-none mb-4">
-                      {slide.title}
-                    </h2>
-                    <Button
-                      asChild
-                      variant="link"
-                      size="lg"
-                      className="flex justify-start px-0 text-text-primary-invert body-01-medium underline-offset-[4px]"
-                      data-clarity-label={slide.ButtonText ?? "Ver más"}
-                    >
-                      <Link
-                        href={slide.href ?? "#"}
-                        className="flex items-center"
-                      >
-                        <ArrowLongRightIcon className="ml-1 h-6 w-6 inline" />
-                        {slide.ButtonText}
-                      </Link>
-                    </Button>
-                  </motion.div>
+              <div className="absolute inset-0">
+                <Image
+                  src={slide.image.mobile}
+                  alt={slide.title}
+                  fill
+                  className={cn(
+                    "object-cover transition-opacity duration-300 lg:hidden",
+                    slideLoaded ? "opacity-100" : "opacity-0"
+                  )}
+                  priority={idx === 0}
+                  sizes="(min-width: 1024px) 0px, 100vw"
+                  onLoadingComplete={() => handleImageLoad(idx)}
+                />
+                <Image
+                  src={slide.image.desktop}
+                  alt={slide.title}
+                  fill
+                  className={cn(
+                    "hidden object-cover transition-opacity duration-300 lg:block",
+                    slideLoaded ? "opacity-100" : "opacity-0"
+                  )}
+                  priority={idx === 0}
+                  sizes="(min-width: 1024px) 100vw, 0px"
+                  onLoadingComplete={() => handleImageLoad(idx)}
+                />
+              </div>
+              <div className="absolute inset-0 bg-black/10" />
+              <div className="relative z-10 flex h-full flex-col px-6 justify-end text-left text-text-primary-invert">
+                {!slideLoaded && (
+                  <div className="mb-20">
+                    <Skeleton className="mb-4 h-10 w-3/5 max-w-[320px]" />
+                    <Skeleton className="h-8 w-32 max-w-[160px]" />
+                  </div>
                 )}
-              </AnimatePresence>
+                <AnimatePresence mode="wait">
+                  {current === idx && introDone && slideLoaded && (
+                    <motion.div
+                      key={slide.id}
+                      initial={{ opacity: 0, y: 40 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -40 }}
+                      transition={{
+                        duration: 0.6,
+                        ease: "easeOut",
+                        delay: SLIDE_TRANSITION_SEC,
+                      }}
+                      className="mb-20"
+                    >
+                      <h2 className="text-[70px] heading-02-semibold leading-none mb-4">
+                        {slide.title}
+                      </h2>
+                      <Button
+                        asChild
+                        variant="link"
+                        size="lg"
+                        className="flex justify-start px-0 text-text-primary-invert body-01-medium underline-offset-[4px]"
+                        data-clarity-label={slide.ButtonText ?? "Ver más"}
+                      >
+                        <Link
+                          href={slide.href ?? "#"}
+                          className="flex items-center"
+                        >
+                          <ArrowLongRightIcon className="ml-1 h-6 w-6 inline" />
+                          {slide.ButtonText}
+                        </Link>
+                      </Button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Indicadores */}
