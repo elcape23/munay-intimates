@@ -228,10 +228,34 @@ export function ProductForm({ product }: ProductFormProps) {
   };
 
   const handleOptionChange = (optionName: string, value: string) => {
-    setSelectedOptions((prev) => ({
-      ...prev,
-      [optionName]: value,
-    }));
+    setSelectedOptions((prev) => {
+      const nextOptions = {
+        ...prev,
+        [optionName]: value,
+      };
+
+      const isSizeOption = sizeOptionNames.has(optionName);
+
+      if (isSizeOption && colorOption) {
+        const availableColorsForNextSize =
+          availableColorsBySize?.get(value) ?? null;
+
+        if (availableColorsForNextSize && availableColorsForNextSize.size > 0) {
+          const previousColor = prev[colorOption.name];
+          const colorIsStillAvailable =
+            previousColor && availableColorsForNextSize.has(previousColor);
+
+          if (!colorIsStillAvailable) {
+            const [fallbackColor] = Array.from(availableColorsForNextSize);
+            if (fallbackColor) {
+              nextOptions[colorOption.name] = fallbackColor;
+            }
+          }
+        }
+      }
+
+      return nextOptions;
+    });
   };
 
   const handleAddToCart = async () => {
@@ -505,6 +529,10 @@ export function ProductForm({ product }: ProductFormProps) {
   const sizeVariantOptions = variantOptions.filter((option) =>
     ["talle", "talla", "size"].includes(option.name.toLowerCase())
   );
+  const sizeOptionNames = useMemo(
+    () => new Set(sizeVariantOptions.map((option) => option.name)),
+    [sizeVariantOptions]
+  );
   const primarySizeOption = sizeVariantOptions[0];
   const selectedSizeValue = primarySizeOption
     ? selectedOptions[primarySizeOption.name]
@@ -513,10 +541,9 @@ export function ProductForm({ product }: ProductFormProps) {
     ? selectedOptions[colorOption.name]
     : undefined;
 
-  const availableColorsForSelectedSize = useMemo(() => {
+  const availableColorsBySize = useMemo(() => {
     if (
       !primarySizeOption ||
-      !selectedSizeValue ||
       !colorOption ||
       !product.variants?.edges?.length
     ) {
@@ -525,8 +552,7 @@ export function ProductForm({ product }: ProductFormProps) {
 
     const sizeName = primarySizeOption.name.toLowerCase();
     const colorName = colorOption.name.toLowerCase();
-    const set = new Set<string>();
-
+    const map = new Map<string, Set<string>>();
     for (const { node: variant } of product.variants.edges) {
       if (
         !variant.availableForSale ||
@@ -552,20 +578,32 @@ export function ProductForm({ product }: ProductFormProps) {
         (opt) => opt.name.toLowerCase() === colorName
       )?.value;
 
-      if (!variantSizeValue || !variantColorValue) continue;
-      if (variantSizeValue !== selectedSizeValue) continue;
+      if (!variantSizeValue || !variantColorValue) {
+        continue;
+      }
 
-      set.add(variantColorValue);
+      if (!map.has(variantSizeValue)) {
+        map.set(variantSizeValue, new Set<string>());
+      }
+
+      map.get(variantSizeValue)?.add(variantColorValue);
     }
 
-    return set;
+    return map;
   }, [
     colorOption,
     primarySizeOption,
     product.options,
     product.variants?.edges,
-    selectedSizeValue,
   ]);
+
+  const availableColorsForSelectedSize = useMemo(() => {
+    if (!selectedSizeValue || !availableColorsBySize) {
+      return null;
+    }
+
+    return availableColorsBySize.get(selectedSizeValue) ?? null;
+  }, [availableColorsBySize, selectedSizeValue]);
 
   const filteredColorValues = useMemo(() => {
     if (!colorOption) return [] as string[];
