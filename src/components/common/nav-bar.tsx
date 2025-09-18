@@ -117,9 +117,13 @@ export function Navbar({
         >
           {" "}
           {isProduct || searchMode ? (
-            <XMarkIcon className="w-6 h-6" />
+            <XMarkIcon
+              className="w-6 h-6"
+              data-clarity-label="Cerrar menú o búsqueda"
+            />
           ) : (
             <Bars3Icon
+              data-clarity-label="Abrir menú"
               className={cn("h-6 w-6", {
                 "text-icon-primary-invert":
                   alwaysDark || (!alwaysLight && isHome && !scrolled),
