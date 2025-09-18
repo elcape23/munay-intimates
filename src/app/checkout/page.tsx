@@ -22,6 +22,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuthStore } from "@/store/auth-store";
 import {
   CustomerAddress,
+  getCheckoutRedirectUrl,
   getCustomerAddresses,
   updateCartBuyerIdentity,
 } from "@/lib/shopify";
@@ -156,13 +157,27 @@ export default function CheckoutOptionsPage() {
             cart.id,
             customerAccessToken.accessToken
           );
-          window.location.assign(updatedCart.checkoutUrl);
+          const redirectUrl = getCheckoutRedirectUrl(updatedCart.checkoutUrl);
+          if (!redirectUrl) {
+            console.error(
+              "No se pudo determinar una URL de checkout válida para el carrito actualizado."
+            );
+            return;
+          }
+          window.location.assign(redirectUrl);
           return;
         } catch (e) {
           console.error(e);
         }
       }
-      window.location.assign(cart.checkoutUrl);
+      const redirectUrl = getCheckoutRedirectUrl(updatedCart.checkoutUrl);
+      if (!redirectUrl) {
+        console.error(
+          "No se pudo determinar una URL de checkout válida para el carrito actualizado."
+        );
+        return;
+      }
+      window.location.assign(redirectUrl);
     } else if (selectedMethod === "Efectivo") {
       router.push("/checkout/cash");
     } else if (selectedMethod === "Transferencia") {

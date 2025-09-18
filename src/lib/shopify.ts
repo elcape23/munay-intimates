@@ -17,11 +17,33 @@ const rawAppUrl =
   process.env.NEXT_PUBLIC_VERCEL_URL ||
   process.env.VERCEL_URL ||
   "http://localhost:3000";
+const rawPublicAppUrl = process.env.NEXT_PUBLIC_APP_URL;
 
 // Garantiza que haya un protocolo para evitar errores al usar la URL.
 const appUrl = rawAppUrl.startsWith("http")
   ? rawAppUrl
   : `https://${rawAppUrl}`;
+const appHostname = (() => {
+  try {
+    return new URL(appUrl).hostname;
+  } catch {
+    return null;
+  }
+})();
+const publicAppHostname = (() => {
+  if (!rawPublicAppUrl) return null;
+  try {
+    const normalized = rawPublicAppUrl.startsWith("http")
+      ? rawPublicAppUrl
+      : `https://${rawPublicAppUrl}`;
+    return new URL(normalized).hostname;
+  } catch {
+    console.warn(
+      "⚠️ NEXT_PUBLIC_APP_URL parece no ser una URL válida. Se omitirá en la normalización del checkout."
+    );
+    return null;
+  }
+})();
 if (rawStoreDomain.startsWith("http")) {
   console.warn(
     `⚠️ NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN debería ser solo el dominio (ej. "mi-tienda.myshopify.com"). Se usará "${storeDomain}".`
@@ -90,6 +112,34 @@ function buildShopifyError(raw: unknown): Error {
     (error as any).details = original;
   }
   return error;
+}
+
+export function getCheckoutRedirectUrl(rawUrl: string): string | null {
+  if (!rawUrl) return null;
+
+  let normalizedUrl: URL;
+  try {
+    normalizedUrl = new URL(rawUrl);
+  } catch {
+    return null;
+  }
+
+  const currentHostname =
+    typeof window !== "undefined" && window.location
+      ? window.location.hostname
+      : null;
+
+  if (
+    (currentHostname && normalizedUrl.hostname === currentHostname) ||
+    (publicAppHostname && normalizedUrl.hostname === publicAppHostname) ||
+    (appHostname && normalizedUrl.hostname === appHostname)
+  ) {
+    normalizedUrl.protocol = "https:";
+    normalizedUrl.hostname = storeDomain;
+    normalizedUrl.port = "";
+  }
+
+  return normalizedUrl.toString();
 }
 
 // --- Definiciones de Tipos de Datos (Completas) ---
