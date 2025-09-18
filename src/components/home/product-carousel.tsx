@@ -22,9 +22,9 @@ export function ProductCarousel({ title, data }: Props) {
   useEffect(() => {
     const c = containerRef.current;
     if (!c) return;
-    // calcula el scrollLeft que deja el punto medio del contenido en el centro
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
     c.scrollTo({
-      left: (c.scrollWidth - c.clientWidth) / 2,
+      left: isDesktop ? 0 : (c.scrollWidth - c.clientWidth) / 2,
       behavior: "auto",
     });
   }, [data]); // vuelve a centrar si cambian los datos
