@@ -7,6 +7,7 @@ import {
   ProductCard,
   ProductCardProps,
 } from "@/components/common/product-card";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 interface Props {
   title: string;
@@ -17,6 +18,17 @@ export function ProductCarousel({ title, data }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
+
+  const handleScroll = (direction: "left" | "right") => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const scrollAmount = container.clientWidth;
+    container.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
 
   // 1️⃣ Auto‐centra al mount
   useEffect(() => {
@@ -57,7 +69,27 @@ export function ProductCarousel({ title, data }: Props) {
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <h2 className="heading-06-medium text-left ml-6 mb-3">{title}</h2>
+      <div className="flex items-center justify-between pl-6 mb-3">
+        <h2 className="heading-06-medium text-left">{title}</h2>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => handleScroll("left")}
+            aria-label="Desplazar carrusel a la izquierda"
+            className="inline-flex h-10 w-10 items-center justify-center text-icon-primary-default transition-colors hover:bg-background-fill-neutral-hover focus:outline-none focus:ring-2 focus:ring-border-primary-default/60 focus:ring-offset-2"
+          >
+            <ChevronLeftIcon className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => handleScroll("right")}
+            aria-label="Desplazar carrusel a la derecha"
+            className="inline-flex h-10 w-10 items-center justify-center text-icon-primary-default transition-colors hover:bg-background-fill-neutral-hover focus:outline-none focus:ring-2 focus:ring-border-primary-default/60 focus:ring-offset-2"
+          >
+            <ChevronRightIcon className="h-5 w-5" />
+          </button>
+        </div>
+      </div>{" "}
       <div className="relative">
         <div
           ref={containerRef}
