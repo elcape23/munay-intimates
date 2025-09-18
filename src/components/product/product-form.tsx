@@ -500,6 +500,8 @@ export function ProductForm({ product }: ProductFormProps) {
     (option) => !["talle", "talla", "size"].includes(option.name.toLowerCase())
   );
 
+  const hasMultipleVariants = (product.variants?.edges.length ?? 0) > 1;
+
   const isAddButtonDisabled =
     !isVariantAvailable || loadingButton === "add" || quantity < 1;
   const isBuyButtonDisabled =
@@ -559,31 +561,35 @@ export function ProductForm({ product }: ProductFormProps) {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              onClick={handleDecreaseQuantity}
-              disabled={!canDecreaseQuantity}
-              className="w-10 h-10 heading-05-regular leading-none"
-              variant="ghost"
-              size="icon"
-              aria-label="Disminuir cantidad"
-              data-clarity-label="Disminuir cantidad"
-            >
-              -
-            </Button>
+            {hasMultipleVariants && (
+              <Button
+                onClick={handleDecreaseQuantity}
+                disabled={!canDecreaseQuantity}
+                className="w-10 h-10 heading-05-regular leading-none"
+                variant="ghost"
+                size="icon"
+                aria-label="Disminuir cantidad"
+                data-clarity-label="Disminuir cantidad"
+              >
+                -
+              </Button>
+            )}
             <span className="body-01-regular w-6 text-center text-text-primary-default">
               {quantity}
             </span>
-            <Button
-              onClick={handleIncreaseQuantity}
-              disabled={!canIncreaseQuantity}
-              className="w-10 h-10 heading-05-regular leading-none"
-              variant="ghost"
-              size="icon"
-              aria-label="Aumentar cantidad"
-              data-clarity-label="Aumentar cantidad"
-            >
-              +
-            </Button>
+            {hasMultipleVariants && (
+              <Button
+                onClick={handleIncreaseQuantity}
+                disabled={!canIncreaseQuantity}
+                className="w-10 h-10 heading-05-regular leading-none"
+                variant="ghost"
+                size="icon"
+                aria-label="Aumentar cantidad"
+                data-clarity-label="Aumentar cantidad"
+              >
+                +
+              </Button>
+            )}
           </div>
         </div>
         {otherVariantOptions.map((option) => renderVariantOption(option))}{" "}
