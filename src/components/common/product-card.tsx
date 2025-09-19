@@ -57,18 +57,22 @@ export function ProductCard({
     loaded ? "opacity-100" : "opacity-0"
   );
 
+  const hasNotifiedParentRef = useRef(false);
+
   const handleImageLoaded = useCallback(() => {
-    setLoaded((prev) => {
-      if (!prev) {
-        onImageLoad?.();
-      }
-      return true;
-    });
-  }, [onImageLoad]);
+    setLoaded(true);
+  }, []);
 
   useEffect(() => {
     setLoaded(false);
+    hasNotifiedParentRef.current = false;
   }, [imageSrc]);
+  useEffect(() => {
+    if (loaded && !hasNotifiedParentRef.current) {
+      hasNotifiedParentRef.current = true;
+      onImageLoad?.();
+    }
+  }, [loaded, onImageLoad]);
   useEffect(() => {
     const img = imageRef.current;
     if (img?.complete && !loaded) {
