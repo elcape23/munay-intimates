@@ -55,33 +55,10 @@ if (storeDomain?.includes("vercel.app")) {
   );
 }
 
-const missingShopifyConfig: string[] = [];
-
-if (!process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN) {
-  missingShopifyConfig.push("NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN");
-}
-if (!storefrontAccessToken) {
-  missingShopifyConfig.push("NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN");
-}
-if (
-  !process.env.NEXT_PUBLIC_APP_URL &&
-  !process.env.NEXT_PUBLIC_VERCEL_URL &&
-  !process.env.VERCEL_URL
-) {
-  missingShopifyConfig.push("NEXT_PUBLIC_APP_URL");
-}
-
-export const isShopifyConfigured = missingShopifyConfig.length === 0;
-
-let hasWarnedAboutShopifyConfig = false;
-if (!isShopifyConfigured && !hasWarnedAboutShopifyConfig) {
-  console.warn(
-    "⚠️ Las variables de entorno de Shopify no están completamente configuradas (" +
-      `${missingShopifyConfig.join(
-        ", "
-      )}). Algunas funcionalidades pueden no estar disponibles hasta que se definan.`
+if (!storeDomain || !storefrontAccessToken || !appUrl) {
+  throw new Error(
+    "Las variables de entorno de Shopify (dominio, token y URL de la app) no están configuradas."
   );
-  hasWarnedAboutShopifyConfig = true;
 }
 
 const shopifyApiEndpoint = `https://${storeDomain}/api/2024-04/graphql.json`;
@@ -327,12 +304,6 @@ export async function shopifyFetch<T>({
   revalidate?: number | null;
   cache?: RequestCache;
 }): Promise<T> {
-  if (!isShopifyConfigured) {
-    throw buildShopifyError(
-      "Las variables de entorno de Shopify no están configuradas. Configurá NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN, NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN y NEXT_PUBLIC_APP_URL."
-    );
-  }
-
   const fetchOptions: RequestInit & { next?: { revalidate: number } } = {
     method: "POST",
     headers: {
