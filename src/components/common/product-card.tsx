@@ -54,8 +54,12 @@ export function ProductCard({
   const imageRef = useRef<HTMLImageElement | null>(null);
 
   const handleImageLoaded = useCallback(() => {
-    setLoaded(true);
-    onImageLoad?.();
+    setLoaded((prev) => {
+      if (!prev) {
+        onImageLoad?.();
+      }
+      return true;
+    });
   }, [onImageLoad]);
 
   useEffect(() => {
@@ -63,11 +67,10 @@ export function ProductCard({
   }, [imageSrc]);
   useEffect(() => {
     const img = imageRef.current;
-    if (img?.complete) {
+    if (img?.complete && !loaded) {
       handleImageLoaded();
     }
-  }, [imageSrc, handleImageLoaded]);
-  // calcula % de descuento redondeado
+  }, [imageSrc, loaded, handleImageLoaded]); // calcula % de descuento redondeado
   const priceNum = parsePrice(price);
   const compareNum = parsePrice(compareAtPrice ?? "");
   const isOnSale = Boolean(compareAtPrice) && compareNum > priceNum;
@@ -104,7 +107,7 @@ export function ProductCard({
               )}
               priority
               onLoadingComplete={handleImageLoaded}
-              onError={() => setLoaded(true)}
+              onError={handleImageLoaded}
             />
           ) : (
             <Image
@@ -119,7 +122,7 @@ export function ProductCard({
               )}
               priority
               onLoadingComplete={handleImageLoaded}
-              onError={() => setLoaded(true)}
+              onError={handleImageLoaded}
             />
           )}{" "}
           {loaded && !availableForSale && (
