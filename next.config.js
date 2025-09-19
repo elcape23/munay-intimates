@@ -5,6 +5,7 @@ const styleHeaders = [
     value: "*",
   },
 ];
+
 const nextConfig = {
   // Añadimos esta configuración para las imágenes
   images: {

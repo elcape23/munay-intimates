@@ -739,12 +739,24 @@ export function ProductForm({ product }: ProductFormProps) {
     <div className="space-y-6">
       {/* Selectores de variantes */}
       <div className="space-y-4">
-        {isLastUnitAvailable && (
-          <div className="flex items-center gap-2 bg-background-surface-warning-default px-4 py-2 text-text-warning-default">
-            <FireIcon className="h-5 w-5" aria-hidden="true" />
-            <span className="body-02-semibold">¡Última unidad disponible!</span>
-          </div>
-        )}
+        <div className="min-h-[48px]">
+          <AnimatePresence initial={false}>
+            {isLastUnitAvailable && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-2 bg-background-surface-warning-default px-4 py-2 text-text-warning-default"
+              >
+                <FireIcon className="h-5 w-5" aria-hidden="true" />
+                <span className="body-02-semibold">
+                  ¡Última unidad disponible!
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
         {sizeVariantOptions.map((option) => renderVariantOption(option))}
         {colorOption && renderVariantOption(colorOption)}
         {/* Cantidad */}
