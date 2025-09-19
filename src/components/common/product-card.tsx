@@ -52,6 +52,12 @@ export function ProductCard({
 }: ProductCardProps) {
   const [loaded, setLoaded] = useState(false);
   const imageRef = useRef<HTMLImageElement | null>(null);
+  const shouldUseFill = fill || size === "default";
+  const imageClassName = cn(
+    "object-cover w-full rounded-[2px] group-hover:scale-105 transition-transform duration-300 transition-opacity",
+    shouldUseFill ? "h-full" : "h-auto",
+    loaded ? "opacity-100" : "opacity-0"
+  );
 
   const handleImageLoaded = useCallback(() => {
     setLoaded((prev) => {
@@ -95,16 +101,14 @@ export function ProductCard({
           {!loaded && (
             <Skeleton className="absolute bottom-3 left-3 z-10 h-6 w-14" />
           )}
-          {fill ? (
+          {shouldUseFill ? (
             <Image
               src={imageSrc}
               alt={altText ?? title}
               fill
+              sizes="(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw"
               ref={imageRef}
-              className={cn(
-                "object-cover w-full h-full rounded-[2px] group-hover:scale-105 transition-transform duration-300 transition-opacity",
-                loaded ? "opacity-100" : "opacity-0"
-              )}
+              className={imageClassName}
               priority
               onLoadingComplete={handleImageLoaded}
               onError={handleImageLoaded}
@@ -116,10 +120,7 @@ export function ProductCard({
               width={220}
               height={328}
               ref={imageRef}
-              className={cn(
-                "object-cover w-full h-auto rounded-[2px] group-hover:scale-105 transition-transform duration-300 transition-opacity",
-                loaded ? "opacity-100" : "opacity-0"
-              )}
+              className={imageClassName}
               priority
               onLoadingComplete={handleImageLoaded}
               onError={handleImageLoaded}
