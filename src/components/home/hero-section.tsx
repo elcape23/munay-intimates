@@ -235,7 +235,7 @@ export function HeroSection({
                   )}
                   priority={idx === 0}
                   sizes="(min-width: 1024px) 0px, 100vw"
-                  onLoadingComplete={() => handleImageLoad(idx)}
+                  onLoad={() => handleImageLoad(idx)}
                 />
                 <Image
                   src={slide.image.desktop}
@@ -247,7 +247,7 @@ export function HeroSection({
                   )}
                   priority={idx === 0}
                   sizes="(min-width: 1024px) 100vw, 0px"
-                  onLoadingComplete={() => handleImageLoad(idx)}
+                  onLoad={() => handleImageLoad(idx)}
                 />
               </div>
               <div className="absolute inset-0 bg-black/10" />

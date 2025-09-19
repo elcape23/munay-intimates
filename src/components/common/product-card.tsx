@@ -113,7 +113,7 @@ export function ProductCard({
               ref={imageRef}
               className={imageClassName}
               priority
-              onLoadingComplete={handleImageLoaded}
+              onLoad={handleImageLoaded}
               onError={handleImageLoaded}
             />
           ) : (
@@ -125,7 +125,7 @@ export function ProductCard({
               ref={imageRef}
               className={imageClassName}
               priority
-              onLoadingComplete={handleImageLoaded}
+              onLoad={handleImageLoaded}
               onError={handleImageLoaded}
             />
           )}{" "}
