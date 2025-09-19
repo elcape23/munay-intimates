@@ -24,7 +24,6 @@ export interface ProductCardProps {
   /** If true, image adapts to parent width */
   fill?: boolean;
   onImageLoad?: () => void;
-  clarityLabel?: string;
 }
 
 function parsePrice(value: string): number {
@@ -48,13 +47,12 @@ export function ProductCard({
   size = "default",
   fill = false,
   onImageLoad,
-  clarityLabel,
 }: ProductCardProps) {
   const [loaded, setLoaded] = useState(false);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const shouldUseFill = fill || size === "default";
   const imageClassName = cn(
-    "object-cover w-full rounded-[2px] group-hover:scale-105 transition-transform duration-300 transition-opacity",
+    "object-cover w-full rounded-[2px] group-hover:scale-105 transition-transform duration-300 transition-opacity pointer-events-none",
     shouldUseFill ? "h-full" : "h-auto",
     loaded ? "opacity-100" : "opacity-0"
   );
@@ -85,21 +83,22 @@ export function ProductCard({
     : 0;
 
   return (
-    <div className="relative" data-clarity-label={clarityLabel}>
+    <div className="relative">
       {" "}
       <Link
         href={`/products/${handle}`}
         className={`flex flex-col bg-transparent ${
           size === "small" ? "h-[315px]" : "h-auto"
         } overflow-hidden hover:transition-shadow duration-300`}
+        data-clarity-label={title}
       >
         {/* Imagen */}
-        <div className="relative w-full overflow-hidden aspect-[220/328]">
+        <div className="relative w-full overflow-hidden aspect-[220/328] pointer-events-none">
           {!loaded && (
-            <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-600" />
+            <Skeleton className="absolute inset-0 z-10 h-full w-full transition-opacity duration-600 pointer-events-none" />
           )}
           {!loaded && (
-            <Skeleton className="absolute bottom-3 left-3 z-10 h-6 w-14" />
+            <Skeleton className="absolute bottom-3 left-3 z-10 h-6 w-14 pointer-events-none" />
           )}
           {shouldUseFill ? (
             <Image
@@ -127,20 +126,20 @@ export function ProductCard({
             />
           )}{" "}
           {loaded && !availableForSale && (
-            <div className="absolute inset-0 z-10 bg-white/70  pointer-events-none" />
+            <div className="absolute inset-0 z-10 bg-white/70 pointer-events-none" />
           )}
           {/* Badge Oferta, NEW o SIN STOCK */}
           {loaded &&
             (!availableForSale ? (
-              <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert">
+              <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert pointer-events-none">
                 SIN STOCK
               </div>
             ) : isOnSale ? (
-              <div className="absolute bottom-3 left-3 z-20 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert">
+              <div className="absolute bottom-3 left-3 z-20 p-1 bg-background-fill-danger-default body-02-semibold text-text-primary-invert pointer-events-none">
                 {discountPercent}%
               </div>
             ) : isNew ? (
-              <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert">
+              <div className="absolute bottom-3 left-3 z-20 px-3 py-1.5 bg-background-fill-neutral-default body-02-semibold text-text-primary-invert pointer-events-none">
                 NEW
               </div>
             ) : null)}
