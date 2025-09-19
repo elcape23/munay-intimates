@@ -192,7 +192,7 @@ export function Navbar({
           >
             {isProduct || searchMode ? (
               <XMarkIcon
-                className={cn("w-6 h-6", {
+                className={cn("w-6 h-6 pointer-events-none", {
                   "text-icon-primary-invert": useInvertedColors,
                   "text-icon-primary-default": !useInvertedColors,
                 })}
@@ -201,7 +201,7 @@ export function Navbar({
             ) : (
               <Bars3Icon
                 data-clarity-label="Abrir menú"
-                className={cn("h-6 w-6", {
+                className={cn("h-6 w-6 pointer-events-none", {
                   "text-icon-primary-invert": useInvertedColors,
                   "text-icon-primary-default": !useInvertedColors,
                 })}
