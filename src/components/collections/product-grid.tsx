@@ -191,8 +191,13 @@ export function ProductGrid({
           );
         }
 
-        prices.push(parseFloat(product.priceRange.minVariantPrice.amount));
+        const priceAmount = Number.parseFloat(
+          product.priceRange?.minVariantPrice?.amount ?? ""
+        );
 
+        if (Number.isFinite(priceAmount)) {
+          prices.push(priceAmount);
+        }
         if (showSeasonFilters) {
           const seasonValue = product.estacion?.value?.toLowerCase();
           if (seasonValue) {
@@ -299,14 +304,16 @@ export function ProductGrid({
         maxPrice,
       };
     }, [items, showSeasonFilters]);
+  const safeMinPrice = Number.isFinite(minPrice) ? minPrice : 0;
+  const safeMaxPrice = Number.isFinite(maxPrice) ? maxPrice : safeMinPrice;
   useEffect(() => {
     setPriceFilterRange((prevRange) => {
-      if (prevRange[0] === minPrice && prevRange[1] === maxPrice) {
+      if (prevRange[0] === safeMinPrice && prevRange[1] === safeMaxPrice) {
         return prevRange;
       }
-      return [minPrice, maxPrice];
+      return [safeMinPrice, safeMaxPrice];
     });
-  }, [minPrice, maxPrice]);
+  }, [safeMinPrice, safeMaxPrice]);
 
   useEffect(() => {
     if (!pagination?.hasNextPage) return;
