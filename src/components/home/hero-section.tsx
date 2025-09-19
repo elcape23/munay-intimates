@@ -270,9 +270,9 @@ export function HeroSection({
                         ease: "easeOut",
                         delay: SLIDE_TRANSITION_SEC,
                       }}
-                      className="mb-20 lg:mx-32 lg:mb-32"
+                      className="mb-20 mx-6 lg:mx-32 lg:mb-32"
                     >
-                      <h2 className="text-[70px] heading-02-semibold leading-none mb-4 ">
+                      <h2 className="text-[70px] heading-02-semibold leading-none mb-4">
                         {slide.title}
                       </h2>
                       <Button
