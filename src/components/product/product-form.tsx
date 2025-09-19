@@ -429,6 +429,8 @@ export function ProductForm({ product }: ProductFormProps) {
     }
 
     if (["talle", "talla", "size"].includes(normalizedName)) {
+      const sizeAvailability = sizeAvailabilityMap.get(option.name);
+      const hasAvailabilityInfo = sizeAvailabilityMap.size > 0;
       return (
         <div
           key={option.id}
@@ -446,23 +448,33 @@ export function ProductForm({ product }: ProductFormProps) {
           </div>
           <div className="flex flex-row gap-2 items-center">
             {option.values.map((value) => {
-              const isActive = selectedValue === value;
+              const isValueAvailable = hasAvailabilityInfo
+                ? sizeAvailability?.get(value) === true
+                : true;
+              const isActive = isValueAvailable && selectedValue === value;
               return (
                 <Button
                   key={value}
+                  disabled={!isValueAvailable}
                   onClick={() => handleOptionChange(option.name, value)}
                   className={`relative p-1 transition-colors ${
                     isActive
                       ? "body-01-semibold text-text-primary-default"
                       : "text-text-secondary-default hover:bg-gray-100"
-                  }`}
+                  } ${!isValueAvailable ? "disabled:text-text-disabled" : ""}`}
                   variant="ghost"
                   size="icon"
                   data-clarity-label={`Seleccionar ${
                     option.name
                   } ${formatSizeLabel(value)}`}
                 >
-                  {formatSizeLabel(value)}
+                  <span>{formatSizeLabel(value)}</span>
+                  {!isValueAvailable && (
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute left-1/2 top-1/2 h-[1px] w-6 -translate-x-1/2 -translate-y-1/2 bg-border-primary-default"
+                    />
+                  )}{" "}
                   <AnimatePresence>
                     {isActive && (
                       <motion.span
@@ -529,6 +541,62 @@ export function ProductForm({ product }: ProductFormProps) {
   const sizeVariantOptions = variantOptions.filter((option) =>
     ["talle", "talla", "size"].includes(option.name.toLowerCase())
   );
+  const sizeAvailabilityMap = useMemo(() => {
+    const availability = new Map<string, Map<string, boolean>>();
+
+    if (!sizeVariantOptions.length) {
+      return availability;
+    }
+
+    const normalizedNameToOriginal = new Map<string, string>();
+
+    for (const option of sizeVariantOptions) {
+      normalizedNameToOriginal.set(option.name.toLowerCase(), option.name);
+      const valuesMap = new Map<string, boolean>();
+      for (const value of option.values) {
+        valuesMap.set(value, false);
+      }
+      availability.set(option.name, valuesMap);
+    }
+
+    if (!product.variants?.edges?.length) {
+      return availability;
+    }
+
+    for (const { node: variant } of product.variants.edges) {
+      const hasStock =
+        variant.availableForSale &&
+        (variant.quantityAvailable === null ||
+          variant.quantityAvailable === undefined ||
+          variant.quantityAvailable > 0);
+
+      if (!hasStock) {
+        continue;
+      }
+
+      const optionsFromVariant =
+        variant.selectedOptions && variant.selectedOptions.length > 0
+          ? variant.selectedOptions
+          : product.options.map((option, index) => ({
+              name: option.name,
+              value: variant.title.split(" / ")[index] ?? "",
+            }));
+
+      for (const selectedOption of optionsFromVariant) {
+        const originalName = normalizedNameToOriginal.get(
+          selectedOption.name.toLowerCase()
+        );
+        if (!originalName) continue;
+
+        const valuesMap = availability.get(originalName);
+        if (!valuesMap) continue;
+
+        valuesMap.set(selectedOption.value, true);
+      }
+    }
+
+    return availability;
+  }, [product.options, product.variants?.edges, sizeVariantOptions]);
   const sizeOptionNames = useMemo(
     () => new Set(sizeVariantOptions.map((option) => option.name)),
     [sizeVariantOptions]
