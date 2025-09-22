@@ -47,13 +47,13 @@ export const Footer: React.FC = () => (
       {/* Links */}
       <div className="flex flex-col items-start space-y-2">
         <Link
-          href="/terminos"
+          href="/legal"
           className="body-02-regular text-text-secondary-default underline hover:underline"
         >
           Términos &amp; Condiciones
         </Link>
         <Link
-          href="/politica"
+          href="/legal"
           className="body-02-regular text-text-secondary-default underline hover:underline"
         >
           Política de privacidad &amp; Cookies
