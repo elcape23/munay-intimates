@@ -28,7 +28,7 @@ const SEASONS = [
 const INNERWEAR_SUBCATEGORIES = [
   { label: "CONJUNTOS", slug: "conjuntos" },
   { label: "BOMBACHAS", slug: "bombachas" },
-  { label: "CORPIÑOS", slug: "corpiños" },
+  { label: "CORPIÑOS", slug: "corpinos" },
 ];
 
 const INNERWEAR_LABELS = INNERWEAR_SUBCATEGORIES.map((sub) => sub.label);

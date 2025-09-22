@@ -1,19 +1,30 @@
 // src/app/(pages)/collections/[handle]/page.tsx
 
 import { getCollectionByHandle } from "@/lib/shopify";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ProductGrid } from "@/components/collections/product-grid";
 import { Footer } from "@/components/common/footer";
 import { EmptyCollection } from "@/components/collections/empty-collection";
 import { sortProductsByAvailability } from "@/lib/product-helpers";
+import { slugify } from "@/lib/utils";
 
 export default async function CollectionPage({
   params,
 }: {
   params: { handle: string };
 }) {
-  const { handle } = params;
-  const collection = await getCollectionByHandle(handle, 16);
+  const { handle: rawHandle } = params;
+  const normalizedHandle = slugify(rawHandle);
+
+  if (!normalizedHandle) {
+    notFound();
+  }
+
+  if (normalizedHandle !== rawHandle) {
+    redirect(`/collections/${normalizedHandle}`);
+  }
+
+  const collection = await getCollectionByHandle(normalizedHandle, 16);
   if (!collection) {
     notFound();
   }
@@ -38,7 +49,7 @@ export default async function CollectionPage({
         title={collection.title}
         products={products}
         pageInfo={pageInfo}
-        handle={handle}
+        handle={collection.handle}
       />{" "}
       <Footer />
     </section>
