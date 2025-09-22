@@ -105,7 +105,6 @@ export default function CartPage() {
             }}
             transition={{ duration: 0.5 }}
           >
-            {" "}
             <Image
               src="/illustrations/cart-empty.svg"
               alt="Carrito vacío"
@@ -123,7 +122,6 @@ export default function CartPage() {
               size="text"
               data-clarity-label="Seguir comprando"
             >
-              {" "}
               <Link
                 href="/"
                 onClick={handleContinueShopping}
@@ -134,7 +132,7 @@ export default function CartPage() {
             </Button>
           </motion.div>
           <Footer />
-        </section>{" "}
+        </section>
       </>
     );
   }
