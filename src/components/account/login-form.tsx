@@ -21,7 +21,7 @@ export default function LoginForm({
   redirectOnSuccess = true,
   registerReturnUrl,
 }: LoginFormProps) {
-  const { login, isLoggedIn, error: authError, isLoading } = useAuthStore();
+  const { login, isLoggedIn, isLoading } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -51,7 +51,8 @@ export default function LoginForm({
           }
         }
       } else {
-        setError(authError || "El email o la contraseña son incorrectos.");
+        const stateError = useAuthStore.getState().error;
+        setError(stateError || "El email o la contraseña son incorrectos.");
       }
     } catch (e) {
       console.error("Error atrapado en el componente de Login:", e);
