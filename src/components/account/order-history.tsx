@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+import { formatProductTitle } from "@/lib/utils";
 
 export function OrderHistory({
   statusFilter,
@@ -140,6 +141,8 @@ export function OrderHistory({
                             (o) => o.name.toLowerCase() === "color"
                           )?.value;
 
+                          const formattedTitle = formatProductTitle(item.title);
+
                           return (
                             <div
                               key={item.variant.image.url + item.title}
@@ -148,14 +151,16 @@ export function OrderHistory({
                               <div className="relative w-40 h-40 rounded-md overflow-hidden flex-shrink-0">
                                 <Image
                                   src={item.variant.image.url}
-                                  alt={item.variant.image.altText || item.title}
+                                  alt={
+                                    item.variant.image.altText || formattedTitle
+                                  }
                                   fill
                                   style={{ objectFit: "cover" }}
                                 />
                               </div>
                               <div className="self-stretch items-start justify-between pt-4 pb-6 space-y-6">
                                 <p className="body-01-regular text-text-primary-default">
-                                  {item.title}
+                                  {formattedTitle}{" "}
                                 </p>
                                 <div className="body-01-regular text-text-primary-default flex gap-1">
                                   {talla && <span>{talla}</span>} |{" "}

@@ -9,6 +9,7 @@ import RelatedProductsCarousel from "@/components/product/related-products-carou
 import { useUiStore } from "@/store/ui-store";
 import type { ShopifyProduct, FeaturedProduct } from "@/lib/shopify";
 import { trackClarityEvent } from "@/lib/clarity";
+import { formatProductTitle } from "@/lib/utils";
 
 export function SearchModal() {
   const { isSearchOpen, closeSearch, openMenu } = useUiStore();
@@ -172,7 +173,7 @@ export function SearchModal() {
                           onClick={closeSearch}
                           className="block py-1"
                         >
-                          {p.title}
+                          {formatProductTitle(p.title)}{" "}
                         </motion.a>
                       ))}
                     </motion.div>

@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FavoriteButton } from "./favorite-button";
 import { COLOR_MAP } from "@/lib/color-map";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { cn, formatProductTitle } from "@/lib/utils";
 
 export interface ProductCardProps {
   id: string;
@@ -48,6 +48,7 @@ export function ProductCard({
   fill = false,
   onImageLoad,
 }: ProductCardProps) {
+  const formattedTitle = formatProductTitle(title);
   const [loaded, setLoaded] = useState(false);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const shouldUseFill = fill || size === "default";
@@ -94,7 +95,7 @@ export function ProductCard({
         className={`flex flex-col bg-transparent ${
           size === "small" ? "h-[315px]" : "h-auto"
         } overflow-hidden hover:transition-shadow duration-300`}
-        data-clarity-label={title}
+        data-clarity-label={formattedTitle}
       >
         {/* Imagen */}
         <div className="relative w-full overflow-hidden aspect-[220/328] pointer-events-none">
@@ -107,7 +108,7 @@ export function ProductCard({
           {shouldUseFill ? (
             <Image
               src={imageSrc}
-              alt={altText ?? title}
+              alt={altText ?? formattedTitle}
               fill
               sizes="(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw"
               ref={imageRef}
@@ -165,7 +166,7 @@ export function ProductCard({
             <>
               {/* Título */}
               <h3 className="body-01-medium text-text-primary-default truncate whitespace-nowrap">
-                {title}
+                {formattedTitle}{" "}
               </h3>
               {colorVariants.length > 0 && (
                 <div className="flex items-center">

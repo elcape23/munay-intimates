@@ -10,7 +10,7 @@ import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/cart-store";
 import { useFavoritesStore } from "@/store/favorites-store";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, formatProductTitle } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { trackClarityEvent } from "@/lib/clarity";
 
@@ -37,6 +37,8 @@ export function CartItem({ line }: CartItemProps) {
   const isAlreadyFavorite = favoriteHandles.includes(
     line.merchandise.product.handle
   );
+
+  const formattedTitle = formatProductTitle(line.merchandise.product.title);
 
   // ✅ Mide ancho de los botones al montar
   useEffect(() => {
@@ -193,7 +195,7 @@ export function CartItem({ line }: CartItemProps) {
           >
             <Image
               src={line.merchandise.image.url}
-              alt={line.merchandise.image.altText || ""}
+              alt={line.merchandise.image.altText || formattedTitle}
               fill
               style={{ objectFit: "cover" }}
             />
@@ -218,7 +220,7 @@ export function CartItem({ line }: CartItemProps) {
                 href={`/products/${line.merchandise.product.handle}`}
                 className="block body-02-regular text-text-primary-default hover:underline"
               >
-                {line.merchandise.product.title}
+                {formattedTitle}{" "}
               </Link>
               <div className="body-02-regular text-text-primary-default flex gap-1">
                 {talla && <span>{talla}</span>} |{" "}

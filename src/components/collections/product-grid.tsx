@@ -845,7 +845,7 @@ export function ProductGrid({
                 imageSrc={
                   product.images.edges[0]?.node.url || "/placeholder.png"
                 }
-                altText={product.images.edges[0]?.node.altText || product.title}
+                altText={product.images.edges[0]?.node.altText ?? undefined}
                 price={parseFloat(
                   product.priceRange.minVariantPrice.amount
                 ).toLocaleString("es-AR", {

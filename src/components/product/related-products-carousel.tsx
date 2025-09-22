@@ -43,7 +43,7 @@ export default function RelatedProductsCarousel({
               title: product.title,
               handle: product.handle,
               imageSrc: product.images.edges[0]?.node.url || "/placeholder.png",
-              altText: product.images.edges[0]?.node.altText || product.title,
+              altText: product.images.edges[0]?.node.altText ?? undefined,
               price,
               compareAtPrice: compareAt
                 ? parseFloat(compareAt).toFixed(0)

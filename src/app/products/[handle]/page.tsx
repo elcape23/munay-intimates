@@ -15,6 +15,7 @@ import { COLOR_MAP } from "@/lib/color-map";
 import { Footer } from "@/components/common/footer";
 import SlideUpSection from "@/components/common/slide-up-section";
 import { ProductAnalytics } from "@/components/product/product-analytics";
+import { formatProductTitle } from "@/lib/utils";
 
 // Esta es una página dinámica. Next.js le pasará los 'params' desde la URL.
 export default async function ProductDetailPage({
@@ -30,6 +31,7 @@ export default async function ProductDetailPage({
   const firstCollectionHandle = product.collections?.edges?.[0]?.node.handle;
 
   const relatedProducts = await getRecommendedProducts(product.id, 10);
+  const formattedTitle = formatProductTitle(product.title);
 
   return (
     <SlideUpSection className="mx-6 grid grid-cols-1 gap-y-6 gap-x-6 no-scrollbar mb-24">
@@ -45,7 +47,7 @@ export default async function ProductDetailPage({
         <div className="flex items-center justify-between">
           <div className="flex flex-row">
             <h1 className="heading-06-medium text-text-primary-default">
-              {product.title}
+              {formattedTitle}{" "}
             </h1>
             {/* Badge “NEW” si el producto tiene el tag “New” */}
             {product.isNew && (
