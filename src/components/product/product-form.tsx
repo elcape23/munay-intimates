@@ -111,7 +111,7 @@ export function ProductForm({ product }: ProductFormProps) {
     return defaults;
   });
 
-  // Obtenemos el estado y las acciones directamente desde nuestro store de Zustand.
+  const cart = useCartStore((s) => s.cart);
   const addItemToCart = useCartStore((s) => s.addItemToCart);
 
   const [loadingButton, setLoadingButton] = useState<"add" | "buy" | null>(
@@ -162,19 +162,43 @@ export function ProductForm({ product }: ProductFormProps) {
       )
     )?.node;
   }, [selectedOptions, product.variants]);
+  const selectedVariantId = selectedVariant?.id;
+  const quantityAlreadyInCart = useMemo(() => {
+    if (!cart || !selectedVariantId) return 0;
+
+    return cart.lines.edges.reduce((total, { node }) => {
+      return node.merchandise.id === selectedVariantId
+        ? total + node.quantity
+        : total;
+    }, 0);
+  }, [cart, selectedVariantId]);
+  const remainingAvailableQuantity = useMemo(() => {
+    if (
+      !selectedVariant ||
+      selectedVariant.quantityAvailable === null ||
+      selectedVariant.quantityAvailable === undefined
+    ) {
+      return null;
+    }
+
+    return Math.max(
+      selectedVariant.quantityAvailable - quantityAlreadyInCart,
+      0
+    );
+  }, [quantityAlreadyInCart, selectedVariant]);
+  const hasUnlimitedStock = remainingAvailableQuantity === null;
   useEffect(() => {
     if (!selectedVariant || !selectedVariant.availableForSale) {
       setQuantity(0);
       return;
     }
 
-    const available = selectedVariant.quantityAvailable;
-
-    if (available === null || available === undefined) {
+    if (hasUnlimitedStock) {
       setQuantity((prev) => (prev < 1 ? 1 : prev));
       return;
     }
 
+    const available = remainingAvailableQuantity ?? 0;
     if (available <= 0) {
       setQuantity(0);
       return;
@@ -184,27 +208,22 @@ export function ProductForm({ product }: ProductFormProps) {
       const ensuredMinimum = prev < 1 ? 1 : prev;
       return Math.min(ensuredMinimum, available);
     });
-  }, [selectedVariant]);
+  }, [hasUnlimitedStock, remainingAvailableQuantity, selectedVariant]);
 
-  const rawAvailableQuantity = selectedVariant?.quantityAvailable;
-  const availableQuantity =
-    rawAvailableQuantity === undefined ? null : rawAvailableQuantity;
-  const hasUnlimitedStock =
-    rawAvailableQuantity === null || rawAvailableQuantity === undefined;
   const hasMultipleVariants = (product.variants?.edges.length ?? 0) > 1;
   const hasEnoughStockForQuantityControls =
-    hasUnlimitedStock || (rawAvailableQuantity ?? 0) > 1;
+    hasUnlimitedStock || (remainingAvailableQuantity ?? 0) > 1;
   const shouldShowQuantityControls =
     hasMultipleVariants && hasEnoughStockForQuantityControls;
   const isVariantAvailable =
     !!selectedVariant &&
     selectedVariant.availableForSale &&
-    (hasUnlimitedStock || (rawAvailableQuantity ?? 0) > 0);
+    (hasUnlimitedStock || (remainingAvailableQuantity ?? 0) > 0);
   const minimumQuantity = isVariantAvailable ? 1 : 0;
   const canIncreaseQuantity =
     !!selectedVariant &&
     selectedVariant.availableForSale &&
-    (hasUnlimitedStock || quantity < (rawAvailableQuantity ?? 0));
+    (hasUnlimitedStock || quantity < (remainingAvailableQuantity ?? 0));
   const canDecreaseQuantity = quantity > minimumQuantity;
 
   const handleDecreaseQuantity = () => {
@@ -214,8 +233,8 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const handleIncreaseQuantity = () => {
     if (!selectedVariant || !selectedVariant.availableForSale) return;
-    const available = selectedVariant.quantityAvailable;
-    if (available !== undefined && available !== null) {
+    if (!hasUnlimitedStock) {
+      const available = remainingAvailableQuantity ?? 0;
       if (available <= 0 || quantity >= available) {
         toast({ title: "No hay más stock disponible." });
         return;
@@ -277,6 +296,23 @@ export function ProductForm({ product }: ProductFormProps) {
       return;
     }
 
+    if (!hasUnlimitedStock) {
+      const available = remainingAvailableQuantity ?? 0;
+      if (available <= 0) {
+        toast({
+          title: "Ya agregaste todas las unidades disponibles a tu carrito.",
+        });
+        return;
+      }
+
+      if (quantity > available) {
+        toast({
+          title: `Solo hay ${available} unidades disponibles.`,
+        });
+        return;
+      }
+    }
+
     if (
       selectedVariant.quantityAvailable !== null &&
       selectedVariant.quantityAvailable !== undefined &&
@@ -322,6 +358,23 @@ export function ProductForm({ product }: ProductFormProps) {
     if (quantity < 1) {
       toast({ title: "Seleccioná al menos una unidad." });
       return;
+    }
+
+    if (!hasUnlimitedStock) {
+      const available = remainingAvailableQuantity ?? 0;
+      if (available <= 0) {
+        toast({
+          title: "Ya agregaste todas las unidades disponibles a tu carrito.",
+        });
+        return;
+      }
+
+      if (quantity > available) {
+        toast({
+          title: `Solo hay ${available} unidades disponibles.`,
+        });
+        return;
+      }
     }
 
     if (
@@ -703,13 +756,13 @@ export function ProductForm({ product }: ProductFormProps) {
     !isVariantAvailable || loadingButton === "add" || quantity < 1;
   const isBuyButtonDisabled =
     !isVariantAvailable || loadingButton === "buy" || quantity < 1;
-  const isLastUnitAvailable = isVariantAvailable && availableQuantity === 1;
-  const availabilityLabel =
-    typeof availableQuantity === "number"
-      ? `${availableQuantity} ${
-          availableQuantity === 1 ? "Disponible" : "Disponibles"
-        }`
-      : "—";
+  const isLastUnitAvailable =
+    isVariantAvailable && remainingAvailableQuantity === 1;
+  const availabilityLabel = hasUnlimitedStock
+    ? "—"
+    : `${remainingAvailableQuantity ?? 0} ${
+        remainingAvailableQuantity === 1 ? "Disponible" : "Disponibles"
+      }`;
 
   const addButtonLabel =
     loadingButton === "add"
