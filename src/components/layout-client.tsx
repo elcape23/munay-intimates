@@ -19,8 +19,8 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const shown =
-      typeof sessionStorage !== "undefined" &&
-      sessionStorage.getItem("introShown") === "true";
+      typeof window !== "undefined" &&
+      window.localStorage.getItem("introShown") === "true";
     setIntroShown(shown);
     if (shown) {
       setIntroLoaded(true);
@@ -29,8 +29,8 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
   }, [setIntroDone]);
 
   const handleIntroComplete = () => {
-    if (typeof sessionStorage !== "undefined") {
-      sessionStorage.setItem("introShown", "true");
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("introShown", "true");
     }
     setIntroLoaded(true);
     setIntroDone(true);
