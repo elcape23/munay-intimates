@@ -96,7 +96,7 @@ export function ProductCarousel({ title, data }: Props) {
           className="
             flex overflow-x-auto overflow-y-hidden
             scroll-smooth snap-x snap-mandatory no-scrollbar
-            gap-2 lg:gap-4
+            gap-2 lg:gap-4 justify-center lg:justify-start
           "
         >
           {data.map((item) => (
