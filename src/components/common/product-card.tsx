@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FavoriteButton } from "./favorite-button";
-import { COLOR_MAP } from "@/lib/color-map";
+import { COLOR_MAP, getColorStyle } from "@/lib/color-map";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatProductTitle } from "@/lib/utils";
 
@@ -171,24 +171,36 @@ export function ProductCard({
               {colorVariants.length > 0 && (
                 <div className="flex items-center">
                   {colorVariants.map((color, i) => {
-                    // si ya viene en HEX (ej. "#123456") lo uso directo,
-                    // si no, busco en el mapa; si tampoco existe, uso gris por defecto
-                    const bgColor = color.startsWith("#")
-                      ? color
-                      : COLOR_MAP[color] ?? "#cccccc";
+                    const trimmedColor = color.trim();
+                    const normalizedColor = trimmedColor.toLowerCase();
+                    const resolvedColorValue = trimmedColor.startsWith("#")
+                      ? trimmedColor
+                      : COLOR_MAP[trimmedColor] ?? trimmedColor;
+                    const resolvedColor = resolvedColorValue
+                      .toString()
+                      .toLowerCase();
                     const isWhite =
-                      bgColor.toLowerCase() === "#ffffff" ||
-                      bgColor.toLowerCase() === "#fff" ||
-                      bgColor.toLowerCase() === "white";
+                      normalizedColor === "blanco" ||
+                      resolvedColor === "#ffffff" ||
+                      resolvedColor === "#fff" ||
+                      resolvedColor === "white";
+                    const isMulticolor = normalizedColor === "multicolor";
+                    const style = isMulticolor
+                      ? getColorStyle("Multicolor")
+                      : trimmedColor.startsWith("#")
+                      ? { backgroundColor: trimmedColor }
+                      : COLOR_MAP[trimmedColor]
+                      ? { backgroundColor: COLOR_MAP[trimmedColor] }
+                      : { backgroundColor: "#cccccc" };
                     return (
                       <span
                         key={i}
                         className={`h-4 w-4 m-[2px] rounded-full ${
-                          isWhite
+                          isWhite && !isMulticolor
                             ? "border border-border-secondary-default"
                             : ""
                         }`}
-                        style={{ backgroundColor: bgColor }}
+                        style={style}
                         title={color}
                       />
                     );

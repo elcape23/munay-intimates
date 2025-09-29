@@ -31,7 +31,7 @@ export const getColorStyle = (color: string): CSSProperties => {
   if (color === "Multicolor") {
     return {
       backgroundImage:
-        "linear-gradient(135deg, #FF8A00 0%, #FF36D6 50%, #38BDF8 100%)",
+        "linear-gradient(135deg, #e8b11e 0%, #FF36D6 50%, #0000ff 100%)",
     };
   }
 
