@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FireIcon } from "@heroicons/react/24/outline";
 import { ShopifyProduct, ShopifyProductVariant } from "@/lib/shopify";
 import { useCartStore } from "@/store/cart-store";
-import { COLOR_MAP } from "@/lib/color-map";
+import { getColorStyle } from "@/lib/color-map";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { trackAddToCart } from "@/lib/analytics";
@@ -450,7 +450,6 @@ export function ProductForm({ product }: ProductFormProps) {
           </div>
           <div className="flex gap-3 mt-2">
             {valuesToRender.map((value) => {
-              const hex = COLOR_MAP[value] ?? value;
               const isActive = selectedValue === value;
               const isBlack = value.toLowerCase() === "negro";
               const isWhite = value.toLowerCase() === "blanco";
@@ -469,7 +468,7 @@ export function ProductForm({ product }: ProductFormProps) {
                       ? "border-border-tertiary-default"
                       : "border-transparent"
                   }`}
-                  style={{ backgroundColor: hex }}
+                  style={getColorStyle(value)}
                   variant="ghost"
                   size="icon"
                   data-clarity-label={`Seleccionar color ${value}`}

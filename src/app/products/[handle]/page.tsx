@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/accordion";
 import RelatedProductsCarousel from "@/components/product/related-products-carousel";
 import ProductGallery from "@/components/product/product-gallery";
-import { COLOR_MAP } from "@/lib/color-map";
+import { getColorStyle } from "@/lib/color-map";
 import { Footer } from "@/components/common/footer";
 import SlideUpSection from "@/components/common/slide-up-section";
 import { ProductAnalytics } from "@/components/product/product-analytics";
@@ -70,9 +70,7 @@ export default async function ProductDetailPage({
               <div className="ml-4 flex items-center gap-1">
                 <span
                   className="w-5 h-5 rounded-full border"
-                  style={{
-                    backgroundColor: COLOR_MAP[firstColor] ?? firstColor,
-                  }}
+                  style={getColorStyle(firstColor)}
                 />
                 {othersCount > 0 && (
                   <span className="body-01-regular text-text-primary-default">

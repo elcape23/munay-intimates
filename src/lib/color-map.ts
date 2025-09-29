@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 export const COLOR_MAP: Record<string, string> = {
   Amarillo: "#ece075ff",
   Avellana: "#C6A597",
@@ -23,4 +25,17 @@ export const COLOR_MAP: Record<string, string> = {
   Suela: "B77517",
   Terra: "#8A3515",
   Vison: "#dccd9e",
+};
+
+export const getColorStyle = (color: string): CSSProperties => {
+  if (color === "Multicolor") {
+    return {
+      backgroundImage:
+        "linear-gradient(135deg, #FF8A00 0%, #FF36D6 50%, #38BDF8 100%)",
+    };
+  }
+
+  return {
+    backgroundColor: COLOR_MAP[color] ?? color,
+  };
 };
