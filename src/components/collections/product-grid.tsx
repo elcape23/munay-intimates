@@ -104,16 +104,6 @@ export function ProductGrid({
   }, [handle, items, pagination]);
 
   useEffect(() => {
-    setImagesLoaded(0);
-  }, [items]);
-
-  useEffect(() => {
-    if (imagesLoaded >= items.length && items.length > 0) {
-      setGridLoaded(true);
-    }
-  }, [imagesLoaded, items.length]);
-
-  useEffect(() => {
     if (isFilterModalOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -527,6 +517,15 @@ export function ProductGrid({
     maxPrice,
     shouldDeferSoldOut,
   ]);
+
+  const visibleProductCount = filteredAndSortedProducts.length;
+
+  useEffect(() => {
+    if (gridLoaded) return;
+    if (visibleProductCount === 0 || imagesLoaded >= visibleProductCount) {
+      setGridLoaded(true);
+    }
+  }, [gridLoaded, imagesLoaded, visibleProductCount]);
 
   const activeFilterCount = activeFilters.length;
 
