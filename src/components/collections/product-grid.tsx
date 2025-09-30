@@ -70,6 +70,8 @@ export function ProductGrid({
   const [minPriceFilter, maxPriceFilter] = priceFilterRange;
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
+  const hasMoreProducts = Boolean(pagination?.hasNextPage);
+  const shouldDeferSoldOut = hasMoreProducts || loadingMore;
   const [imagesLoaded, setImagesLoaded] = useState(0);
   const [gridLoaded, setGridLoaded] = useState(false);
   const router = useRouter();
@@ -480,6 +482,19 @@ export function ProductGrid({
           }
         );
       });
+    } else {
+      const availableProducts = filtered.filter(
+        (product) => product.availableForSale
+      );
+      const soldOutProducts = filtered.filter(
+        (product) => !product.availableForSale
+      );
+
+      if (shouldDeferSoldOut && availableProducts.length > 0) {
+        filtered = availableProducts;
+      } else {
+        filtered = [...availableProducts, ...soldOutProducts];
+      }
     }
 
     switch (sortMethod) {
@@ -510,6 +525,7 @@ export function ProductGrid({
     activeSeason,
     minPrice,
     maxPrice,
+    shouldDeferSoldOut,
   ]);
 
   const activeFilterCount = activeFilters.length;
