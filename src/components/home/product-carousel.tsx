@@ -35,8 +35,19 @@ export function ProductCarousel({ title, data }: Props) {
     const c = containerRef.current;
     if (!c) return;
     const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    if (isDesktop) {
+      c.scrollTo({ left: 0, behavior: "auto" });
+      return;
+    }
+
+    const firstItem = c.querySelector<HTMLElement>("[data-carousel-item]");
+    if (!firstItem) return;
+
+    const centeredPosition =
+      firstItem.offsetLeft + firstItem.offsetWidth / 2 - c.clientWidth / 2;
+
     c.scrollTo({
-      left: isDesktop ? 0 : (c.scrollWidth - c.clientWidth) / 2,
+      left: Math.max(centeredPosition, 0),
       behavior: "auto",
     });
   }, [data]); // vuelve a centrar si cambian los datos
@@ -97,6 +108,7 @@ export function ProductCarousel({ title, data }: Props) {
             flex overflow-x-auto overflow-y-hidden
             scroll-smooth snap-x snap-mandatory no-scrollbar
             gap-2 lg:gap-4 justify-center lg:justify-start
+              px-6 lg:px-0
           "
         >
           {data.map((item) => (
@@ -104,12 +116,13 @@ export function ProductCarousel({ title, data }: Props) {
               key={item.id}
               className="
                 flex-shrink-0 snap-center
-                w-64
-                sm:w-72
+                     w-[70vw] max-w-[320px]
+                sm:w-72 sm:max-w-none
                 lg:w-auto
                 lg:basis-[calc((100%-3rem)/4)]
                 lg:max-w-[calc((100%-3rem)/4)]
               "
+              data-carousel-item
             >
               {" "}
               <ProductCard {...item} />
