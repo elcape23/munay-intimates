@@ -1,7 +1,7 @@
 // src/components/home/ProductCarousel.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ProductCard,
@@ -30,28 +30,56 @@ export function ProductCarousel({ title, data }: Props) {
     });
   };
 
-  // 1️⃣ Auto‐centra al mount
-  useEffect(() => {
+  // 1️⃣ Auto‐centra al mount y en cambios de tamaño
+  const alignFirstItem = useCallback(() => {
     const c = containerRef.current;
     if (!c) return;
     const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
     if (isDesktop) {
       c.scrollTo({ left: 0, behavior: "auto" });
+      c.style.removeProperty("--carousel-scroll-padding-left");
+      c.style.removeProperty("--carousel-scroll-padding-right");
       return;
     }
 
     const firstItem = c.querySelector<HTMLElement>("[data-carousel-item]");
     if (!firstItem) return;
 
-    const centeredPosition =
-      firstItem.offsetLeft + firstItem.offsetWidth / 2 - c.clientWidth / 2;
+    const containerRect = c.getBoundingClientRect();
+    const itemRect = firstItem.getBoundingClientRect();
+    const styles = window.getComputedStyle(c);
 
+    const paddingLeft = parseFloat(styles.paddingLeft) || 0;
+    const paddingRight = parseFloat(styles.paddingRight) || 0;
+    const halfDiff = Math.max((containerRect.width - itemRect.width) / 2, 0);
+
+    const extraLeft = Math.max(halfDiff - paddingLeft, 0);
+    const extraRight = Math.max(halfDiff - paddingRight, 0);
+
+    c.style.setProperty(
+      "--carousel-scroll-padding-left",
+      `${paddingLeft + extraLeft}px`
+    );
+    c.style.setProperty(
+      "--carousel-scroll-padding-right",
+      `${paddingRight + extraRight}px`
+    );
+
+    const targetScroll = firstItem.offsetLeft - extraLeft;
     c.scrollTo({
-      left: Math.max(centeredPosition, 0),
+      left: Math.max(targetScroll, 0),
       behavior: "auto",
     });
-  }, [data]); // vuelve a centrar si cambian los datos
+  }, [data]);
 
+  useEffect(() => {
+    alignFirstItem();
+
+    window.addEventListener("resize", alignFirstItem);
+    return () => {
+      window.removeEventListener("resize", alignFirstItem);
+    };
+  }, [alignFirstItem]); // vuelve a centrar si cambian los datos
   // 2️⃣ Detecta cuando el carrusel entra en la vista
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -110,6 +138,10 @@ export function ProductCarousel({ title, data }: Props) {
             gap-2 lg:gap-4 justify-center lg:justify-start
               px-6 lg:px-0
           "
+          style={{
+            scrollPaddingLeft: "var(--carousel-scroll-padding-left, 1.5rem)",
+            scrollPaddingRight: "var(--carousel-scroll-padding-right, 1.5rem)",
+          }}
         >
           {data.map((item) => (
             <div
