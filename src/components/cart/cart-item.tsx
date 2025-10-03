@@ -2,7 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  type MouseEvent,
+  type KeyboardEvent,
+} from "react";
 import { useSwipeable } from "react-swipeable";
 import { motion } from "framer-motion";
 import type { ShopifyCart } from "@/lib/shopify";
@@ -13,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { cn, formatProductTitle } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { trackClarityEvent } from "@/lib/clarity";
+import { useRouter } from "next/navigation";
 
 type CartLine = ShopifyCart["lines"]["edges"][number]["node"];
 
@@ -37,8 +44,10 @@ export function CartItem({ line }: CartItemProps) {
   const isAlreadyFavorite = favoriteHandles.includes(
     line.merchandise.product.handle
   );
+  const router = useRouter();
 
   const formattedTitle = formatProductTitle(line.merchandise.product.title);
+  const productHref = `/products/${line.merchandise.product.handle}`;
 
   // ✅ Mide ancho de los botones al montar
   useEffect(() => {
@@ -116,6 +125,41 @@ export function CartItem({ line }: CartItemProps) {
     itemRef.current = el;
   };
 
+  const handleCardClick = () => {
+    router.push(productHref);
+  };
+
+  const handleCardKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleCardClick();
+    }
+  };
+
+  const stopPropagation = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+  };
+
+  const handleSaveClick = (event: MouseEvent<HTMLButtonElement>) => {
+    stopPropagation(event);
+    handleSave();
+  };
+
+  const handleDeleteClick = (event: MouseEvent<HTMLButtonElement>) => {
+    stopPropagation(event);
+    handleDelete();
+  };
+
+  const handleDecreaseClick = (event: MouseEvent<HTMLButtonElement>) => {
+    stopPropagation(event);
+    handleDecrease();
+  };
+
+  const handleIncreaseClick = (event: MouseEvent<HTMLButtonElement>) => {
+    stopPropagation(event);
+    handleIncrease();
+  };
+
   const precio = new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: line.merchandise.price.currencyCode,
@@ -157,7 +201,7 @@ export function CartItem({ line }: CartItemProps) {
         {/* Botones ocultos a la derecha */}
         <div ref={buttonsRef} className="absolute inset-y-0 right-0 flex">
           <Button
-            onClick={handleSave}
+            onClick={handleSaveClick}
             className={cn(
               "w-max px-8 body-02-semibold rounded-l-1",
               isAlreadyFavorite
@@ -174,7 +218,7 @@ export function CartItem({ line }: CartItemProps) {
             {isAlreadyFavorite ? "Guardado" : "Guardar"}{" "}
           </Button>
           <Button
-            onClick={handleDelete}
+            onClick={handleDeleteClick}
             className="w-max px-8 body-02-semibold bg-background-fill-danger-default text-text-primary-invert"
             variant="ghost"
             data-clarity-label="Eliminar producto del carrito"
@@ -187,6 +231,10 @@ export function CartItem({ line }: CartItemProps) {
           style={{
             transform: open ? `translateX(-${slideAmt}px)` : "translateX(0)",
           }}
+          role="link"
+          tabIndex={0}
+          onClick={handleCardClick}
+          onKeyDown={handleCardKeyDown}
         >
           {/* … */}
           <div
@@ -243,7 +291,7 @@ export function CartItem({ line }: CartItemProps) {
             </div>
             <div className="flex items-center gap-2 mt-2">
               <Button
-                onClick={handleDecrease}
+                onClick={handleDecreaseClick}
                 className="m-1"
                 aria-label="disminuir cantidad"
                 variant="ghost"
@@ -257,7 +305,7 @@ export function CartItem({ line }: CartItemProps) {
                 {isSoldOut ? 0 : line.quantity}{" "}
               </span>
               <Button
-                onClick={handleIncrease}
+                onClick={handleIncreaseClick}
                 className="m-1"
                 aria-label="incrementar cantidad"
                 variant="ghost"
@@ -272,7 +320,7 @@ export function CartItem({ line }: CartItemProps) {
               </Button>
             </div>
             <Button
-              onClick={handleDelete}
+              onClick={handleDeleteClick}
               className="my-2 mr-2 body-02-regular text-text-secondary-default hover:text-text-secondary-hover transition-colors"
               variant="ghost"
               size="text"
