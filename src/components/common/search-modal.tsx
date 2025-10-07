@@ -192,6 +192,7 @@ export function SearchModal() {
                     <RelatedProductsCarousel
                       products={suggestions}
                       size="small"
+                      onProductClick={closeSearch}
                     />
                   </motion.div>
                 )}

@@ -24,6 +24,7 @@ export interface ProductCardProps {
   /** If true, image adapts to parent width */
   fill?: boolean;
   onImageLoad?: () => void;
+  onClick?: () => void;
 }
 
 function parsePrice(value: string): number {
@@ -47,6 +48,7 @@ export function ProductCard({
   size = "default",
   fill = false,
   onImageLoad,
+  onClick,
 }: ProductCardProps) {
   const formattedTitle = formatProductTitle(title);
   const [loaded, setLoaded] = useState(false);
@@ -96,6 +98,7 @@ export function ProductCard({
           size === "small" ? "h-[315px]" : "h-auto"
         } overflow-hidden hover:transition-shadow duration-300`}
         data-clarity-label={formattedTitle}
+        onClick={onClick}
       >
         {/* Imagen */}
         <div className="relative w-full overflow-hidden aspect-[220/328] pointer-events-none">
