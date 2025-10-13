@@ -32,15 +32,9 @@ export default function CartPage() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const prevCount = useRef<number>(0);
   const router = useRouter();
-  const hasAvailableItems = cart?.lines?.edges?.some(
-    ({ node }) => node.merchandise.quantityAvailable > 0 && node.quantity > 0
-  );
 
   const handleContinue = () => {
     if (!cart) return;
-    if (!hasAvailableItems) {
-      return;
-    }
     setLoadingCheckout(true);
     const items = cart.lines.edges.map(({ node }) => ({
       item_name: node.merchandise.product.title,
@@ -160,15 +154,18 @@ export default function CartPage() {
 
   const currency = cart.cost.subtotalAmount.currencyCode;
 
-  const subtotal = cart.lines.edges.reduce((acc, { node }) => {
-    if (node.merchandise.quantityAvailable === 0) {
-      return acc;
-    }
+  const availableLines =
+    cart.lines?.edges?.filter(
+      ({ node }) => node.merchandise.quantityAvailable !== 0
+    ) ?? [];
+
+  const subtotal = availableLines.reduce((acc, { node }) => {
     return acc + parseFloat(node.cost.totalAmount.amount);
   }, 0);
   const shipping = SHIPPING_FLAT_RATE;
   const total = subtotal;
   const grandTotal = subtotal + shipping;
+  const isCheckoutDisabled = availableLines.length === 0;
   const formatPrice = (value: number) =>
     new Intl.NumberFormat("es-AR", {
       style: "currency",
@@ -229,7 +226,7 @@ export default function CartPage() {
                 value="primary"
                 size="lg"
                 data-clarity-label="Continuar con la compra"
-                disabled={!hasAvailableItems}
+                disabled={isCheckoutDisabled}
               >
                 {" "}
                 Continuar - {formatPrice(grandTotal)}
@@ -245,7 +242,7 @@ export default function CartPage() {
           size="lg"
           className="w-1/2"
           data-clarity-label="Continuar con el pago"
-          disabled={!hasAvailableItems}
+          disabled={isCheckoutDisabled}
         >
           Continuar
         </Button>
