@@ -20,8 +20,12 @@ import { trackClarityEvent } from "@/lib/clarity";
 export default function CartPage() {
   // Obtenemos todo el estado directamente desde nuestro store de Zustand.
   // ¡Ya no necesitamos useState ni useEffect para buscar el carrito aquí!
-  const { cart, isLoading } = useCartStore();
-  const { isLoggedIn } = useAuthStore();
+  const { cart, isLoading: isCartLoading } = useCartStore();
+  const {
+    isLoggedIn,
+    customerAccessToken,
+    isLoading: isAuthLoading,
+  } = useAuthStore();
   const [showEmpty, setShowEmpty] = useState(false);
   const [loadingCheckout, setLoadingCheckout] = useState(false);
   const [loadingHome, setLoadingHome] = useState(false);
@@ -43,7 +47,16 @@ export default function CartPage() {
       total_items: cart.totalQuantity,
       value: parseFloat(cart.cost.totalAmount.amount),
     });
-    if (isLoggedIn) {
+    const isAuthenticated = isLoggedIn || !!customerAccessToken;
+
+    if (isAuthLoading && isAuthenticated) {
+      // Si el estado de autenticación aún se está resolviendo pero tenemos un
+      // token persistido, evitamos redirigir prematuramente al login.
+      router.push("/checkout");
+      return;
+    }
+
+    if (isAuthenticated) {
       router.push("/checkout");
     } else {
       router.push("/account?returnTo=/checkout");
@@ -71,7 +84,7 @@ export default function CartPage() {
     prevCount.current = lineCount;
   }, [lineCount]);
 
-  if (isLoading && !cart) {
+  if (isCartLoading && !cart) {
     // Mostramos 'Cargando' solo la primera vez.
     return <div className="text-center p-12">Cargando carrito...</div>;
   }
