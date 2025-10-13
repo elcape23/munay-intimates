@@ -57,7 +57,7 @@ const SLIDES: HeroSlide[] = [
     title: "Días relajados",
     subtitle: "Lo último en lencería Munay",
     ButtonText: "Explorar novedades",
-    href: "/new",
+    href: "/collections/conjuntos",
   },
 ];
 
