@@ -27,7 +27,7 @@ interface HeroSlide {
 /** Slides definidos internamente para no ensuciar page.tsx */
 const SLIDES: HeroSlide[] = [
   {
-    id: "2",
+    id: "1",
     image: {
       mobile: "/images/hero/mobile/slide-1.webp",
       desktop: "/images/hero/desktop/slide-1.webp",
@@ -38,7 +38,7 @@ const SLIDES: HeroSlide[] = [
     href: "/collections/new",
   },
   {
-    id: "1",
+    id: "2",
     image: {
       mobile: "/images/hero/mobile/slide-dia-de-la-madre-2.webp",
       desktop: "/images/hero/desktop/slide-2.webp",
