@@ -8,13 +8,34 @@ export function TopBanner() {
   if (pathname !== "/") return null;
 
   return (
-    <motion.div
-      initial={{ y: -50, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
-      className="fixed top-0 inset-x-0 z-50 bg-background-fill-danger-default text-text-primary-invert body-02-bold text-center py-2"
-    >
-      10% OFF EXTRA por el Día de la Madre
-    </motion.div>
+    /*<div>
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+        className="fixed top-0 inset-x-0 z-50 bg-background-surface-primary-invert text-text-primary-invert body-02-regular text-center py-2"
+      >
+        25% OFF en Efectivo o Transferencia
+      </motion.div>
+      
+    </div>*/
+    <div className="fixed inset-x-0 top-0 z-50">
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+        className="bg-background-surface-primary-invert text-text-primary-invert body-02-regular text-center py-2"
+      >
+        25% OFF en Efectivo o Transferencia
+      </motion.div>
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1, duration: 0.5, ease: "easeInOut" }}
+        className="bg-background-fill-danger-default text-text-primary-invert body-02-bold text-center py-2"
+      >
+        10% OFF EXTRA por el Día de la Madre
+      </motion.div>
+    </div>
   );
 }
