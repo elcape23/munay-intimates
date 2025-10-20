@@ -40,10 +40,10 @@ const SLIDES: HeroSlide[] = [
   {
     id: "2",
     image: {
-      mobile: "/images/hero/mobile/slide-dia-de-la-madre-2.webp",
+      mobile: "/images/hero/mobile/slide-2.webp",
       desktop: "/images/hero/desktop/slide-2.webp",
     },
-    title: "Feliz día Mamá",
+    title: "Noches con estilo",
     subtitle: "Comodidad absoluta cada día",
     ButtonText: "Comprar",
     href: "/collections/pijamas",
