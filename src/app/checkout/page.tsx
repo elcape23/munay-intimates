@@ -48,6 +48,7 @@ export default function CheckoutOptionsPage() {
   const [deliveryTime, setDeliveryTime] = useState("10hs a 13hs");
   const [couponCode, setCouponCode] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   useEffect(() => {
     const fetchAddress = async () => {
       if (!customerAccessToken) return;
@@ -118,17 +119,48 @@ export default function CheckoutOptionsPage() {
 
   const handleApplyCoupon = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!couponCode.trim()) {
+    const trimmedCoupon = couponCode.trim();
+    if (!trimmedCoupon) {
       return;
     }
 
     setIsApplyingCoupon(true);
     try {
-      toast({ title: "Tu cupón fue agregado con éxito" });
+      if ((appliedCoupon ?? "").toUpperCase() === "CYBER") {
+        toast({
+          title: "Cupón ya aplicado",
+          description: "Ya aplicaste el cupón CYBER.",
+        });
+        return;
+      }
+
+      const trimmedCoupon = (couponCode ?? "").trim();
+
+      if (trimmedCoupon.toUpperCase() !== "CYBER") {
+        toast({
+          title: "Cupón inválido",
+          description: "El cupón ingresado no es válido.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setAppliedCoupon("CYBER");
+      toast({
+        title: "¡Cupón aplicado!",
+        description: "Tu cupón CYBER fue agregado con éxito.",
+      });
       setCouponCode("");
     } finally {
       setIsApplyingCoupon(false);
     }
+  };
+
+  const handleCouponChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (appliedCoupon) {
+      setAppliedCoupon(null);
+    }
+    setCouponCode(event.target.value);
   };
 
   const handleContinue = async () => {
@@ -293,10 +325,17 @@ export default function CheckoutOptionsPage() {
                   <div className="relative">
                     <Input
                       value={couponCode}
-                      onChange={(event) => setCouponCode(event.target.value)}
-                      placeholder="Ingresá tu código"
+                      onChange={handleCouponChange}
+                      placeholder={
+                        appliedCoupon ? `${appliedCoupon}` : "Ingresá tu código"
+                      }
                       autoComplete="off"
-                      className="pr-24"
+                      className={cn(
+                        "pr-24",
+                        appliedCoupon &&
+                          !couponCode &&
+                          "border-border-success-default text-text-success-default placeholder:text-text-success-default focus:outline-border-success-default"
+                      )}
                     />
                     <Button
                       type="submit"
@@ -308,6 +347,12 @@ export default function CheckoutOptionsPage() {
                       {isApplyingCoupon ? "Aplicando..." : "Aplicar"}
                     </Button>
                   </div>
+                  {appliedCoupon === "CYBER" && (
+                    <p className="body-02-regular text-text-success-default">
+                      Cupón CYBER aplicado. No aplica a productos de la
+                      subcategoría Bombachas.
+                    </p>
+                  )}
                 </form>
               </AccordionContent>
             </AccordionItem>
@@ -413,6 +458,7 @@ export default function CheckoutOptionsPage() {
           cart={cart}
           paymentMethod={selectedMethod}
           shippingCost={effectiveShippingCost}
+          appliedCoupon={appliedCoupon}
         />{" "}
       </div>
       <div className="mt-6">
