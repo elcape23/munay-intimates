@@ -29,7 +29,7 @@ import {
 } from "@/lib/shopify";
 import { DeliveryDateModal } from "@/components/checkout/delivery-date-modal";
 import { trackClarityEvent } from "@/lib/clarity";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
@@ -124,7 +124,7 @@ export default function CheckoutOptionsPage() {
 
     setIsApplyingCoupon(true);
     try {
-      toast.success("tu cupón fue agregado con éxito");
+      toast({ title: "Tu cupón fue agregado con éxito" });
       setCouponCode("");
     } finally {
       setIsApplyingCoupon(false);
