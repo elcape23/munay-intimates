@@ -63,7 +63,7 @@ export default function OrderSummary({
   const normalizedCoupon = appliedCoupon?.trim().toUpperCase();
 
   const eligibleSubtotal =
-    showExtraDiscount && normalizedCoupon === "CYBER"
+    showExtraDiscount && normalizedCoupon === "CYBERMUNAY"
       ? cart.lines.edges.reduce((sum, { node }) => {
           if (node.merchandise.quantityAvailable === 0) return sum;
           const tags = node.merchandise.product.tags || [];
@@ -118,7 +118,7 @@ export default function OrderSummary({
           )}
           {couponDiscount > 0 && (
             <div className="flex justify-between body-02-regular">
-              <span>15% OFF CYBER</span>
+              <span>15% OFF CYBERMUNAY</span>
               <span>-{formatPrice(couponDiscount)}</span>{" "}
             </div>
           )}

@@ -126,17 +126,17 @@ export default function CheckoutOptionsPage() {
 
     setIsApplyingCoupon(true);
     try {
-      if ((appliedCoupon ?? "").toUpperCase() === "CYBER") {
+      if ((appliedCoupon ?? "").toUpperCase() === "CYBERMUNAY") {
         toast({
           title: "Cupón ya aplicado",
-          description: "Ya aplicaste el cupón CYBER.",
+          description: "Ya aplicaste el cupón CYBERMUNAY.",
         });
         return;
       }
 
       const trimmedCoupon = (couponCode ?? "").trim();
 
-      if (trimmedCoupon.toUpperCase() !== "CYBER") {
+      if (trimmedCoupon.toUpperCase() !== "CYBERMUNAY") {
         toast({
           title: "Cupón inválido",
           description: "El cupón ingresado no es válido.",
@@ -145,10 +145,10 @@ export default function CheckoutOptionsPage() {
         return;
       }
 
-      setAppliedCoupon("CYBER");
+      setAppliedCoupon("CYBERMUNAY");
       toast({
         title: "¡Cupón aplicado!",
-        description: "Tu cupón CYBER fue agregado con éxito.",
+        description: "Tu cupón CYBERMUNAY fue agregado con éxito.",
       });
       setCouponCode("");
     } finally {
@@ -347,9 +347,9 @@ export default function CheckoutOptionsPage() {
                       {isApplyingCoupon ? "Aplicando..." : "Aplicar"}
                     </Button>
                   </div>
-                  {appliedCoupon === "CYBER" && (
+                  {appliedCoupon === "CYBERMUNAY" && (
                     <p className="body-02-regular text-text-success-default">
-                      Cupón CYBER aplicado. No aplica a productos de la
+                      Cupón CYBERMUNAY aplicado. No aplica a productos de la
                       subcategoría Bombachas.
                     </p>
                   )}
