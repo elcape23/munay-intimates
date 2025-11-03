@@ -285,27 +285,29 @@ export default function CheckoutOptionsPage() {
               </div>
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="coupon">
-            <AccordionTrigger>Aplicar Cupón</AccordionTrigger>
-            <AccordionContent>
-              <form className="p-4 space-y-3" onSubmit={handleApplyCoupon}>
-                <Input
-                  value={couponCode}
-                  onChange={(event) => setCouponCode(event.target.value)}
-                  placeholder="Ingresá tu código"
-                  autoComplete="off"
-                />
-                <Button
-                  type="submit"
-                  className="w-full"
-                  size="lg"
-                  disabled={!couponCode.trim() || isApplyingCoupon}
-                >
-                  {isApplyingCoupon ? "Aplicando..." : "Aplicar"}
-                </Button>
-              </form>
-            </AccordionContent>
-          </AccordionItem>
+          {selectedMethod !== "Tarjeta de crédito" && (
+            <AccordionItem value="coupon">
+              <AccordionTrigger>Aplicar Cupón</AccordionTrigger>
+              <AccordionContent>
+                <form className="p-4 space-y-3" onSubmit={handleApplyCoupon}>
+                  <Input
+                    value={couponCode}
+                    onChange={(event) => setCouponCode(event.target.value)}
+                    placeholder="Ingresá tu código"
+                    autoComplete="off"
+                  />
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    size="lg"
+                    disabled={!couponCode.trim() || isApplyingCoupon}
+                  >
+                    {isApplyingCoupon ? "Aplicando..." : "Aplicar"}
+                  </Button>
+                </form>
+              </AccordionContent>
+            </AccordionItem>
+          )}
           <AccordionItem value="shipping-method">
             <AccordionTrigger>Método de envío</AccordionTrigger>
             <AccordionContent>
