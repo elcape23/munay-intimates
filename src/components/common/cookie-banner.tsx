@@ -76,7 +76,7 @@ export function CookieBanner() {
             transition={{ duration: 0.5, ease: "easeInOut" }}
             className="relative w-full bg-background-primary-default p-4 pb-6"
           >
-            <div className="max-w-screen-md mx-auto flex flex-col gap-4 mb-20 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-screen-md mx-auto flex flex-col gap-4 mb-40 md:flex-row md:items-center md:justify-between">
               <h2>
                 <span className="body-01-bold">Cookies</span>
               </h2>
