@@ -221,7 +221,7 @@ export default function CheckoutOptionsPage() {
         </div>
         <Accordion
           type="multiple"
-          defaultValue={["payment", "shipping-method", "shipping"]}
+          defaultValue={["payment", "coupon", "shipping-method", "shipping"]}
           className="space-y-6"
         >
           <AccordionItem value="payment">
@@ -290,20 +290,24 @@ export default function CheckoutOptionsPage() {
               <AccordionTrigger>Aplicar Cupón</AccordionTrigger>
               <AccordionContent>
                 <form className="p-4 space-y-3" onSubmit={handleApplyCoupon}>
-                  <Input
-                    value={couponCode}
-                    onChange={(event) => setCouponCode(event.target.value)}
-                    placeholder="Ingresá tu código"
-                    autoComplete="off"
-                  />
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    size="lg"
-                    disabled={!couponCode.trim() || isApplyingCoupon}
-                  >
-                    {isApplyingCoupon ? "Aplicando..." : "Aplicar"}
-                  </Button>
+                  <div className="relative">
+                    <Input
+                      value={couponCode}
+                      onChange={(event) => setCouponCode(event.target.value)}
+                      placeholder="Ingresá tu código"
+                      autoComplete="off"
+                      className="pr-24"
+                    />
+                    <Button
+                      type="submit"
+                      variant="link"
+                      size="text"
+                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                      disabled={!couponCode.trim() || isApplyingCoupon}
+                    >
+                      {isApplyingCoupon ? "Aplicando..." : "Aplicar"}
+                    </Button>
+                  </div>
                 </form>
               </AccordionContent>
             </AccordionItem>
