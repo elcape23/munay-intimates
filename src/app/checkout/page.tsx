@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/accordion";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuthStore } from "@/store/auth-store";
+import { Input } from "@/components/ui/input";
 import {
   CustomerAddress,
   getCheckoutRedirectUrl,
@@ -28,6 +29,7 @@ import {
 } from "@/lib/shopify";
 import { DeliveryDateModal } from "@/components/checkout/delivery-date-modal";
 import { trackClarityEvent } from "@/lib/clarity";
+import { toast } from "sonner";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
@@ -44,6 +46,8 @@ export default function CheckoutOptionsPage() {
   const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
   const [deliveryDateLabel, setDeliveryDateLabel] = useState("Mañana");
   const [deliveryTime, setDeliveryTime] = useState("10hs a 13hs");
+  const [couponCode, setCouponCode] = useState("");
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   useEffect(() => {
     const fetchAddress = async () => {
       if (!customerAccessToken) return;
@@ -110,6 +114,21 @@ export default function CheckoutOptionsPage() {
 
   const handleCard = () => {
     setSelectedMethod("Tarjeta de crédito");
+  };
+
+  const handleApplyCoupon = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!couponCode.trim()) {
+      return;
+    }
+
+    setIsApplyingCoupon(true);
+    try {
+      toast.success("tu cupón fue agregado con éxito");
+      setCouponCode("");
+    } finally {
+      setIsApplyingCoupon(false);
+    }
   };
 
   const handleContinue = async () => {
@@ -264,6 +283,27 @@ export default function CheckoutOptionsPage() {
                   </Button>
                 </div>
               </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="coupon">
+            <AccordionTrigger>Aplicar Cupón</AccordionTrigger>
+            <AccordionContent>
+              <form className="p-4 space-y-3" onSubmit={handleApplyCoupon}>
+                <Input
+                  value={couponCode}
+                  onChange={(event) => setCouponCode(event.target.value)}
+                  placeholder="Ingresá tu código"
+                  autoComplete="off"
+                />
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
+                  disabled={!couponCode.trim() || isApplyingCoupon}
+                >
+                  {isApplyingCoupon ? "Aplicando..." : "Aplicar"}
+                </Button>
+              </form>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="shipping-method">

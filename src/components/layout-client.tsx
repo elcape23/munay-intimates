@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useIntroStore } from "@/store/intro-store";
 import { TopBanner } from "@/components/common/top-banner";
 import { Clarity } from "@/components/common/clarity";
+import { Toaster as SonnerToaster } from "sonner";
 
 export function LayoutClient({ children }: { children: React.ReactNode }) {
   const [introLoaded, setIntroLoaded] = useState(false);
@@ -58,6 +59,7 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
       <SearchModal />
       <main>{children}</main>
       <Toaster />
+      <SonnerToaster richColors position="top-center" />
     </>
   );
 }
