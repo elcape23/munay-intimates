@@ -495,9 +495,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: message }, { status: 400 });
     }
 
-    const orderName =
-      completeJson.data.draftOrderComplete.draftOrder.order.name;
-    const orderGid = completeJson.data.draftOrderComplete.draftOrder.order.id;
+    const draftOrderComplete = completeJson.data?.draftOrderComplete ?? {};
+    const draftOrder = draftOrderComplete?.draftOrder ?? null;
+    const completedOrder =
+      draftOrderComplete?.order ??
+      draftOrderComplete?.completedOrder ??
+      draftOrder?.order ??
+      null;
+
+    const orderGid =
+      completedOrder?.id ?? draftOrder?.order?.id ?? draftOrder?.id ?? null;
+
+    let orderName =
+      completedOrder?.name ??
+      draftOrder?.order?.name ??
+      draftOrder?.name ??
+      null;
+
+    if (!orderName && typeof orderGid === "string") {
+      const gidSegments = orderGid.split("/");
+      orderName = gidSegments[gidSegments.length - 1] || orderGid;
+    }
+
+    if (!orderName) {
+      console.warn("[route.ts] ⚠️ draftOrderComplete sin name legible", {
+        draftOrderComplete,
+      });
+      orderName = "Orden pendiente";
+    }
 
     // 🧾 Traer total definitivo de la orden creada
     const orderQuery = `

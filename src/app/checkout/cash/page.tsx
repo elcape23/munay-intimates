@@ -20,6 +20,7 @@ export default function CheckoutCashPage() {
   const createdRef = useRef(false);
   const isMountedRef = useRef(true);
   const [orderId, setOrderId] = useState<string | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -87,8 +88,26 @@ export default function CheckoutCashPage() {
         throw new Error("La respuesta del servidor no es válida");
       }
       if (!res.ok) throw new Error(data?.error || "No se pudo crear la orden");
+      const resolvedOrderId: string | null = (() => {
+        if (typeof data?.id === "string" && data.id.trim()) {
+          return data.id.trim();
+        }
+        if (typeof data?.name === "string" && data.name.trim()) {
+          return data.name.trim();
+        }
+        if (typeof data?.orderName === "string" && data.orderName.trim()) {
+          return data.orderName.trim();
+        }
+        if (typeof data?.order_id === "string" && data.order_id.trim()) {
+          return data.order_id.trim();
+        }
+        if (typeof data?.orderId === "string" && data.orderId.trim()) {
+          return data.orderId.trim();
+        }
+        return null;
+      })();
       if (isMountedRef.current) {
-        setOrderId(data.id);
+        setOrderId(resolvedOrderId ?? "Pendiente");
       }
       if (cart) {
         const items = cart.lines.edges.map(({ node }) => ({
@@ -195,7 +214,7 @@ export default function CheckoutCashPage() {
       </div>
       <div className="mb-12 space-y-2">
         <Button
-          asChild
+          variant="primary"
           size="lg"
           className="w-full"
           data-clarity-label="Enviar WhatsApp para pago en efectivo"
