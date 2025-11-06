@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 import { useCartStore } from "@/store/cart-store";
@@ -16,154 +16,101 @@ import { trackClarityEvent } from "@/lib/clarity";
 export default function CheckoutCashPage() {
   const router = useRouter();
   const { isLoggedIn, customer } = useAuthStore();
-  const { cart, clearCart, fetchCart } = useCartStore();
+  const { cart, clearCart } = useCartStore();
   const createdRef = useRef(false);
-  const isMountedRef = useRef(true);
   const [orderId, setOrderId] = useState<string | null>(null);
-
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  const readSessionStorage = useCallback((key: string) => {
-    if (typeof window === "undefined") return null;
-    try {
-      return sessionStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  }, []);
-
-  const createOrder = useCallback(async () => {
-    if (!isLoggedIn || !customer || !cart || orderId || createdRef.current)
-      return;
-    createdRef.current = true;
-    if (isMountedRef.current) {
-      setError(null);
+    const createOrder = async () => {
+      if (
+        !isLoggedIn ||
+        !customer ||
+        !cart ||
+        orderId ||
+        loading ||
+        createdRef.current
+      )
+        return;
+      createdRef.current = true;
       setLoading(true);
-    }
-    try {
-      const shippingMethod = readSessionStorage("shippingMethod");
-      const shippingCostStr = readSessionStorage("shippingCost");
-      const shippingCost = shippingCostStr
-        ? parseFloat(shippingCostStr)
-        : undefined;
-      const shippingAddressStr = readSessionStorage("defaultAddress");
-      let shippingAddress: unknown;
-      if (shippingAddressStr) {
-        try {
-          shippingAddress = JSON.parse(shippingAddressStr);
-        } catch (err) {
-          console.warn("No se pudo parsear la dirección de envío", err);
-        }
-      }
-      const deliveryDate = readSessionStorage("deliveryDate");
-      const deliveryTime = readSessionStorage("deliveryTime");
-      const noteParts = ["Pago en efectivo"];
-      if (deliveryDate) noteParts.push(`Fecha: ${deliveryDate}`);
-      if (deliveryTime) noteParts.push(`Horario: ${deliveryTime}`);
-      const note = noteParts.join(" - ");
-      const res = await fetch("/api/create-pending-orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cart,
-          customerId: customer?.id,
-          note,
-          tags: ["efectivo"],
-          shippingMethod,
-          shippingCost,
-          shippingAddress,
-        }),
-      });
-      let data: any = null;
       try {
-        data = await res.json();
-      } catch (err) {
-        throw new Error("La respuesta del servidor no es válida");
-      }
-      if (!res.ok) throw new Error(data?.error || "No se pudo crear la orden");
-      const resolvedOrderId: string | null = (() => {
-        if (typeof data?.id === "string" && data.id.trim()) {
-          return data.id.trim();
-        }
-        if (typeof data?.name === "string" && data.name.trim()) {
-          return data.name.trim();
-        }
-        if (typeof data?.orderName === "string" && data.orderName.trim()) {
-          return data.orderName.trim();
-        }
-        if (typeof data?.order_id === "string" && data.order_id.trim()) {
-          return data.order_id.trim();
-        }
-        if (typeof data?.orderId === "string" && data.orderId.trim()) {
-          return data.orderId.trim();
-        }
-        return null;
-      })();
-      if (isMountedRef.current) {
-        setOrderId(resolvedOrderId ?? "Pendiente");
-      }
-      if (cart) {
-        const items = cart.lines.edges.map(({ node }) => ({
-          item_name: node.merchandise.product.title,
-          item_id: node.merchandise.sku || node.merchandise.id,
-          price: parseFloat(node.merchandise.price.amount),
-          quantity: node.quantity,
-        }));
-        trackPurchase(
-          data.id,
-          parseFloat(cart.cost.totalAmount.amount),
-          cart.cost.totalAmount.currencyCode,
-          items
-        );
-        trackClarityEvent("purchase_completed", {
-          order_id: data.id,
-          value: parseFloat(cart.cost.totalAmount.amount),
-          currency: cart.cost.totalAmount.currencyCode,
-          payment_method: "Efectivo",
+        const shippingMethod =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("shippingMethod")
+            : null;
+        const shippingCostStr =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("shippingCost")
+            : null;
+        const shippingCost = shippingCostStr
+          ? parseFloat(shippingCostStr)
+          : undefined;
+        const shippingAddressStr =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("defaultAddress")
+            : null;
+        const shippingAddress = shippingAddressStr
+          ? JSON.parse(shippingAddressStr)
+          : undefined;
+        const deliveryDate =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("deliveryDate")
+            : null;
+        const deliveryTime =
+          typeof window !== "undefined"
+            ? sessionStorage.getItem("deliveryTime")
+            : null;
+        const noteParts = ["Pago en efectivo"];
+        if (deliveryDate) noteParts.push(`Fecha: ${deliveryDate}`);
+        if (deliveryTime) noteParts.push(`Horario: ${deliveryTime}`);
+        const note = noteParts.join(" - ");
+        const res = await fetch("/api/create-pending-orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cart,
+            customerId: customer?.id,
+            note,
+            tags: ["efectivo"],
+            shippingMethod,
+            shippingCost,
+            shippingAddress,
+          }),
         });
-      }
-      clearCart();
-      try {
-        await fetchCart();
-      } catch (err) {
-        console.warn("No se pudo recrear el carrito luego de la orden", err);
-      }
-    } catch (e) {
-      createdRef.current = false;
-      if (isMountedRef.current) {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Error");
+        setOrderId(data.id);
+        if (cart) {
+          const items = cart.lines.edges.map(({ node }) => ({
+            item_name: node.merchandise.product.title,
+            item_id: node.merchandise.sku || node.merchandise.id,
+            price: parseFloat(node.merchandise.price.amount),
+            quantity: node.quantity,
+          }));
+          trackPurchase(
+            data.id,
+            parseFloat(cart.cost.totalAmount.amount),
+            cart.cost.totalAmount.currencyCode,
+            items
+          );
+          trackClarityEvent("purchase_completed", {
+            order_id: data.id,
+            value: parseFloat(cart.cost.totalAmount.amount),
+            currency: cart.cost.totalAmount.currencyCode,
+            payment_method: "Efectivo",
+          });
+        }
+        clearCart();
+      } catch (e) {
         setError(e instanceof Error ? e.message : "No se pudo crear la orden.");
-      }
-    } finally {
-      if (isMountedRef.current) {
+      } finally {
         setLoading(false);
       }
-    }
-  }, [
-    cart,
-    clearCart,
-    customer,
-    fetchCart,
-    isLoggedIn,
-    orderId,
-    readSessionStorage,
-  ]);
-
-  useEffect(() => {
-    void createOrder();
-  }, [createOrder]);
-
-  const handleRetry = useCallback(() => {
-    if (loading) return;
-    createdRef.current = false;
-    void createOrder();
-  }, [createOrder, loading]);
+    };
+    createOrder();
+  }, [isLoggedIn, customer, cart]);
   if (!isLoggedIn) {
     return (
       <section className="pt-[55px] mx-6">
@@ -171,7 +118,7 @@ export default function CheckoutCashPage() {
         <LoginForm
           redirectOnSuccess={false}
           registerReturnUrl="/checkout/cash"
-        />
+        />{" "}
       </section>
     );
   }
@@ -185,6 +132,7 @@ export default function CheckoutCashPage() {
             : "items-start justify-start mt-20"
         }`}
       >
+        {" "}
         {orderId ? (
           <>
             <CheckCircleIcon className="w-6 h-6 text-icon-success-default" />
@@ -204,21 +152,17 @@ export default function CheckoutCashPage() {
             <p className="body-01-regular">Generando orden...</p>
           </div>
         ) : (
-          <div className="flex flex-col items-start gap-3">
-            <p className="body-01-regular text-left">{error}</p>
-            <Button onClick={handleRetry} size="lg">
-              Reintentar
-            </Button>
-          </div>
+          <p className="body-01-regular">{error}</p>
         )}
       </div>
       <div className="mb-12 space-y-2">
         <Button
-          variant="primary"
+          asChild
           size="lg"
           className="w-full"
           data-clarity-label="Enviar WhatsApp para pago en efectivo"
         >
+          {" "}
           <a
             href="https://wa.me/5493813638914"
             target="_blank"
