@@ -189,8 +189,9 @@ export default function CheckoutTransferPage() {
       <div className="mb-16 space-y-2">
         <Button
           onClick={() => router.back()}
-          variant="ghost"
-          size="icon"
+          variant="primary"
+          size="lg"
+          className="w-full"
           data-clarity-label="Volver desde favoritos"
         >
           {" "}
