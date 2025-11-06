@@ -118,7 +118,7 @@ export default function CheckoutCashPage() {
         <LoginForm
           redirectOnSuccess={false}
           registerReturnUrl="/checkout/cash"
-        />{" "}
+        />
       </section>
     );
   }
@@ -132,7 +132,6 @@ export default function CheckoutCashPage() {
             : "items-start justify-start mt-20"
         }`}
       >
-        {" "}
         {orderId ? (
           <>
             <CheckCircleIcon className="w-6 h-6 text-icon-success-default" />
@@ -162,7 +161,6 @@ export default function CheckoutCashPage() {
           className="w-full"
           data-clarity-label="Enviar WhatsApp para pago en efectivo"
         >
-          {" "}
           <a
             href="https://wa.me/5493813638914"
             target="_blank"
