@@ -40,7 +40,8 @@ export async function fetchJson<T = unknown>(
 
   if (contentType.includes("application/json")) {
     try {
-      data = await response.json();
+      const raw = await response.text();
+      data = raw.trim() === "" ? null : JSON.parse(raw);
     } catch (error) {
       const errorDetails: Record<string, unknown> = {
         endpoint: label,

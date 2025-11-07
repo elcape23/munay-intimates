@@ -6,39 +6,12 @@ interface OrderSummaryProps {
   cart: ShopifyCart;
   paymentMethod: string | null;
   shippingCost?: number | null;
-  appliedCoupon?: string | null;
 }
-
-const isBombachaSubcategory = (tags: string[]): boolean => {
-  return tags.some((rawTag) => {
-    const [group, value] = rawTag.split(":");
-    if (!group || !value) return false;
-
-    const normalize = (text: string) =>
-      text
-        .trim()
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-
-    const normalizedGroup = normalize(group);
-    const normalizedValue = normalize(value);
-
-    const subcategoryGroups = new Set(["subcategoria", "subcategory"]);
-
-    if (!subcategoryGroups.has(normalizedGroup)) {
-      return false;
-    }
-
-    return normalizedValue === "bombachas";
-  });
-};
 
 export default function OrderSummary({
   cart,
   paymentMethod,
   shippingCost,
-  appliedCoupon,
 }: OrderSummaryProps) {
   const currency = cart.cost.totalAmount.currencyCode;
 
@@ -60,27 +33,8 @@ export default function OrderSummary({
   const showExtraDiscount =
     paymentMethod === "Efectivo" || paymentMethod === "Transferencia";
   const paymentMethodDiscount = showExtraDiscount ? subtotal * 0.25 : 0;
-  const normalizedCoupon = appliedCoupon?.trim().toUpperCase();
 
-  const eligibleSubtotal =
-    showExtraDiscount && normalizedCoupon === "CYBERMUNAY"
-      ? cart.lines.edges.reduce((sum, { node }) => {
-          if (node.merchandise.quantityAvailable === 0) return sum;
-          const tags = node.merchandise.product.tags || [];
-          if (tags.length && isBombachaSubcategory(tags)) {
-            return sum;
-          }
-          const lineTotal = parseFloat(node.cost.totalAmount.amount);
-          if (Number.isNaN(lineTotal)) {
-            return sum;
-          }
-          return sum + lineTotal;
-        }, 0)
-      : 0;
-
-  const couponDiscount = eligibleSubtotal * 0.15;
-
-  const total = subtotal - paymentMethodDiscount - couponDiscount + shipping;
+  const total = subtotal - paymentMethodDiscount + shipping;
   const formatPrice = (value: number) =>
     new Intl.NumberFormat("es-AR", {
       style: "currency",
@@ -114,12 +68,6 @@ export default function OrderSummary({
             <div className="flex justify-between body-02-regular">
               <span>25% OFF</span>
               <span>-{formatPrice(paymentMethodDiscount)}</span>
-            </div>
-          )}
-          {couponDiscount > 0 && (
-            <div className="flex justify-between body-02-regular">
-              <span>15% OFF CYBERMUNAY</span>
-              <span>-{formatPrice(couponDiscount)}</span>{" "}
             </div>
           )}
         </div>

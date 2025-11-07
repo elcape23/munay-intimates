@@ -8,7 +8,7 @@ export function TopBanner() {
   if (pathname !== "/") return null;
 
   return (
-    /*<div>
+    <div>
       <motion.div
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -17,9 +17,8 @@ export function TopBanner() {
       >
         25% OFF en Efectivo o Transferencia
       </motion.div>
-      
-    </div>*/
-    <div className="fixed inset-x-0 top-0 z-50">
+    </div>
+    /*<div className="fixed inset-x-0 top-0 z-50">
       <motion.div
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -36,6 +35,6 @@ export function TopBanner() {
       >
         15% OFF EXTRA con el código: <strong>CYBERMUNAY</strong>
       </motion.div>
-    </div>
+    </div>*/
   );
 }

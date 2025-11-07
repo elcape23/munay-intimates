@@ -161,7 +161,7 @@ export function Navbar({
       }}
       className={cn(
         "fixed inset-x-0 z-40 transition-all duration-700 ease-in-out",
-        isHome ? "top-16" : "top-0",
+        isHome ? "top-8" : "top-0",
         {
           "bg-transparent":
             !alwaysDark && !alwaysLight && ((isHome && !scrolled) || isProduct),

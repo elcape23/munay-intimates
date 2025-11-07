@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/accordion";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuthStore } from "@/store/auth-store";
-import { Input } from "@/components/ui/input";
 import {
   CustomerAddress,
   getCheckoutRedirectUrl,
@@ -29,7 +28,6 @@ import {
 } from "@/lib/shopify";
 import { DeliveryDateModal } from "@/components/checkout/delivery-date-modal";
 import { trackClarityEvent } from "@/lib/clarity";
-import { toast } from "@/hooks/use-toast";
 import { fetchJson } from "@/lib/api-client";
 
 export default function CheckoutOptionsPage() {
@@ -47,9 +45,6 @@ export default function CheckoutOptionsPage() {
   const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
   const [deliveryDateLabel, setDeliveryDateLabel] = useState("Mañana");
   const [deliveryTime, setDeliveryTime] = useState("10hs a 13hs");
-  const [couponCode, setCouponCode] = useState("");
-  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
-  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   useEffect(() => {
     const fetchAddress = async () => {
       if (!customerAccessToken) return;
@@ -117,52 +112,6 @@ export default function CheckoutOptionsPage() {
 
   const handleCard = () => {
     setSelectedMethod("Tarjeta de crédito");
-  };
-
-  const handleApplyCoupon = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const trimmedCoupon = couponCode.trim();
-    if (!trimmedCoupon) {
-      return;
-    }
-
-    setIsApplyingCoupon(true);
-    try {
-      if ((appliedCoupon ?? "").toUpperCase() === "CYBERMUNAY") {
-        toast({
-          title: "Cupón ya aplicado",
-          description: "Ya aplicaste el cupón CYBERMUNAY.",
-        });
-        return;
-      }
-
-      const trimmedCoupon = (couponCode ?? "").trim();
-
-      if (trimmedCoupon.toUpperCase() !== "CYBERMUNAY") {
-        toast({
-          title: "Cupón inválido",
-          description: "El cupón ingresado no es válido.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setAppliedCoupon("CYBERMUNAY");
-      toast({
-        title: "¡Cupón aplicado!",
-        description: "Tu cupón CYBERMUNAY fue agregado con éxito.",
-      });
-      setCouponCode("");
-    } finally {
-      setIsApplyingCoupon(false);
-    }
-  };
-
-  const handleCouponChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (appliedCoupon) {
-      setAppliedCoupon(null);
-    }
-    setCouponCode(event.target.value);
   };
 
   const handleContinue = async () => {
@@ -255,7 +204,7 @@ export default function CheckoutOptionsPage() {
         </div>
         <Accordion
           type="multiple"
-          defaultValue={["payment", "coupon", "shipping-method", "shipping"]}
+          defaultValue={["payment", "shipping-method", "shipping"]}
           className="space-y-6"
         >
           <AccordionItem value="payment">
@@ -319,46 +268,6 @@ export default function CheckoutOptionsPage() {
               </div>
             </AccordionContent>
           </AccordionItem>
-          {selectedMethod !== "Tarjeta de crédito" && (
-            <AccordionItem value="coupon">
-              <AccordionTrigger>Aplicar Cupón</AccordionTrigger>
-              <AccordionContent>
-                <form className="p-4 space-y-3" onSubmit={handleApplyCoupon}>
-                  <div className="relative">
-                    <Input
-                      value={couponCode}
-                      onChange={handleCouponChange}
-                      placeholder={
-                        appliedCoupon ? `${appliedCoupon}` : "Ingresá tu código"
-                      }
-                      autoComplete="off"
-                      className={cn(
-                        "pr-24",
-                        appliedCoupon &&
-                          !couponCode &&
-                          "border-border-success-default text-text-success-default placeholder:text-text-success-default focus:outline-border-success-default"
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      variant="link"
-                      size="text"
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
-                      disabled={!couponCode.trim() || isApplyingCoupon}
-                    >
-                      {isApplyingCoupon ? "Aplicando..." : "Aplicar"}
-                    </Button>
-                  </div>
-                  {appliedCoupon === "CYBERMUNAY" && (
-                    <p className="body-02-regular text-text-success-default">
-                      Cupón CYBERMUNAY aplicado. No aplica a productos de la
-                      subcategoría Bombachas.
-                    </p>
-                  )}
-                </form>
-              </AccordionContent>
-            </AccordionItem>
-          )}
           <AccordionItem value="shipping-method">
             <AccordionTrigger>Método de envío</AccordionTrigger>
             <AccordionContent>
@@ -460,8 +369,7 @@ export default function CheckoutOptionsPage() {
           cart={cart}
           paymentMethod={selectedMethod}
           shippingCost={effectiveShippingCost}
-          appliedCoupon={appliedCoupon}
-        />{" "}
+        />
       </div>
       <div className="mt-6">
         <Button
