@@ -68,10 +68,13 @@ export async function fetchJson<T = unknown>(
 
   if (!response.ok) {
     const body = data as Record<string, unknown> | undefined;
-    const message =
-      (body?.error && typeof body.error === "string" && body.error) ||
-      (body?.message && typeof body.message === "string" && body.message) ||
-      `Error ${response.status}`;
+    const bodyMessage =
+      typeof body?.error === "string"
+        ? body.error
+        : typeof body?.message === "string"
+        ? body.message
+        : undefined;
+    const message = bodyMessage ?? `Error ${response.status}`;
 
     const errorDetails: Record<string, unknown> = {
       endpoint: label,
