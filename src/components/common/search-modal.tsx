@@ -10,6 +10,7 @@ import { useUiStore } from "@/store/ui-store";
 import type { ShopifyProduct, FeaturedProduct } from "@/lib/shopify";
 import { trackClarityEvent } from "@/lib/clarity";
 import { formatProductTitle } from "@/lib/utils";
+import { fetchJson } from "@/lib/api-client";
 
 export function SearchModal() {
   const { isSearchOpen, closeSearch, openMenu } = useUiStore();
@@ -30,8 +31,9 @@ export function SearchModal() {
     const handler = setTimeout(async () => {
       try {
         if (!query) {
-          const res = await fetch("/api/search");
-          const data = await res.json();
+          const data = await fetchJson<{
+            suggestions?: (ShopifyProduct | FeaturedProduct)[];
+          }>("/api/search", { endpointName: "GET /api/search" });
           setSuggestions(data.suggestions ?? []);
           setResults([]);
           return;
@@ -40,14 +42,16 @@ export function SearchModal() {
           setResults([]);
           return;
         }
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-        const data = await res.json();
+        const data = await fetchJson<{
+          results?: ShopifyProduct[];
+          suggestions?: (ShopifyProduct | FeaturedProduct)[];
+        }>(`/api/search?q=${encodeURIComponent(query)}`);
         setResults(data.results ?? []);
         if (data.suggestions) {
           setSuggestions(data.suggestions);
         }
-      } catch {
-        // ignore errors
+      } catch (error) {
+        console.error("[SearchModal] Error fetching search results", error);
       }
     }, 300);
     return () => clearTimeout(handler);
@@ -68,11 +72,12 @@ export function SearchModal() {
       setQuery("");
       (async () => {
         try {
-          const res = await fetch("/api/search");
-          const data = await res.json();
+          const data = await fetchJson<{
+            suggestions?: (ShopifyProduct | FeaturedProduct)[];
+          }>("/api/search", { endpointName: "GET /api/search" });
           setSuggestions(data.suggestions ?? []);
-        } catch {
-          // ignore errors
+        } catch (error) {
+          console.error("[SearchModal] Error preloading suggestions", error);
         }
       })();
     }
@@ -85,11 +90,17 @@ export function SearchModal() {
       setSuggestions([]);
       return;
     }
-    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-    const data = await res.json();
-    setResults(data.results ?? []);
-    if (data.suggestions) {
-      setSuggestions(data.suggestions);
+    try {
+      const data = await fetchJson<{
+        results?: ShopifyProduct[];
+        suggestions?: (ShopifyProduct | FeaturedProduct)[];
+      }>(`/api/search?q=${encodeURIComponent(query)}`);
+      setResults(data.results ?? []);
+      if (data.suggestions) {
+        setSuggestions(data.suggestions);
+      }
+    } catch (error) {
+      console.error("[SearchModal] Error submitting search", error);
     }
   };
 

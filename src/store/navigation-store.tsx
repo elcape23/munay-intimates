@@ -4,6 +4,7 @@ import {
   NavItem,
   hasNewSaleProducts,
 } from "@/lib/shopify";
+import { fetchJson } from "@/lib/api-client";
 
 interface NavigationState {
   menuItems: NavItem[];
@@ -24,9 +25,10 @@ export const useNavigationStore = create<NavigationState>()((set) => ({
 
       // --- Subcategorías con productos nuevos ---
       try {
-        const response = await fetch("/api/new-subcategories");
-        if (response.ok) {
-          const subItems: NavItem[] = await response.json();
+        const subItems = await fetchJson<NavItem[]>("/api/new-subcategories", {
+          endpointName: "GET /api/new-subcategories",
+        });
+        if (Array.isArray(subItems) && subItems.length > 0) {
           items.push(...subItems);
         }
       } catch (err) {

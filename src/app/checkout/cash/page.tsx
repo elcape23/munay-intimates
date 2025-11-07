@@ -12,6 +12,7 @@ import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { LoadingSpinner } from "@/components/common/loading-spinner";
 import { trackPurchase } from "@/lib/analytics";
 import { trackClarityEvent } from "@/lib/clarity";
+import { fetchJson } from "@/lib/api-client";
 
 export default function CheckoutCashPage() {
   const router = useRouter();
@@ -66,21 +67,24 @@ export default function CheckoutCashPage() {
         if (deliveryDate) noteParts.push(`Fecha: ${deliveryDate}`);
         if (deliveryTime) noteParts.push(`Horario: ${deliveryTime}`);
         const note = noteParts.join(" - ");
-        const res = await fetch("/api/create-pending-orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            cart,
-            customerId: customer?.id,
-            note,
-            tags: ["efectivo"],
-            shippingMethod,
-            shippingCost,
-            shippingAddress,
-          }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Error");
+        const data = await fetchJson<{ id: string }>(
+          "/api/create-pending-orders",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              cart,
+              customerId: customer?.id,
+              note,
+              tags: ["efectivo"],
+              shippingMethod,
+              shippingCost,
+              shippingAddress,
+            }),
+            endpointName: "POST /api/create-pending-orders",
+            expectedKeys: ["id"],
+          }
+        );
         setOrderId(data.id);
         if (cart) {
           const items = cart.lines.edges.map(({ node }) => ({
@@ -104,6 +108,7 @@ export default function CheckoutCashPage() {
         }
         clearCart();
       } catch (e) {
+        console.error("[CheckoutCash] Error creating order", e);
         setError(e instanceof Error ? e.message : "No se pudo crear la orden.");
       } finally {
         setLoading(false);

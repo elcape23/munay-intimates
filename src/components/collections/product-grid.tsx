@@ -26,6 +26,7 @@ import { slugify } from "@/lib/utils";
 import { trackClarityEvent } from "@/lib/clarity";
 import { useRouter } from "next/navigation";
 import { useCollectionStore } from "@/store/collection-store";
+import { fetchJson } from "@/lib/api-client";
 
 type ProductWithDynamicMetafields = ShopifyProduct & {
   [key: string]: ShopifyMetafield | any;
@@ -308,7 +309,7 @@ export function ProductGrid({
   }, [safeMinPrice, safeMaxPrice]);
 
   useEffect(() => {
-    if (!pagination?.hasNextPage) return;
+    if (!pagination?.hasNextPage || !handle) return;
     const target = loadMoreRef.current;
     if (!target) return;
     const observer = new IntersectionObserver(
@@ -316,15 +317,21 @@ export function ProductGrid({
         const entry = entries[0];
         if (entry.isIntersecting && !loadingMore) {
           setLoadingMore(true);
-          fetch(`/api/collections/${handle}?cursor=${pagination.endCursor}`)
-            .then((res) => res.ok && res.json())
+          fetchJson<{
+            products: ShopifyProduct[];
+            pageInfo: { hasNextPage: boolean; endCursor: string | null };
+          }>(`/api/collections/${handle}?cursor=${pagination.endCursor}`, {
+            endpointName: "GET /api/collections",
+            expectedKeys: ["products", "pageInfo"],
+          })
             .then((data) => {
-              if (data) {
-                setItems((prev) =>
-                  sortProductsByAvailability([...prev, ...data.products])
-                );
-                setPagination(data.pageInfo);
-              }
+              setItems((prev) =>
+                sortProductsByAvailability([...prev, ...data.products])
+              );
+              setPagination(data.pageInfo);
+            })
+            .catch((error) => {
+              console.error("[ProductGrid] Error loading more products", error);
             })
             .finally(() => setLoadingMore(false));
         }

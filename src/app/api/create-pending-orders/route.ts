@@ -122,6 +122,14 @@ async function sendOrderConfirmationWhatsApp(opts: {
 
 export async function POST(req: NextRequest) {
   // 1) Leer body
+  let payload: any;
+  try {
+    payload = await req.json();
+  } catch (error) {
+    console.error("[route.ts] ❌ Body inválido", error);
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
   const {
     cart,
     customerId,
@@ -130,8 +138,7 @@ export async function POST(req: NextRequest) {
     shippingMethod,
     shippingCost,
     shippingAddress,
-  } = await req.json();
-
+  } = payload ?? {};
   console.log("[route.ts] ▶️ Body recibido:", {
     cart: Boolean(cart),
     customerId,

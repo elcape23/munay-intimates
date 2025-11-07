@@ -3,7 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 const apiVersion = process.env.SHOPIFY_API_VERSION || "2025-04";
 
 export async function POST(req: NextRequest) {
-  const { countryCode, provinceCode } = await req.json();
+  let body: any;
+  try {
+    body = await req.json();
+  } catch (error) {
+    console.error("[shipping-cost] Invalid JSON body", error);
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  const { countryCode, provinceCode } = body ?? {};
   if (!countryCode) {
     return NextResponse.json(
       { error: "countryCode required" },
@@ -34,8 +42,18 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      const text = await res.text();
-      return NextResponse.json({ error: text }, { status: res.status });
+      const raw = await res.text();
+      console.error("[shipping-cost] Shopify error", {
+        status: res.status,
+        preview: raw.slice(0, 200),
+      });
+      let message = `Shopify error (${res.status})`;
+      try {
+        const parsed = JSON.parse(raw);
+        message =
+          parsed?.errors?.[0]?.message || parsed?.errors?.[0] || message;
+      } catch {}
+      return NextResponse.json({ error: message }, { status: res.status });
     }
 
     const data = await res.json();
@@ -71,6 +89,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ price });
   } catch (e: any) {
+    console.error("[shipping-cost] Unexpected error", e);
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

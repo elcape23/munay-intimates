@@ -6,25 +6,33 @@ export async function GET(
   req: Request,
   { params }: { params: { handle: string } }
 ) {
-  const url = new URL(req.url);
-  const first = parseInt(url.searchParams.get("first") || "16", 10);
-  const cursor = url.searchParams.get("cursor");
-  const collection = await getCollectionByHandle(
-    params.handle,
-    first,
-    cursor || undefined
-  );
-  if (!collection) {
+  try {
+    const url = new URL(req.url);
+    const first = parseInt(url.searchParams.get("first") || "16", 10);
+    const cursor = url.searchParams.get("cursor");
+    const collection = await getCollectionByHandle(
+      params.handle,
+      first,
+      cursor || undefined
+    );
+    if (!collection) {
+      return NextResponse.json(
+        { products: [], pageInfo: { hasNextPage: false, endCursor: null } },
+        { status: 404 }
+      );
+    }
+    const products: ShopifyProduct[] = sortProductsByAvailability(
+      collection.products.edges.map((e) => e.node)
+    );
+    return NextResponse.json({
+      products,
+      pageInfo: collection.products.pageInfo,
+    });
+  } catch (error) {
+    console.error("[api/collections] Error loading collection", error);
     return NextResponse.json(
-      { products: [], pageInfo: { hasNextPage: false, endCursor: null } },
-      { status: 404 }
+      { error: "Failed to load collection" },
+      { status: 500 }
     );
   }
-  const products: ShopifyProduct[] = sortProductsByAvailability(
-    collection.products.edges.map((e) => e.node)
-  );
-  return NextResponse.json({
-    products,
-    pageInfo: collection.products.pageInfo,
-  });
 }

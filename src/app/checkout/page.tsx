@@ -30,6 +30,7 @@ import {
 import { DeliveryDateModal } from "@/components/checkout/delivery-date-modal";
 import { trackClarityEvent } from "@/lib/clarity";
 import { toast } from "@/hooks/use-toast";
+import { fetchJson } from "@/lib/api-client";
 
 export default function CheckoutOptionsPage() {
   const { cart, isLoading } = useCartStore();
@@ -68,22 +69,23 @@ export default function CheckoutOptionsPage() {
     const fetchShipping = async () => {
       if (!defaultAddress) return;
       try {
-        const res = await fetch("/api/shipping-cost", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            countryCode: defaultAddress.countryCode,
-            provinceCode: defaultAddress.provinceCode,
-          }),
-        });
-        if (res.ok) {
-          const json = await res.json();
-          if (typeof json.price === "number") {
-            setShippingCost(json.price);
+        const json = await fetchJson<{ price: number | null }>(
+          "/api/shipping-cost",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              countryCode: defaultAddress.countryCode,
+              provinceCode: defaultAddress.provinceCode,
+            }),
+            endpointName: "POST /api/shipping-cost",
           }
+        );
+        if (typeof json.price === "number") {
+          setShippingCost(json.price);
         }
       } catch (e) {
-        console.error(e);
+        console.error("[CheckoutOptions] Error fetching shipping cost", e);
       }
     };
     fetchShipping();

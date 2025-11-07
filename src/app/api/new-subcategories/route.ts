@@ -38,10 +38,18 @@ async function fetchSubcategories(): Promise<NavItem[]> {
 }
 
 export async function GET() {
-  if (!cache || Date.now() - cache.timestamp > CACHE_TTL) {
-    const items = await fetchSubcategories();
-    cache = { timestamp: Date.now(), items };
-  }
+  try {
+    if (!cache || Date.now() - cache.timestamp > CACHE_TTL) {
+      const items = await fetchSubcategories();
+      cache = { timestamp: Date.now(), items };
+    }
 
-  return NextResponse.json(cache!.items);
+    return NextResponse.json(cache!.items);
+  } catch (error) {
+    console.error("[api/new-subcategories] Error generating list", error);
+    return NextResponse.json(
+      { error: "Failed to load subcategories" },
+      { status: 500 }
+    );
+  }
 }
