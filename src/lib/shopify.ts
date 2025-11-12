@@ -114,13 +114,40 @@ function buildShopifyError(raw: unknown): Error {
   return error;
 }
 
+const normalizeHostnameForComparison = (value: string | null | undefined) => {
+  if (!value) return null;
+  return value.replace(/^www\./i, "").toLowerCase();
+};
+
 export function getCheckoutRedirectUrl(rawUrl: string): string | null {
   if (!rawUrl) return null;
 
-  let normalizedUrl: URL;
-  try {
-    normalizedUrl = new URL(rawUrl);
-  } catch {
+  const trimmedUrl = rawUrl.trim();
+  if (!trimmedUrl) return null;
+
+  const tryBuildUrl = (value: string, base?: string): URL | null => {
+    try {
+      return base ? new URL(value, base) : new URL(value);
+    } catch {
+      return null;
+    }
+  };
+
+  let finalUrl: URL | null = tryBuildUrl(trimmedUrl);
+
+  if (!finalUrl && trimmedUrl.startsWith("//")) {
+    finalUrl = tryBuildUrl(`https:${trimmedUrl}`);
+  }
+
+  if (!finalUrl && trimmedUrl.startsWith("/")) {
+    finalUrl = tryBuildUrl(trimmedUrl, `https://${storeDomain}`);
+  }
+
+  if (!finalUrl) {
+    finalUrl = tryBuildUrl(`https://${trimmedUrl}`);
+  }
+
+  if (!finalUrl) {
     return null;
   }
 
@@ -129,17 +156,22 @@ export function getCheckoutRedirectUrl(rawUrl: string): string | null {
       ? window.location.hostname
       : null;
 
+  const redirectHostname = normalizeHostnameForComparison(finalUrl.hostname);
+  const currentNormalized = normalizeHostnameForComparison(currentHostname);
+  const publicNormalized = normalizeHostnameForComparison(publicAppHostname);
+  const appNormalized = normalizeHostnameForComparison(appHostname);
+
   if (
-    (currentHostname && normalizedUrl.hostname === currentHostname) ||
-    (publicAppHostname && normalizedUrl.hostname === publicAppHostname) ||
-    (appHostname && normalizedUrl.hostname === appHostname)
+    (currentNormalized && redirectHostname === currentNormalized) ||
+    (publicNormalized && redirectHostname === publicNormalized) ||
+    (appNormalized && redirectHostname === appNormalized)
   ) {
-    normalizedUrl.protocol = "https:";
-    normalizedUrl.hostname = storeDomain;
-    normalizedUrl.port = "";
+    finalUrl.protocol = "https:";
+    finalUrl.hostname = storeDomain;
+    finalUrl.port = "";
   }
 
-  return normalizedUrl.toString();
+  return finalUrl.toString();
 }
 
 // --- Definiciones de Tipos de Datos (Completas) ---
