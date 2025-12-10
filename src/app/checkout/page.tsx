@@ -27,6 +27,7 @@ import {
   updateCartBuyerIdentity,
 } from "@/lib/shopify";
 import { DeliveryDateModal } from "@/components/checkout/delivery-date-modal";
+import { AddressSelectionModal } from "@/components/checkout/address-selection-modal";
 import { trackClarityEvent } from "@/lib/clarity";
 import { fetchJson } from "@/lib/api-client";
 
@@ -38,10 +39,12 @@ export default function CheckoutOptionsPage() {
   const [defaultAddress, setDefaultAddress] = useState<CustomerAddress | null>(
     null
   );
+  const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
 
   const [shippingCost, setShippingCost] = useState<number | null>(null);
   const [shippingMethod, setShippingMethod] =
     useState<string>("Envío a Domicilio");
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
   const [deliveryDateLabel, setDeliveryDateLabel] = useState("Mañana");
   const [deliveryTime, setDeliveryTime] = useState("10hs a 13hs");
@@ -51,10 +54,14 @@ export default function CheckoutOptionsPage() {
       const { addresses, defaultAddressId } = await getCustomerAddresses(
         customerAccessToken.accessToken
       );
+      const uniqueAddresses = Array.from(
+        new Map(addresses.map((addr) => [addr.id, addr])).values()
+      );
       const chosen =
-        addresses.find((addr) => addr.id === defaultAddressId) ||
-        addresses[0] ||
+        uniqueAddresses.find((addr) => addr.id === defaultAddressId) ||
+        uniqueAddresses[0] ||
         null;
+      setAddresses(uniqueAddresses);
       setDefaultAddress(chosen);
     };
     fetchAddress();
@@ -314,7 +321,7 @@ export default function CheckoutOptionsPage() {
                     <Button
                       variant="link"
                       size="text"
-                      onClick={() => {}}
+                      onClick={() => setIsAddressModalOpen(true)}
                       data-clarity-label="Cambiar dirección de envío"
                     >
                       {" "}
@@ -388,6 +395,19 @@ export default function CheckoutOptionsPage() {
         onConfirm={(date, time) => {
           setDeliveryDateLabel(date);
           setDeliveryTime(time);
+        }}
+      />
+      <AddressSelectionModal
+        open={isAddressModalOpen}
+        addresses={addresses}
+        selectedAddressId={defaultAddress?.id || null}
+        onClose={() => setIsAddressModalOpen(false)}
+        onConfirm={(addressId) => {
+          const selected = addresses.find((addr) => addr.id === addressId);
+          if (selected) {
+            setDefaultAddress(selected);
+          }
+          setIsAddressModalOpen(false);
         }}
       />
     </section>
