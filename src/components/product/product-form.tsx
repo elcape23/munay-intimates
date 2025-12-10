@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { trackAddToCart } from "@/lib/analytics";
 import { trackClarityEvent } from "@/lib/clarity";
+import { useRouter } from "next/navigation";
 
 type ProductFormProps = {
   product: ShopifyProduct;
@@ -113,6 +114,7 @@ export function ProductForm({ product }: ProductFormProps) {
 
   const cart = useCartStore((s) => s.cart);
   const addItemToCart = useCartStore((s) => s.addItemToCart);
+  const router = useRouter();
 
   const [loadingButton, setLoadingButton] = useState<"add" | "buy" | null>(
     null
@@ -413,12 +415,7 @@ export function ProductForm({ product }: ProductFormProps) {
         price: parseFloat(selectedVariant.price.amount),
         quantity,
       });
-      const { cart } = useCartStore.getState();
-      if (!cart?.checkoutUrl) {
-        console.error("checkoutUrl no disponible", cart);
-        return;
-      }
-      window.location.href = cart.checkoutUrl;
+      router.push("/checkout");
     } catch (error) {
       toast({ title: "Hubo un error al procesar la compra." });
     } finally {
