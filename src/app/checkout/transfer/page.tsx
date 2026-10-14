@@ -172,10 +172,10 @@ export default function CheckoutTransferPage() {
                 Datos para transferencia
               </p>
               <p className="body-01-regular text-text-primary-default">
-                CBU: 0000184305000007087298
+                CBU: 0000184305000019699878
                 <br />
-                Alias: intimatesmunay
-                <br /> Nombre: Victoria Manso
+                Alias: munay.munay1
+                <br /> Nombre: Solana Manso
                 <br />
                 CUIT: 27-39977095-0
               </p>
