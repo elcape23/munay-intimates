@@ -8,13 +8,18 @@ import { CookieBanner } from "@/components/common/cookie-banner";
 import {
   getSaleProducts,
   getNewProducts,
+  getHeroSlides,
   FeaturedProduct,
+  HeroSlide,
 } from "@/lib/shopify";
 
 export default async function HomePage() {
   // 1) Traemos los productos en oferta y los más nuevos en paralelo
   const [newest, sale]: [FeaturedProduct[], FeaturedProduct[]] =
     await Promise.all([getNewProducts(5), getSaleProducts(5, 50)]);
+
+  // Si Shopify falla, el hero usa sus slides por defecto
+  const heroSlides: HeroSlide[] = await getHeroSlides().catch(() => []);
 
   // 2) Filtramos los productos sin stock
   const newestInStock = newest.filter((p) => p.availableForSale !== false);
@@ -30,7 +35,7 @@ export default async function HomePage() {
   return (
     <section>
       {/* Hero carousel */}
-      <HeroSection />
+      <HeroSection slides={heroSlides} />
 
       {/* Carrusel de Ofertas + Nuevos */}
       <ProductCarousel title="Destacados" data={combined} />

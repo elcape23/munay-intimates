@@ -430,6 +430,101 @@ export async function getMenu(
   }));
 }
 
+// --- Hero de la Home (metaobject “hero_slide”) ---
+
+export type HeroSlide = {
+  id: string;
+  image: { mobile: string; desktop: string };
+  title: string;
+  subtitle: string;
+  ButtonText: string;
+  href?: string;
+};
+
+/** Handles de los campos del metaobject definido en Shopify admin */
+const HERO_SLIDE_TYPE = "hero_slides";
+const HERO_SLIDE_FIELDS = {
+  title: "title",
+  subtitle: "subtitle",
+  buttonText: "button_text",
+  link: "link",
+  imageMobile: "image_mobile",
+  imageDesktop: "image_desktop",
+  order: "order",
+};
+
+/**
+ * Devuelve los slides del hero cargados como metaobjects en Shopify.
+ *  - Requiere “Storefront API access” activado en la definición.
+ *  - Si falta la imagen mobile se usa la desktop (y viceversa).
+ */
+export async function getHeroSlides(): Promise<HeroSlide[]> {
+  const QUERY = gql`
+    query HeroSlides($type: String!) {
+      metaobjects(type: $type, first: 20) {
+        nodes {
+          id
+          fields {
+            key
+            value
+            reference {
+              ... on MediaImage {
+                image {
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const data = await shopifyFetch<{
+    metaobjects: {
+      nodes: {
+        id: string;
+        fields: {
+          key: string;
+          value: string | null;
+          reference: { image?: { url: string } } | null;
+        }[];
+      }[];
+    };
+  }>({ query: QUERY, variables: { type: HERO_SLIDE_TYPE } });
+
+  const slides = data.metaobjects.nodes.map((node) => {
+    const field = (key: string) => node.fields.find((f) => f.key === key);
+    const text = (key: string) => field(key)?.value ?? "";
+    const image = (key: string) => field(key)?.reference?.image?.url ?? "";
+
+    const mobile = image(HERO_SLIDE_FIELDS.imageMobile);
+    const desktop = image(HERO_SLIDE_FIELDS.imageDesktop);
+
+    return {
+      order: Number(text(HERO_SLIDE_FIELDS.order)) || 0,
+      slide: {
+        id: node.id,
+        image: { mobile: mobile || desktop, desktop: desktop || mobile },
+        title: text(HERO_SLIDE_FIELDS.title),
+        subtitle: text(HERO_SLIDE_FIELDS.subtitle),
+        ButtonText: text(HERO_SLIDE_FIELDS.buttonText),
+        // links al propio sitio → path relativo (tolera "http:/" mal tipeado)
+        href:
+          text(HERO_SLIDE_FIELDS.link).replace(
+            /^https?:\/+(?:www\.|shop\.)?munayintimates\.com\.ar/i,
+            ""
+          ) || undefined,
+      },
+    };
+  });
+
+  return slides
+    .filter(({ slide }) => slide.image.mobile)
+    .sort((a, b) => a.order - b.order)
+    .map(({ slide }) => slide);
+}
+
 // ➊ Reusa el tipo que ya definiste
 export interface FeaturedProduct {
   id: string;

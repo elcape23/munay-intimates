@@ -11,21 +11,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
 import { useIntroStore } from "@/store/intro-store";
+import type { HeroSlide } from "@/lib/shopify";
 
-interface HeroSlide {
-  id: string;
-  image: {
-    mobile: string;
-    desktop: string;
-  };
-  title: string;
-  subtitle: string;
-  ButtonText: string;
-  href?: string;
-}
-
-/** Slides definidos internamente para no ensuciar page.tsx */
-const SLIDES: HeroSlide[] = [
+/** Slides por defecto si Shopify no devuelve ninguno */
+const DEFAULT_SLIDES: HeroSlide[] = [
   {
     id: "1",
     image: {
@@ -68,14 +57,17 @@ const SLIDE_TRANSITION_SEC = 0.7;
 const INTRO_DELAY_MS = 4300;
 
 interface HeroSectionProps {
+  slides?: HeroSlide[];
   autoPlay?: boolean;
   intervalMs?: number;
 }
 
 export function HeroSection({
+  slides,
   autoPlay = true,
   intervalMs = 3000,
 }: HeroSectionProps) {
+  const SLIDES = slides?.length ? slides : DEFAULT_SLIDES;
   const [current, setCurrent] = useState(0);
   const [progress, setProgress] = useState(0);
   const router = useRouter();
